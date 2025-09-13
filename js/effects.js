@@ -444,7 +444,7 @@ function createDistortion() {
         waveshaper = new WaveShaper( audioContext );
 
     waveshaper.output.connect( wetGain );
-    waveshaper.setDrive(50.0);
+    waveshaper.setDrive(100.0);
     return waveshaper.input;
 }
 
