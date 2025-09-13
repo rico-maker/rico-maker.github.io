@@ -74,6 +74,18 @@ function cancelAnalyserUpdates() {
     rafID = null;
 }
 
+function createInvert() {
+    var inverter = audioContext.createWaveShaper();
+    var curve = new Float32Array(65536);
+    for (var i = -32768; i < 32768; i++) {
+        curve[i + 32768] = -i / 32768; // inverte o sinal
+    }
+    inverter.curve = curve;
+    inverter.connect(wetGain);
+    return inverter;
+}
+
+
 function updateAnalysers(time) {
     analyserView1.doFrequencyAnalysis( analyser1 );
     analyserView2.doFrequencyAnalysis( analyser2 );
@@ -381,6 +393,9 @@ function changeEffect() {
             break;
         case 21: // Apollo effect
             currentEffectNode = createApolloEffect();
+            break;
+        case 22: // Invert
+            currentEffectNode = createInvert();
             break;
         default:
             break;
