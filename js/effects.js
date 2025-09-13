@@ -338,7 +338,7 @@ function pollGamepad() {
     const gp = gamepads[0]; 
     if (!gp) return;
 
-    let r2 = gp.axes[5]; 
+    let r2 = gp.buttons[8]; 
     if (r2 === undefined) r2 = 1; 
 
     const normalized = (r2 + 1) / 2;
