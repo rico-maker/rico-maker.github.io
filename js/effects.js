@@ -45,6 +45,9 @@ var audioInput = null,
     btcrBits = 16,   // between 1 and 16
     btcrNormFreq = 1; // between 0.0 and 1.0
 
+let r2Value = 0;
+let autowahActive = false;
+
 var rafID = null;
 var analyser1;
 var analyserView1;
@@ -775,9 +778,22 @@ function createEnvelopeFollower() {
     return waveshaper;
 }
 
+function updateR2() {
+    if (autowahActive && gamepadIndex !== null) {
+        let gp = navigator.getGamepads()[gamepadIndex];
+        if (gp) {
+            r2Value = gp.buttons[7].value; // R2
+        }
+    }
+    requestAnimationFrame(updateR2);
+}
+requestAnimationFrame(updateR2);
+
+// AutoWah com R2
 function createAutowah() {
-    var inputNode = audioContext.createGain();
+    var autowah = audioContext.createGain(); // mantido o nome original
     var waveshaper = audioContext.createWaveShaper();
+
     awFollower = audioContext.createBiquadFilter();
     awFollower.type = "lowpass";
     awFollower.frequency.value = 10.0;
@@ -799,9 +815,21 @@ function createAutowah() {
     awDepth.connect(awFilter.frequency);
     awFilter.connect(wetGain);
 
-    inputNode.connect(waveshaper);
-    inputNode.connect(awFilter);
-    return inputNode;
+    autowah.connect(waveshaper);
+    autowah.connect(awFilter);
+
+    // Só atualiza a frequência se o autowah estiver ativo
+    function updateAutowah() {
+        if (autowahActive) {
+            let minFreq = 50;
+            let maxFreq = 1500;
+            awFilter.frequency.value = minFreq + (maxFreq - minFreq) * r2Value;
+        }
+        requestAnimationFrame(updateAutowah);
+    }
+    requestAnimationFrame(updateAutowah);
+
+    return autowah;
 }
 
 function createNoiseGate() {
