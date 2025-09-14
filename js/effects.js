@@ -823,7 +823,7 @@ function createAutowah() {
         if (autowahActive) {
             let minFreq = 50;
             let maxFreq = 1500;
-            awFilter.frequency.value = minFreq + (maxFreq - minFreq) * r2Value;
+            awFilter.frequency.value = minFreq + (maxFreq - minFreq) * r2Value * 10;
         }
         requestAnimationFrame(updateAutowah);
     }
