@@ -238,6 +238,37 @@ function keyPress(ev) {
 
 window.addEventListener('load', initAudio );
 
+window.addEventListener('load', initAudio );
+
+// === Gamepad R2 pitch bend ===
+let gamepadIndex = null;
+
+window.addEventListener("gamepadconnected", (e) => {
+    gamepadIndex = e.gamepad.index;
+    console.log("Gamepad conectado:", e.gamepad.id);
+});
+
+window.addEventListener("gamepaddisconnected", (e) => {
+    if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
+    console.log("Gamepad desconectado:", e.gamepad.id);
+});
+
+function updateR2Pitch() {
+    if (gamepadIndex !== null && currentEffectNode && currentEffectNode.setPitch) {
+        const gp = navigator.getGamepads()[gamepadIndex];
+        if (gp) {
+            const r2Value = gp.buttons[7].value; // 0.0 a 1.0
+            // Mapear R2 para bend de ±12 semitons (1 oitava)
+            const bend = (r2Value * 24) - 12; // -12 a +12
+            currentEffectNode.setPitch(Math.pow(2, bend / 12)); // Jungle usa ratio
+        }
+    }
+    requestAnimationFrame(updateR2Pitch);
+}
+
+requestAnimationFrame(updateR2Pitch);
+
+
 window.addEventListener('keydown', keyPress );
 
 function crossfade(value) {
