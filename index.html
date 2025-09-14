@@ -227,7 +227,7 @@
             // Atualiza o pitch com base no R2
             if (effect && effect.setPitchOffset) {
                 let octOffset = Math.log2(VARIAVELTESTE);
-                effect.setPitchOffset(octOffset * -1);
+                effect.setPitchOffset((octOffset / 4) * -1);
             }
         }
     }
