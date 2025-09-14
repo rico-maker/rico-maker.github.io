@@ -216,21 +216,24 @@
 	});
 
 	function updateR2() {
-	    if (r2Active && gamepadIndex !== null) {
-	        let gp = navigator.getGamepads()[gamepadIndex];
-	        if (gp) {
-	            let r2 = gp.buttons[7].value; // R2
-	            VARIAVELTESTE = r2 + 1;
+    if (gamepadIndex !== null) {
+        let gp = navigator.getGamepads()[gamepadIndex];
+        if (gp) {
+            let r2 = gp.buttons[7].value; // R2
+            VARIAVELTESTE = r2 + 1;  
+            // Atualiza a barra de progresso
+            document.getElementById("r2Bar").value = r2;
+            
+            // Atualiza o pitch com base no R2
+            if (effect && effect.setPitchOffset) {
+                let octOffset = Math.log2(VARIAVELTESTE);
+                effect.setPitchOffset(octOffset);
+            }
+        }
+    }
+    requestAnimationFrame(updateR2);
+}
 
-	            // Aplica pitch multiplicando pelo VARIAVELTESTE
-	            if (effect && effect.setPitchOffset) {
-	                let octOffset = Math.log2(VARIAVELTESTE);
-	                effect.setPitchOffset(octOffset);
-	            }
-	        }
-	    }
-	    requestAnimationFrame(updateR2);
-	}
 
 	requestAnimationFrame(updateR2);
 
