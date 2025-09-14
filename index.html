@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -16,16 +15,12 @@
 	<!-- WebGL stuff -->
 	<script src="js/visualizer/base.js"></script>
 	<script src="js/visualizer/cameracontroller.js"></script>
-
-	<!-- TODO(kbr): remove this dependency -->
 	<script src="js/visualizer/matrix4x4.js"></script>
-
-	<!-- Visualizer GL library -->
 	<script src="js/visualizer/visualizer.js"></script>
 	<script src="js/visualizer/shader.js"></script>
 
 	<style>
-	body { font: 14pt Arial, sans-serif; background: #333; color: grey; }
+	body { font: 14pt Arial, sans-serif; background: #ffff; color: grey; }
 	select { font: 14pt Arial, sans-serif; }
 	div#controls div { display:none; border: 1px solid darkgray; border-radius: 5px; padding: 10px; width: 728px;}
 	div#controls div.display { display: block; }
@@ -37,60 +32,61 @@
 </head>
 <body>
 	<div id="autoplay">
-		<button onclick="audioContext.resume(); changeInput(); document.getElementById('autoplay').style='display:none';">Start Processing</button>
+		<button id="startBtn">Start Processing</button>
 	</div>
+
 	<div>Input:
 		<select id="audioinput" onchange="changeInput(this.selectedIndex);">
 			<option>default (selection not supported)</option>
 		</select>
-<!--
-		<button id="apollo">quindar beep</button>
--->
 	</div>
 
 	<div id="arranger">
-	<canvas id="view1" width="750" height="200"></canvas><br>
-	<canvas id="view2" width="750" height="200"></canvas>
-	<div>
-		<input type="radio" name="radioSet" value="data" 
-		onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_FREQUENCY); analyserView2.setAnalysisType(ANALYSISTYPE_FREQUENCY);">Frequency
-		<input type="radio" name="radioSet" value="data" 
-		onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_SONOGRAM); analyserView2.setAnalysisType(ANALYSISTYPE_SONOGRAM);">Sonogram
-		<input type="radio" name="radioSet" value="data" checked="checked" 
-		onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_3D_SONOGRAM); analyserView2.setAnalysisType(ANALYSISTYPE_3D_SONOGRAM);">3D Sonogram
-		<input type="radio" name="radioSet" value="data" 
-		onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_WAVEFORM); analyserView2.setAnalysisType(ANALYSISTYPE_WAVEFORM);">Waveform
-	</div>
-	<div id="effectMix">Effect: <select id="effect">
-		<option>Delay </option>
-		<option>Reverb </option>
-		<option>Distortion </option>
-		<option>Telephone </option>
-		<option>Gain LFO </option>
-		<option>Chorus </option>
-		<option>Flange </option>
-		<option>Ring mod </option>
-		<option>Stereo Chorus </option>
-		<option>Stereo Flange </option>
-		<option>Pitch Shifter </option>
-		<option>Mod Delay </option>
-		<option>Ping-pong delay</option>
-		<option>LFO Filter</option>
-		<option>Envelope Follower (testing only)</option>
-		<option>Autowah</option>
-		<option>Noise Gate</option>
-		<option>Wah Bass</option>
-		<option>Distorted Wah Chorus</option>
-		<option>Vibrato</option>
-		<option>BitCrusher</option>
-		<option>Apollo Quindar Tones</option>
-</select>
-&nbsp;&nbsp;Effect Mix: <input type="range" min="0.0" max="1.0" step="0.01" value="1.0" style="height: 20px; width: 200px;" 
-onInput="crossfade( event.target.value );">
-&nbsp;&nbsp;Mono input: <input type="checkbox" checked onchange="toggleMono()">
-<!--          &nbsp;&nbsp;60Hz filter: <input type="checkbox" checked onchange="toggleFilter()"> -->
-</div>
-<div id="controls">
+		<canvas id="view1" width="750" height="200"></canvas><br>
+		<canvas id="view2" width="750" height="200"></canvas>
+		<div>
+			<input type="radio" name="radioSet" value="data" 
+			onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_FREQUENCY); analyserView2.setAnalysisType(ANALYSISTYPE_FREQUENCY);">Frequency
+			<input type="radio" name="radioSet" value="data" 
+			onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_SONOGRAM); analyserView2.setAnalysisType(ANALYSISTYPE_SONOGRAM);">Sonogram
+			<input type="radio" name="radioSet" value="data" checked="checked" 
+			onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_3D_SONOGRAM); analyserView2.setAnalysisType(ANALYSISTYPE_3D_SONOGRAM);">3D Sonogram
+			<input type="radio" name="radioSet" value="data" 
+			onmousedown="analyserView1.setAnalysisType(ANALYSISTYPE_WAVEFORM); analyserView2.setAnalysisType(ANALYSISTYPE_WAVEFORM);">Waveform
+		</div>
+		
+		<div id="effectMix">Effect: 
+			<select id="effect">
+				<option>Delay </option>
+				<option>Reverb </option>
+				<option>Distortion </option>
+				<option>Telephone </option>
+				<option>Gain LFO </option>
+				<option>Chorus </option>
+				<option>Flange </option>
+				<option>Ring mod </option>
+				<option>Stereo Chorus </option>
+				<option>Stereo Flange </option>
+				<option>Pitch Shifter </option>
+				<option>Mod Delay </option>
+				<option>Ping-pong delay</option>
+				<option>LFO Filter</option>
+				<option>Envelope Follower (testing only)</option>
+				<option>Autowah</option>
+				<option>Noise Gate</option>
+				<option>Wah Bass</option>
+				<option>Distorted Wah Chorus</option>
+				<option>Vibrato</option>
+				<option>BitCrusher</option>
+				<option>Apollo Quindar Tones</option>
+			</select>
+			&nbsp;&nbsp;Effect Mix: 
+			<input type="range" min="0.0" max="1.0" step="0.01" value="1.0" style="height: 20px; width: 200px;" 
+			onInput="crossfade( event.target.value );">
+			&nbsp;&nbsp;Mono input: <input type="checkbox" checked onchange="toggleMono()">
+		</div>
+
+		<div id="controls">
 	<div id="delayControls">A basic digital delay.<br>
 		Delay time: <input id="dtime" type="range" min="0.01" max="3" step="0.01" value="0.15" style="height: 20px; width: 200px" onInput="if (dtime) dtime.delayTime.value = event.target.value;"><br>
 		Regen: <input id="dregen" type="range" min="0.0" max="1.0" step="0.01" value="0.75" style="height: 20px; width: 200px;" 
@@ -201,6 +197,48 @@ onInput="crossfade( event.target.value );">
       <button onclick="this.innerText = toggleSample();">play</button>
   -->
 </div>
-  <a href="https://github.com/cwilso/Audio-Input-Effects" style="position: absolute; z-index:2; top: 0; right: 0; border: 0;"><img src="img/forkme.png" alt="Fork me on GitHub"></a>
+ <a href="https://github.com/cwilso/Audio-Input-Effects" style="position: absolute; z-index:2; top: 0; right: 0; border: 0;"><img src="img/forkme.png" alt="Fork me on GitHub"></a>
+
+	<script>
+	// ================= Gamepad R2 =================
+	let gamepadIndex = null;
+	let VARIAVELTESTE = 0;
+	let r2Active = false; // só ativa após clicar no start
+
+	window.addEventListener("gamepadconnected", (e) => {
+	    gamepadIndex = e.gamepad.index;
+	});
+
+	window.addEventListener("gamepaddisconnected", (e) => {
+	    if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
+	});
+
+	function updateR2() {
+	    if (r2Active && gamepadIndex !== null) {
+	        let gp = navigator.getGamepads()[gamepadIndex];
+	        if (gp) {
+	            let r2 = gp.buttons[7].value; // R2
+	            VARIAVELTESTE = r2 + 1;
+
+	            // Aplica pitch multiplicando pelo VARIAVELTESTE
+	            if (effect && effect.setPitchOffset) {
+	                let octOffset = Math.log2(VARIAVELTESTE);
+	                effect.setPitchOffset(octOffset);
+	            }
+	        }
+	    }
+	    requestAnimationFrame(updateR2);
+	}
+
+	requestAnimationFrame(updateR2);
+
+	// ================= Start Button =================
+	document.getElementById('startBtn').addEventListener('click', () => {
+	    audioContext.resume();
+	    changeInput();
+	    document.getElementById('autoplay').style.display = 'none';
+	    r2Active = true; // ativa leitura do R2
+	});
+	</script>
 </body>
 </html>
