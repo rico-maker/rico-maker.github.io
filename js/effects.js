@@ -6,18 +6,16 @@ var audioInput = null,
     dryGain = null,
     outputMix = null,
     currentEffectNode = null,
-    reverbBuffer = null;
+    reverbBuffer = null,
+    lpInputFilter = null,
+    rafID = null,
+    analyser1, analyser2,
+    analyserView1, analyserView2;
 
-var lpInputFilter = null;
-var rafID = null;
-var analyser1, analyser2;
-var analyserView1, analyserView2;
-
-// Pitch bend final via R2
-var r2PitchNode = null;
 var gamepadIndex = null;
+var r2Node = null;
 
-// Funções auxiliares
+// ====== Funções auxiliares ======
 function convertToMono(input) {
     var splitter = audioContext.createChannelSplitter(2);
     var merger = audioContext.createChannelMerger(2);
@@ -33,7 +31,6 @@ function createLPInputFilter() {
     return lpInputFilter;
 }
 
-// Toggle Mono com proteção contra null
 function toggleMono() {
     if(!audioInput || !realAudioInput) return;
     if (audioInput != realAudioInput) {
@@ -50,11 +47,34 @@ function toggleMono() {
     lpInputFilter.connect(effectInput);
 }
 
+function cancelAnalyserUpdates() {
+    if (rafID) window.cancelAnimationFrame(rafID);
+    rafID = null;
+}
+
+function updateAnalysers(time) {
+    analyserView1.doFrequencyAnalysis(analyser1);
+    analyserView2.doFrequencyAnalysis(analyser2);
+    rafID = window.requestAnimationFrame(updateAnalysers);
+}
+
+function crossfade(value) {
+    var gain1 = Math.cos(value * 0.5 * Math.PI);
+    var gain2 = Math.cos((1.0 - value) * 0.5 * Math.PI);
+    dryGain.gain.value = gain1;
+    wetGain.gain.value = gain2;
+}
+
+// ====== Gamepad R2 ======
+window.addEventListener("gamepadconnected", (e) => { gamepadIndex = e.gamepad.index; });
+window.addEventListener("gamepaddisconnected", (e) => { if (gamepadIndex === e.gamepad.index) gamepadIndex = null; });
+
+// ====== Stream ======
 function gotStream(stream) {
     var input = audioContext.createMediaStreamSource(stream);
     audioInput = convertToMono(input);
 
-    // Cria mix de efeitos
+    // === Mix ===
     outputMix = audioContext.createGain();
     dryGain = audioContext.createGain();
     wetGain = audioContext.createGain();
@@ -68,12 +88,11 @@ function gotStream(stream) {
     outputMix.connect(audioContext.destination);
     outputMix.connect(analyser2);
 
-    // === Pitch bend final via R2 ===
-    r2PitchNode = audioContext.createScriptProcessor(1024, 1, 1);
-    effectInput.connect(r2PitchNode);
-    r2PitchNode.connect(outputMix);
-
-    r2PitchNode.onaudioprocess = function(e) {
+    // === R2 multiplicador final ===
+    r2Node = audioContext.createScriptProcessor(1024, 1, 1);
+    effectInput.connect(r2Node);
+    r2Node.connect(outputMix);
+    r2Node.onaudioprocess = function(e) {
         let input = e.inputBuffer.getChannelData(0);
         let output = e.outputBuffer.getChannelData(0);
         let r2Value = 0;
@@ -81,10 +100,8 @@ function gotStream(stream) {
             let gp = navigator.getGamepads()[gamepadIndex];
             if (gp) r2Value = gp.buttons[7].value;
         }
-        let pitchFactor = Math.pow(2, r2Value * 1); // até +1 oitava
-        for (let i = 0; i < input.length; i++) {
-            output[i] = input[i] * pitchFactor;
-        }
+        let factor = 1 + r2Value;
+        for (let i = 0; i < input.length; i++) output[i] = input[i] * factor;
     };
 
     crossfade(1.0);
@@ -93,31 +110,7 @@ function gotStream(stream) {
     updateAnalysers();
 }
 
-// Gamepad
-window.addEventListener("gamepadconnected", (e) => { gamepadIndex = e.gamepad.index; });
-window.addEventListener("gamepaddisconnected", (e) => { if (gamepadIndex === e.gamepad.index) gamepadIndex = null; });
-
-// Analisadores
-function cancelAnalyserUpdates() {
-    if (rafID) window.cancelAnimationFrame(rafID);
-    rafID = null;
-}
-
-function updateAnalysers(time) {
-    analyserView1.doFrequencyAnalysis(analyser1);
-    analyserView2.doFrequencyAnalysis(analyser2);
-    rafID = window.requestAnimationFrame(updateAnalysers);
-}
-
-// Crossfade
-function crossfade(value) {
-    var gain1 = Math.cos(value * 0.5 * Math.PI);
-    var gain2 = Math.cos((1.0 - value) * 0.5 * Math.PI);
-    dryGain.gain.value = gain1;
-    wetGain.gain.value = gain2;
-}
-
-// Inicialização de áudio
+// ====== Inicialização ======
 function initAudio() {
     analyser1 = audioContext.createAnalyser();
     analyser1.fftSize = 1024;
@@ -137,36 +130,56 @@ function initAudio() {
     });
 }
 
-// Chamadas de inicialização
-window.addEventListener('load', initAudio);
+// ====== Efeitos ======
+var lastEffect = -1;
+function changeEffect() {
+    if (currentEffectNode) currentEffectNode.disconnect();
+    if (effectInput) effectInput.disconnect();
 
+    var effect = document.getElementById("effect").selectedIndex;
+    var effectControls = document.getElementById("controls");
+    if (lastEffect > -1) effectControls.children[lastEffect].classList.remove("display");
+    lastEffect = effect;
+    effectControls.children[effect].classList.add("display");
 
-let gamepadIndex = null;
-
-window.addEventListener("gamepadconnected", (e) => {
-    gamepadIndex = e.gamepad.index;
-});
-
-window.addEventListener("gamepaddisconnected", (e) => {
-    if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
-});
-
-function updateR2Pitch() {
-    if (gamepadIndex !== null && r2PitchShifter) {
-        const gp = navigator.getGamepads()[gamepadIndex];
-        if (gp) {
-            const r2Value = gp.buttons[7].value; // 0.0 a 1.0
-            const bend = r2Value * 12; // até +12 semitons, ajustável
-            r2PitchShifter.setPitch(Math.pow(2, bend / 12));
-        }
+    // Conecta os efeitos
+    switch(effect) {
+        case 0: currentEffectNode = createDelay(); break;
+        case 1: currentEffectNode = createReverb(); break;
+        case 2: currentEffectNode = createDistortion(); break;
+        case 3: currentEffectNode = createTelephonizer(); break;
+        case 4: currentEffectNode = createGainLFO(); break;
+        case 5: currentEffectNode = createChorus(); break;
+        case 6: currentEffectNode = createFlange(); break;
+        case 7: currentEffectNode = createRingmod(); break;
+        case 8: currentEffectNode = createStereoChorus(); break;
+        case 9: currentEffectNode = createStereoFlange(); break;
+        case 10: currentEffectNode = createPitchShifter(); break;
+        case 11: currentEffectNode = createModDelay(); break;
+        case 12: currentEffectNode = createPingPongDelayNode(); break;
+        case 13: currentEffectNode = createFilterLFO(); break;
+        case 14: currentEffectNode = createEnvelopeFollower(); break;
+        case 15: currentEffectNode = createAutowah(); break;
+        case 16: currentEffectNode = createNoiseGate(); break;
+        case 19: currentEffectNode = createVibrato(); break;
+        case 20: currentEffectNode = createBitCrusher(); break;
+        case 21: currentEffectNode = createApolloEffect(); break;
+        default: currentEffectNode = audioContext.createGain(); break;
     }
-    requestAnimationFrame(updateR2Pitch);
+
+    audioInput.connect(currentEffectNode);
+    currentEffectNode.connect(effectInput);
 }
 
-requestAnimationFrame(updateR2Pitch);
+// ====== Eventos ======
+window.addEventListener('load', initAudio);
+window.addEventListener('keydown', keyPress);
+
+// ====== Placeholder para funções de efeito antigas ======
+// Você pode colar todas as suas funções antigas (createDelay, createReverb, createDistortion etc.) aqui.
+// Apenas certifique-se de que elas terminem com `node.connect(wetGain)` ou `return node`.
 
 
-window.addEventListener('keydown', keyPress );
 
 function crossfade(value) {
   // equal-power crossfade
