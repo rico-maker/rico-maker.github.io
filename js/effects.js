@@ -1,3 +1,4 @@
+var r2PitchShifter = null;
 var audioContext = new AudioContext;
 var audioInput = null,
     realAudioInput = null,
@@ -142,6 +143,11 @@ function gotStream(stream) {
     wetGain.connect(outputMix);
     outputMix.connect( audioContext.destination);
     outputMix.connect(analyser2);
+    // Pitch Bend final controlado por R2
+r2PitchShifter = new Jungle(audioContext);
+effectInput.connect(r2PitchShifter.input);
+r2PitchShifter.output.connect(outputMix);
+
     crossfade(1.0);
     changeEffect();
     cancelAnalyserUpdates();
@@ -238,29 +244,23 @@ function keyPress(ev) {
 
 window.addEventListener('load', initAudio );
 
-window.addEventListener('load', initAudio );
-
-// === Gamepad R2 pitch bend ===
 let gamepadIndex = null;
 
 window.addEventListener("gamepadconnected", (e) => {
     gamepadIndex = e.gamepad.index;
-    console.log("Gamepad conectado:", e.gamepad.id);
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {
     if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
-    console.log("Gamepad desconectado:", e.gamepad.id);
 });
 
 function updateR2Pitch() {
-    if (gamepadIndex !== null && currentEffectNode && currentEffectNode.setPitch) {
+    if (gamepadIndex !== null && r2PitchShifter) {
         const gp = navigator.getGamepads()[gamepadIndex];
         if (gp) {
             const r2Value = gp.buttons[7].value; // 0.0 a 1.0
-            // Mapear R2 para bend de ±12 semitons (1 oitava)
-            const bend = (r2Value * 24) - 12; // -12 a +12
-            currentEffectNode.setPitch(Math.pow(2, bend / 12)); // Jungle usa ratio
+            const bend = r2Value * 12; // até +12 semitons, ajustável
+            r2PitchShifter.setPitch(Math.pow(2, bend / 12));
         }
     }
     requestAnimationFrame(updateR2Pitch);
