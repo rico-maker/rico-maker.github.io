@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sintetizador Gamepad</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+h1 { margin-bottom: 10px; }
+
+.container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+#noteLabels {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 10px;
+    font-size: 18px;
+    text-align: left;
+}
+
+#noteStream {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #222;
+    overflow: hidden;
+    border: 2px solid #555;
+    border-radius: 10px;
+}
+
+.note {
+    position: absolute;
+    left: 100%;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    animation: moveLeft linear forwards;
+}
+
+@keyframes moveLeft {
+    from { left: 100%; }
+    to { left: -300px; }
+}
+
+#instrumento {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    font-size: 14px;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+}
+</style>
+</head>
+<body>
+<h1>Sintetizador Multifaixa</h1>
+<p>Segure os botões para manter a nota ativa. R2 → vibrato, L2 → reverb</p>
+
+<select id="instrumento">
+    <option value="sine">Seno (Piano suave)</option>
+    <option value="square">Quadrada (Órgão)</option>
+    <option value="triangle">Triangular (Flauta)</option>
+    <option value="sawtooth">Serra (Synth agressivo)</option>
+</select>
+
+<div class="container">
+    <div id="noteLabels">
+        <div style="color:#15ff00;">Dó</div>
+        <div style="color:#ff0000;">Ré</div>
+        <div style="color:#d10296;">Mi</div>
+        <div style="color:#3902d1;">Fá</div>
+        <div style="color:#02c3d1;">Sol</div>
+        <div style="color:#ffd700;">Lá</div>
+        <div style="color:#ff7f50;">Si</div>
+    </div>
+    <div id="noteStream"></div>
+</div>
+
+<script>
+let gamepadIndex = null;
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let activeOsc = {};
+let activeGain = {};
+let activeDiv = {};
+let vibratoOsc = {};
+let reverbConvolver = audioCtx.createConvolver();
+let instrumento = "sine";
+
+// Criando um reverb simples (curto)
+let reverbGain = audioCtx.createGain();
+reverbGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+reverbConvolver.connect(reverbGain);
+reverbGain.connect(audioCtx.destination);
+
+// ==============================
+// BOTÕES DO GAMEPAD → NOTAS
+// ==============================
+const mapping = {
+    3: "do",
+    1: "re",
+    2: "mi",
+    0: "fa",
+    12: "sol",
+    15: "la",
+    14: "si"
+};
+
+// Definições das notas
+const notaConfig = {
+    "do":  { freq: 261.63, cor: "#15ff00", top: 20 },
+    "re":  { freq: 293.66, cor: "#ff0000", top: 70 },
+    "mi":  { freq: 329.63, cor: "#d10296", top: 120 },
+    "fa":  { freq: 349.23, cor: "#3902d1", top: 170 },
+    "sol": { freq: 392.00, cor: "#02c3d1", top: 220 },
+    "la":  { freq: 440.00, cor: "#ffd700", top: 270 },
+    "si":  { freq: 493.88, cor: "#ff7f50", top: 320 }
+};
+
+// Conectar gamepad
+window.addEventListener("gamepadconnected", (e) => {
+    gamepadIndex = e.gamepad.index;
+    console.log("Gamepad conectado:", e.gamepad.id);
+});
+window.addEventListener("gamepaddisconnected", (e) => {
+    if (gamepadIndex === e.gamepad.index) gamepadIndex = null;
+    console.log("Gamepad desconectado:", e.gamepad.id);
+});
+
+// Multiplicador de oitava pelo joystick esquerdo
+function getOctaveMultiplier(gp) {
+    let y = gp.axes[1] || 0;
+    if (y < 0) return 1 - y;
+    else return 1 - y / 2;
+}
+
+// Multiplicador de pitch fino pelo joystick direito
+function getSemitoneMultiplier(gp) {
+    let y = gp.axes[3] || 0;
+    let semitones = -y;
+    return Math.pow(2, semitones / 12);
+}
+
+function startNote(button, note, multiplier, gp) {
+    if (!activeOsc[button]) {
+        activeOsc[button] = audioCtx.createOscillator();
+        activeGain[button] = audioCtx.createGain();
+        activeOsc[button].type = instrumento;
+        activeOsc[button].frequency.setValueAtTime(note.freq * multiplier, audioCtx.currentTime);
+
+        // Rota do áudio: se L2 pressionado, passa por reverb
+        let connectNode = audioCtx.destination;
+        if (gp.buttons[6].pressed) { // L2
+            connectNode = reverbControler; /-----------------------------------------------------------------------------------------/
+        }
+
+        activeOsc[button].connect(activeGain[button]);
+        activeGain[button].connect(connectNode);
+        activeGain[button].gain.setValueAtTime(0.2, audioCtx.currentTime);
+        activeOsc[button].start();
+
+        // Vibrato R2
+        if (gp.buttons[7].pressed) {
+            vibratoOsc[button] = audioCtx.createOscillator();
+            let vibratoGain = audioCtx.createGain();
+            vibratoOsc[button].frequency.setValueAtTime(5, audioCtx.currentTime);
+            vibratoGain.gain.setValueAtTime(note.freq * 0.05, audioCtx.currentTime);
+            vibratoOsc[button].connect(vibratoGain);
+            vibratoGain.connect(activeOsc[button].frequency);
+            vibratoOsc[button].start();
+        }
+
+        // Bloco visual
+        let stream = document.getElementById("noteStream");
+        let noteDiv = document.createElement("div");
+        noteDiv.className = "note";
+        noteDiv.style.background = note.cor;
+        noteDiv.style.top = note.top + "px";
+        noteDiv.style.height = "40px";
+        noteDiv.style.animationDuration = "8s";
+        stream.appendChild(noteDiv);
+        activeDiv[button] = noteDiv;
+
+        function grow() {
+            if (activeDiv[button]) {
+                let w = activeDiv[button].offsetWidth;
+                activeDiv[button].style.width = (w + 3) + "px";
+                requestAnimationFrame(grow);
+            }
+        }
+        grow();
+    } else {
+        // Atualiza frequência
+        activeOsc[button].frequency.setValueAtTime(note.freq * multiplier, audioCtx.currentTime);
+
+        // Vibrato dinâmico
+        if (gp.buttons[7].pressed && !vibratoOsc[button]) {
+            vibratoOsc[button] = audioCtx.createOscillator();
+            let vibratoGain = audioCtx.createGain();
+            vibratoOsc[button].frequency.setValueAtTime(5, audioCtx.currentTime);
+            vibratoGain.gain.setValueAtTime(note.freq * 0.05, audioCtx.currentTime);
+            vibratoOsc[button].connect(vibratoGain);
+            vibratoGain.connect(activeOsc[button].frequency);
+            vibratoOsc[button].start();
+        } else if (!gp.buttons[7].pressed && vibratoOsc[button]) {
+            vibratoOsc[button].stop();
+            vibratoOsc[button] = null;
+        }
+    }
+}
+
+function stopNote(button) {
+    if (activeOsc[button]) {
+        activeGain[button].gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+        activeOsc[button].stop(audioCtx.currentTime + 0.2);
+        activeOsc[button] = null;
+        activeGain[button] = null;
+
+        if (vibratoOsc[button]) {
+            vibratoOsc[button].stop();
+            vibratoOsc[button] = null;
+        }
+
+        if (activeDiv[button]) {
+            let div = activeDiv[button];
+            activeDiv[button] = null;
+            setTimeout(() => { div.remove(); }, 8000);
+        }
+    }
+}
+
+function updateGamepad() {
+    if (gamepadIndex !== null) {
+        let gp = navigator.getGamepads()[gamepadIndex];
+        if (gp) {
+            let octaveMultiplier = getOctaveMultiplier(gp);
+            let semitoneMultiplier = getSemitoneMultiplier(gp);
+            let finalMultiplier = octaveMultiplier * semitoneMultiplier;
+
+            for (let btn in mapping) {
+                let noteName = mapping[btn];
+                let note = notaConfig[noteName];
+                if (gp.buttons[btn].pressed) {
+                    startNote(btn, note, finalMultiplier, gp);
+                } else {
+                    stopNote(btn);
+                }
+            }
+        }
+    }
+    requestAnimationFrame(updateGamepad);
+}
+requestAnimationFrame(updateGamepad);
+
+// Seletor de instrumento
+document.getElementById("instrumento").addEventListener("change", (e) => {
+    instrumento = e.target.value;
+});
+</script>
+</body>
+</html>
