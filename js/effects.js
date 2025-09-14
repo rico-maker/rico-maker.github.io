@@ -143,10 +143,23 @@ function gotStream(stream) {
     wetGain.connect(outputMix);
     outputMix.connect( audioContext.destination);
     outputMix.connect(analyser2);
-    // Pitch Bend final controlado por R2
-r2PitchShifter = new Jungle(audioContext);
-effectInput.connect(r2PitchShifter.input);
-r2PitchShifter.output.connect(outputMix);
+    r2PitchNode = audioContext.createScriptProcessor(1024, 1, 1);
+    effectInput.connect(r2PitchNode);
+    r2PitchNode.connect(outputMix);
+
+    r2PitchNode.onaudioprocess = function(e) {
+        let input = e.inputBuffer.getChannelData(0);
+        let output = e.outputBuffer.getChannelData(0);
+        let r2Value = 0;
+        if (gamepadIndex !== null) {
+            let gp = navigator.getGamepads()[gamepadIndex];
+            if (gp) r2Value = gp.buttons[7].value;
+        }
+        let pitchFactor = Math.pow(2, r2Value * 1); // até +1 oitava
+        for (let i = 0; i < input.length; i++) {
+            output[i] = input[i] * pitchFactor;
+        }
+    };
 
     crossfade(1.0);
     changeEffect();
