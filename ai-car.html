@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>AI Learns to Drive - Pista Complicada</title>
+<style>
+  body { margin:0; background:#222; color:#eee; font-family:sans-serif; text-align:center; }
+  canvas { background:#333; margin-top:20px; border:2px solid #555; }
+  #info { margin-top:0px; font-size:18px; }
+</style>
+</head>
+<body>
+<h1>AI Learns to Drive - Pista Complicada</h1>
+<div id="info">Geração: 1</div>
+<canvas id="gameCanvas" width="1000" height="600"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const CAR_COUNT = 500;
+const SENSOR_COUNT = 8;
+const MAX_SPEED = 20;
+const MIN_SPEED = 8;const MUTATION_RATE = 0.1;
+let generation = 1;
+let cars = [];
+let bestCar = null;
+
+const START_X = 880;
+const START_Y = 450;
+
+// ==== Pista complicada visível ====
+const trackData = {
+  outer:[
+    {x:150,y:500},{x:200,y:390},{x:400,y:400},{x:600,y:300},{x:800,y:300},
+    {x:900,y:450},{x:900,y:500},{x:700,y:600},{x:500,y:530},{x:320,y:600},{x:150,y:500}
+  ],
+  inner:[
+    {x:200,y:480},{x:250,y:410},{x:400,y:420},{x:600,y:330},{x:780,y:340},
+    {x:850,y:460},{x:820,y:510},{x:710,y:560},{x:500,y:500},{x:320,y:560},{x:200,y:480}
+  ]
+};
+
+// Função simples para verificar se está dentro da pista
+function pointInTrack(x,y){
+  // usa algoritmo de ponto dentro de polígono (ray-casting)
+  function inside(point, poly){
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const xi=poly[i].x, yi=poly[i].y;
+      const xj=poly[j].x, yj=poly[j].y;
+      const intersect = ((yi>point.y)!=(yj>point.y)) && (point.x<(xj-xi)*(point.y-yi)/(yj-yi)+xi);
+      if(intersect) inside=!inside;
+    }
+    return inside;
+  }
+  return inside({x,y},trackData.outer) && !inside({x,y},trackData.inner);
+}
+
+// Rede neural simples
+function simpleNN(inputs,weights){
+  let output=[0,0];
+  for(let i=0;i<2;i++){
+    for(let j=0;j<inputs.length;j++){
+      output[i]+=inputs[j]*weights[j][i];
+    }
+    output[i]=Math.tanh(output[i]);
+  }
+  return output;
+}
+
+class Car {
+  constructor(weights){
+    this.x = START_X;
+    this.y = START_Y;
+    this.angle = -Math.PI/2;
+    this.speed = 4;
+    this.size = 5;
+    this.alive = true;
+    this.fitness = 0;
+    this.sensors = [];
+    this.weights = weights||this.createRandomWeights();
+    this.forwardTimer = 0;
+    this.slowTimer = 0;
+    this.lastX = this.x;
+    this.lastY = this.y;
+  }
+
+  createRandomWeights(){
+    let w=[];
+    for(let i=0;i<SENSOR_COUNT;i++){
+      w.push([Math.random()*2-1, Math.random()*2-1]);
+    }
+    return w;
+  }
+
+  update(dt=0.016){
+    if(!this.alive) return;
+
+    this.sensors=[];
+    const angles=[];
+    for(let i=0;i<SENSOR_COUNT;i++){
+      angles.push(-Math.PI/2 + i*(Math.PI/(SENSOR_COUNT-1)));
+    }
+    for(let a of angles){
+      this.sensors.push(this.castRay(a)/100);
+    }
+
+    let [throttle, turn] = simpleNN(this.sensors,this.weights);
+
+    this.angle += turn*0.3;
+    this.speed += Math.max(0, throttle*0.3);
+    this.speed = Math.min(this.speed, MAX_SPEED);
+
+    this.x += Math.cos(this.angle)*this.speed;
+    this.y += Math.sin(this.angle)*this.speed;
+
+    if(!pointInTrack(this.x,this.y)) this.alive=false;
+
+    const moved = Math.hypot(this.x-this.lastX, this.y-this.lastY);
+    if(moved<0.5) this.forwardTimer+=dt; else this.forwardTimer=0;
+    if(this.forwardTimer>1) this.alive=false;
+
+    if(this.speed<MIN_SPEED) this.slowTimer+=dt; else this.slowTimer=0;
+    if(this.slowTimer>1) this.alive=false;
+
+    this.lastX=this.x;
+    this.lastY=this.y;
+
+    if(this.alive) this.fitness++;
+  }
+
+  castRay(offset){
+    const rayLength=100;
+    const angle=this.angle+offset;
+    for(let i=0;i<rayLength;i+=2){
+      let rx=this.x+Math.cos(angle)*i;
+      let ry=this.y+Math.sin(angle)*i;
+      if(!pointInTrack(rx,ry)) return i;
+    }
+    return rayLength;
+  }
+
+  draw(isBest){
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.angle);
+    ctx.fillStyle = !this.alive ? 'red' : (isBest ? 'lime' : 'cyan');
+    ctx.fillRect(-this.size/2,-this.size/2,this.size,this.size);
+    ctx.restore();
+  }
+}
+
+function nextGeneration(){
+  cars.sort((a,b)=>b.fitness-a.fitness);
+  bestCar = cars[0];
+  const newCars=[];
+  for(let i=0;i<CAR_COUNT;i++){
+    let newWeights=bestCar.weights.map(w=>w.map(v=>Math.random()<MUTATION_RATE?v+(Math.random()-0.5)*0.3:v));
+    newCars.push(new Car(newWeights));
+  }
+  cars=newCars;
+  generation++;
+  document.getElementById('info').innerText="Geração: "+generation;
+}
+
+function init(){
+  cars=[];
+  for(let i=0;i<CAR_COUNT;i++) cars.push(new Car());
+}
+init();
+
+function drawTrack(){
+  ctx.fillStyle='#555';
+  ctx.beginPath();
+  const o=trackData.outer;
+  ctx.moveTo(o[0].x,o[0].y);
+  for(let p of o) ctx.lineTo(p.x,p.y);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle='#333';
+  const i=trackData.inner;
+  ctx.beginPath();
+  ctx.moveTo(i[0].x,i[0].y);
+  for(let p of i) ctx.lineTo(p.x,p.y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function gameLoop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawTrack();
+
+  let aliveCount=0;
+  for(let car of cars){
+    car.update(0.016);
+    if(car.alive) aliveCount++;
+    car.draw(car===bestCar);
+  }
+
+  if(aliveCount===0){
+    nextGeneration();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
+</script>
+</body>
+</html>
