@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Horários de Prova (30 em 30)</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#0f1720;
+      --text:#e6eef6;
+      --muted:#8b94a0;
+      --accent:#2dd4bf;
+    }
+    body{
+      margin:0; font-family:sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+      height:100vh;
+    }
+    .card{background:var(--card);padding:20px;border-radius:12px;max-width:500px;width:100%}
+    h1{font-size:20px;margin:0 0 10px}
+    p{color:var(--muted);margin:0 0 16px}
+    ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+    .slot{padding:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+    .past{background:#222;color:var(--muted)}
+    .current{background:#13332f;color:var(--accent)}
+    .future{background:#1a1f29;color:var(--text)}
+    .controls{margin-top:15px;display:flex;gap:10px}
+    button{background:#222;border:none;padding:8px 12px;border-radius:6px;color:var(--text);cursor:pointer}
+    button:hover{background:#333}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Horários da prova</h1>
+    <p>Os horários aparecem em intervalos de 30 minutos durante 5 horas.</p>
+    <ul id="slots"></ul>
+    <div class="controls">
+      <button id="change">Alterar início</button>
+      <button id="now">Ajustar para agora</button>
+    </div>
+  </div>
+<script>
+  const slotsEl = document.getElementById('slots');
+  const changeBtn = document.getElementById('change');
+  const nowBtn = document.getElementById('now');
+  let startTime;
+
+  function pad(n){return n.toString().padStart(2,'0');}
+  function formatTime(d){return pad(d.getHours())+":"+pad(d.getMinutes());}
+
+  function generateSlots(start){
+    let arr=[];
+    for(let i=0;i<=10;i++){
+      arr.push(new Date(start.getTime()+i*30*60000));
+    }
+    return arr;
+  }
+
+  function render(){
+    if(!startTime) return; // don't render if no startTime set
+    const now=new Date();
+    const slots=generateSlots(startTime);
+    slotsEl.innerHTML='';
+    for(const s of slots){
+      const li=document.createElement('li');
+      const slotStart=s.getTime();
+      const slotEnd=slotStart+30*60000;
+      let cls='future';
+      if(now.getTime()>=slotEnd){cls='past';}
+      else if(now.getTime()>=slotStart&&now.getTime()<slotEnd){cls='current';}
+      li.className='slot '+cls;
+      li.textContent=formatTime(s);
+      slotsEl.appendChild(li);
+    }
+  }
+
+  function askStart(){
+    while(true){
+      let input=prompt("Digite o horário de início (HH:MM)","15:00");
+      if(input===null) return false; // user cancelled
+      let [h,m]=input.split(":").map(Number);
+      if(!isNaN(h)&&!isNaN(m)&&h>=0&&h<24&&m>=0&&m<60){
+        startTime=new Date();
+        startTime.setHours(h,m,0,0);
+        render();
+        return true;
+      }
+      alert("Por favor, digite um horário válido no formato HH:MM (ex: 15:00).");
+    }
+  }
+
+  changeBtn.onclick=askStart;
+  nowBtn.onclick=()=>{
+    let now=new Date();
+    let rounded=new Date(now);
+    rounded.setMinutes(now.getMinutes()<30?0:30,0,0);
+    startTime=rounded;
+    render();
+  };
+
+  window.onload=()=>{
+    // Try to ask start time until valid or user cancels
+    if(!askStart()){
+      // If user cancels, default to current rounded time
+      nowBtn.onclick();
+    }
+    setInterval(render, 5000); // update every 5 seconds
+  };
+</script>
+</body>
+</html>
