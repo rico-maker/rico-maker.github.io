@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Corretor de Prova — Teclas Q W E R T (sem Enter)</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; max-width:800px; margin:30px auto; padding:16px; color:#111; }
+  h1 { margin:0 0 8px 0; font-size:1.4rem; }
+  p.lead { margin:6px 0 18px 0; color:#333; }
+  .painel { border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff; }
+  .questao { font-size:1.8rem; margin:6px 0; }
+  .resposta { font-size:1.6rem; margin:6px 0 12px 0; }
+  .status { font-weight:700; padding:8px 12px; display:inline-block; border-radius:8px; margin-bottom:8px; }
+  .correto { background:#e6ffef; color:#0a6f3a; border:1px solid #8de2b2; }
+  .errado { background:#ffecec; color:#8a1d1d; border:1px solid #f1a3a3; }
+  .info { color:#555; margin:6px 0; }
+  .barra { display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+  button { padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fafafa; cursor:pointer; }
+  button.primary { background:#007bff; color:#fff; border-color:#0066d6; }
+  table { width:100%; border-collapse:collapse; margin-top:12px;}
+  th,td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
+  .small { font-size:0.9rem; color:#666; }
+  .kbd { display:inline-block; padding:4px 8px; border-radius:6px; background:#f2f2f2; border:1px solid #ddd; font-weight:700; }
+  footer { margin-top:18px; color:#666; font-size:0.9rem; }
+</style>
+</head>
+<body>
+  <div class="painel">
+    <h1>Corretor de Prova</h1>
+    <p class="lead">Use <span class="kbd">Q</span>/<span class="kbd">W</span>/<span class="kbd">E</span>/<span class="kbd">R</span>/<span class="kbd">T</span> para responder (A/B/C/D/E). Não precisa apertar Enter. Pressione <span class="kbd">Esc</span> para encerrar antes do fim.</p>
+
+    <div id="display">
+      <div class="questao" id="num">Questão —</div>
+      <div class="resposta" id="resposta">Aguardando tecla...</div>
+      <div id="resultado" class="status" style="display:none"></div>
+
+      <div class="barra">
+        <div class="info">Acertos: <span id="acertos">0</span> / <span id="total">0</span></div>
+        <div class="info">Progresso: <span id="progresso">0%</span></div>
+        <div><button id="botaoRestart">Reiniciar</button></div>
+        <div><button id="baixar" style="display:none">Baixar CSV</button></div>
+      </div>
+    </div>
+
+    <div id="relatorio" style="display:none; margin-top:14px;">
+      <h3>Resumo</h3>
+      <div class="info">Total de questões respondidas: <span id="respondidas">0</span></div>
+      <div class="info">Acertos: <span id="acertosFim">0</span> (<span id="percent">0</span>%)</div>
+      <table id="tabela">
+        <thead><tr><th>Questão</th><th>Sua resposta</th><th>Gabarito</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <footer>
+      Dica: clique na janela do navegador e pressione as teclas Q W E R T. Funciona em desktop. Em alguns navegadores, atalhos do sistema podem interferir.
+    </footer>
+  </div>
+
+<script>
+(function () {
+  // mapa de teclas para alternativas
+  const mapa = { q: 'A', w: 'B', e: 'C', r: 'D', t: 'E' };
+
+  // gabarito (questões 6 a 45)
+  const gabarito = {
+    6: 'C',7: 'E',8: 'C',9: 'E',10: 'D',
+    11: 'A',12: 'E',13: 'C',14: 'A',15: 'E',
+    16: 'B',17: 'C',18: 'B',19: 'E',20: 'B',
+    21: 'C',22: 'E',23: 'C',24: 'B',25: 'D',
+    26: 'E',27: 'B',28: 'C',29: 'E',30: 'D',
+    31: 'B',32: 'A',33: 'B',34: 'A',35: 'B',
+    36: 'C',37: 'D',38: 'D',39: 'C',40: 'C',
+    41: 'A',42: 'A',43: 'B',44: 'B',45: 'A'
+  };
+
+  const questoes = Object.keys(gabarito).map(n => parseInt(n,10)).sort((a,b)=>a-b);
+  const totalQuestoes = questoes.length;
+
+  // estado
+  let indice = 0;
+  let acertos = 0;
+  const respostas = []; // {num, resposta, correta, ok}
+
+  // elementos
+  const elNum = document.getElementById('num');
+  const elResp = document.getElementById('resposta');
+  const elResultado = document.getElementById('resultado');
+  const elAcertos = document.getElementById('acertos');
+  const elTotal = document.getElementById('total');
+  const elProgresso = document.getElementById('progresso');
+  const elRelatorio = document.getElementById('relatorio');
+  const elTabelaBody = document.querySelector('#tabela tbody');
+  const elRespondidas = document.getElementById('respondidas');
+  const elAcertosFim = document.getElementById('acertosFim');
+  const elPercent = document.getElementById('percent');
+  const btnRestart = document.getElementById('botaoRestart');
+  const btnBaixar = document.getElementById('baixar');
+
+  elTotal.textContent = totalQuestoes;
+
+  function atualizaDisplay() {
+    if (indice < totalQuestoes) {
+      const num = questoes[indice];
+      elNum.textContent = `Questão ${num}:`;
+      elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
+      elResultado.style.display = 'none';
+      elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
+    } else {
+      finalizar();
+    }
+    elAcertos.textContent = acertos;
+  }
+
+  function registrarResposta(teclaChar) {
+    if (indice >= totalQuestoes) return;
+    const key = teclaChar.toLowerCase();
+    if (!(key in mapa)) return; // ignorar teclas inválidas
+
+    const num = questoes[indice];
+    const resposta = mapa[key];
+    const correta = gabarito[num];
+    const ok = resposta === correta;
+    respostas.push({ num, resposta, correta, ok });
+
+    // mostrar resultado visual
+    elResp.textContent = resposta;
+    elResultado.style.display = 'inline-block';
+    elResultado.textContent = ok ? '✔ Correto!' : `✘ Errado — certa: ${correta}`;
+    elResultado.className = 'status ' + (ok ? 'correto' : 'errado');
+
+    if (ok) acertos++;
+
+    indice++;
+    elAcertos.textContent = acertos;
+    elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
+
+    // pequeno atraso antes de avançar visualmente para a próxima (sem bloquear teclado)
+    setTimeout(() => {
+      if (indice < totalQuestoes) {
+        elNum.textContent = `Questão ${questoes[indice]}:`;
+        elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
+        elResultado.style.display = 'none';
+      } else {
+        finalizar();
+      }
+    }, 180);
+  }
+
+  function finalizar() {
+    elNum.textContent = 'Fim';
+    elResp.textContent = 'Sessão finalizada.';
+    elResultado.style.display = 'none';
+    elProgresso.textContent = '100%';
+    elRelatorio.style.display = 'block';
+    elRespondidas.textContent = respostas.length;
+    elAcertosFim.textContent = acertos;
+    elPercent.textContent = ((acertos / totalQuestoes) * 100).toFixed(1);
+
+    // tabela
+    elTabelaBody.innerHTML = '';
+    for (const r of respostas) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.num}</td>
+                      <td>${r.resposta}</td>
+                      <td>${r.correta}</td>
+                      <td>${r.ok ? 'Correto' : 'Errado'}</td>`;
+      elTabelaBody.appendChild(tr);
+    }
+
+    // botão de baixar
+    btnBaixar.style.display = 'inline-block';
+  }
+
+  // evento de teclado global (na página)
+  window.addEventListener('keydown', function (ev) {
+    // evitar digitar em campos (se houver)
+    if (ev.target && (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.isContentEditable)) {
+      return;
+    }
+    if (ev.key === 'Escape') {
+      // encerrar imediatamente
+      finalizar();
+      return;
+    }
+    const key = ev.key.toLowerCa
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Corretor de Prova — Teclas Q W E R T (sem Enter)</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; max-width:800px; margin:30px auto; padding:16px; color:#111; }
+  h1 { margin:0 0 8px 0; font-size:1.4rem; }
+  p.lead { margin:6px 0 18px 0; color:#333; }
+  .painel { border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff; }
+  .questao { font-size:1.8rem; margin:6px 0; }
+  .resposta { font-size:1.6rem; margin:6px 0 12px 0; }
+  .status { font-weight:700; padding:8px 12px; display:inline-block; border-radius:8px; margin-bottom:8px; }
+  .correto { background:#e6ffef; color:#0a6f3a; border:1px solid #8de2b2; }
+  .errado { background:#ffecec; color:#8a1d1d; border:1px solid #f1a3a3; }
+  .info { color:#555; margin:6px 0; }
+  .barra { display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+  button { padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fafafa; cursor:pointer; }
+  button.primary { background:#007bff; color:#fff; border-color:#0066d6; }
+  table { width:100%; border-collapse:collapse; margin-top:12px;}
+  th,td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
+  .small { font-size:0.9rem; color:#666; }
+  .kbd { display:inline-block; padding:4px 8px; border-radius:6px; background:#f2f2f2; border:1px solid #ddd; font-weight:700; }
+  footer { margin-top:18px; color:#666; font-size:0.9rem; }
+</style>
+</head>
+<body>
+  <div class="painel">
+    <h1>Corretor de Prova</h1>
+    <p class="lead">Use <span class="kbd">Q</span>/<span class="kbd">W</span>/<span class="kbd">E</span>/<span class="kbd">R</span>/<span class="kbd">T</span> para responder (A/B/C/D/E). Não precisa apertar Enter. Pressione <span class="kbd">Esc</span> para encerrar antes do fim.</p>
+
+    <div id="display">
+      <div class="questao" id="num">Questão —</div>
+      <div class="resposta" id="resposta">Aguardando tecla...</div>
+      <div id="resultado" class="status" style="display:none"></div>
+
+      <div class="barra">
+        <div class="info">Acertos: <span id="acertos">0</span> / <span id="total">0</span></div>
+        <div class="info">Progresso: <span id="progresso">0%</span></div>
+        <div><button id="botaoRestart">Reiniciar</button></div>
+        <div><button id="baixar" style="display:none">Baixar CSV</button></div>
+      </div>
+    </div>
+
+    <div id="relatorio" style="display:none; margin-top:14px;">
+      <h3>Resumo</h3>
+      <div class="info">Total de questões respondidas: <span id="respondidas">0</span></div>
+      <div class="info">Acertos: <span id="acertosFim">0</span> (<span id="percent">0</span>%)</div>
+      <table id="tabela">
+        <thead><tr><th>Questão</th><th>Sua resposta</th><th>Gabarito</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <footer>
+      Dica: clique na janela do navegador e pressione as teclas Q W E R T. Funciona em desktop. Em alguns navegadores, atalhos do sistema podem interferir.
+    </footer>
+  </div>
+
+<script>
+(function () {
+  // mapa de teclas para alternativas
+  const mapa = { q: 'A', w: 'B', e: 'C', r: 'D', t: 'E' };
+
+  // gabarito (questões 6 a 45)
+  const gabarito = {
+    6: 'C',7: 'E',8: 'C',9: 'E',10: 'D',
+    11: 'A',12: 'E',13: 'C',14: 'A',15: 'E',
+    16: 'B',17: 'C',18: 'B',19: 'E',20: 'B',
+    21: 'C',22: 'E',23: 'C',24: 'B',25: 'D',
+    26: 'E',27: 'B',28: 'C',29: 'E',30: 'D',
+    31: 'B',32: 'A',33: 'B',34: 'A',35: 'B',
+    36: 'C',37: 'D',38: 'D',39: 'C',40: 'C',
+    41: 'A',42: 'A',43: 'B',44: 'B',45: 'A'
+  };
+
+  const questoes = Object.keys(gabarito).map(n => parseInt(n,10)).sort((a,b)=>a-b);
+  const totalQuestoes = questoes.length;
+
+  // estado
+  let indice = 0;
+  let acertos = 0;
+  const respostas = []; // {num, resposta, correta, ok}
+
+  // elementos
+  const elNum = document.getElementById('num');
+  const elResp = document.getElementById('resposta');
+  const elResultado = document.getElementById('resultado');
+  const elAcertos = document.getElementById('acertos');
+  const elTotal = document.getElementById('total');
+  const elProgresso = document.getElementById('progresso');
+  const elRelatorio = document.getElementById('relatorio');
+  const elTabelaBody = document.querySelector('#tabela tbody');
+  const elRespondidas = document.getElementById('respondidas');
+  const elAcertosFim = document.getElementById('acertosFim');
+  const elPercent = document.getElementById('percent');
+  const btnRestart = document.getElementById('botaoRestart');
+  const btnBaixar = document.getElementById('baixar');
+
+  elTotal.textContent = totalQuestoes;
+
+  function atualizaDisplay() {
+    if (indice < totalQuestoes) {
+      const num = questoes[indice];
+      elNum.textContent = `Questão ${num}:`;
+      elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
+      elResultado.style.display = 'none';
+      elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
+    } else {
+      finalizar();
+    }
+    elAcertos.textContent = acertos;
+  }
+
+  function registrarResposta(teclaChar) {
+    if (indice >= totalQuestoes) return;
+    const key = teclaChar.toLowerCase();
+    if (!(key in mapa)) return; // ignorar teclas inválidas
+
+    const num = questoes[indice];
+    const resposta = mapa[key];
+    const correta = gabarito[num];
+    const ok = resposta === correta;
+    respostas.push({ num, resposta, correta, ok });
+
+    // mostrar resultado visual
+    elResp.textContent = resposta;
+    elResultado.style.display = 'inline-block';
+    elResultado.textContent = ok ? '✔ Correto!' : `✘ Errado — certa: ${correta}`;
+    elResultado.className = 'status ' + (ok ? 'correto' : 'errado');
+
+    if (ok) acertos++;
+
+    indice++;
+    elAcertos.textContent = acertos;
+    elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
+
+    // pequeno atraso antes de avançar visualmente para a próxima (sem bloquear teclado)
+    setTimeout(() => {
+      if (indice < totalQuestoes) {
+        elNum.textContent = `Questão ${questoes[indice]}:`;
+        elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
+        elResultado.style.display = 'none';
+      } else {
+        finalizar();
+      }
+    }, 180);
+  }
+
+  function finalizar() {
+    elNum.textContent = 'Fim';
+    elResp.textContent = 'Sessão finalizada.';
+    elResultado.style.display = 'none';
+    elProgresso.textContent = '100%';
+    elRelatorio.style.display = 'block';
+    elRespondidas.textContent = respostas.length;
+    elAcertosFim.textContent = acertos;
+    elPercent.textContent = ((acertos / totalQuestoes) * 100).toFixed(1);
+
+    // tabela
+    elTabelaBody.innerHTML = '';
+    for (const r of respostas) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${r.num}</td>
+                      <td>${r.resposta}</td>
+                      <td>${r.correta}</td>
+                      <td>${r.ok ? 'Correto' : 'Errado'}</td>`;
+      elTabelaBody.appendChild(tr);
+    }
+
+    // botão de baixar
+    btnBaixar.style.display = 'inline-block';
+  }
+
+  // evento de teclado global (na página)
+  window.addEventListener('keydown', function (ev) {
+    // evitar digitar em campos (se houver)
+    if (ev.target && (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.isContentEditable)) {
+      return;
+    }
+    if (ev.key === 'Escape') {
+      // encerrar imediatamente
+      finalizar();
+      return;
+    }
+    const key = ev.key.toLowerCase();
+    if (key in mapa) {
+      ev.preventDefault();
+      registrarResposta(key);
+    }
+  });
+
+  btnRestart.addEventListener('click', function () {
+    // reset
+    indice = 0;
+    acertos = 0;
+    respostas.length = 0;
+    elRelatorio.style.display = 'none';
+    btnBaixar.style.display = 'none';
+    elAcertos.textContent = '0';
+    atualizaDisplay();
+  });
+
+  btnBaixar.addEventListener('click', function () {
+    // gera CSV: Questão,SuaResposta,Gabarito,Status
+    let csv = 'Questao,SuaResposta,Gabarito,Status\n';
+    for (const r of respostas) {
+      csv += `${r.num},${r.resposta},${r.correta},${r.ok ? 'Correto' : 'Errado'}\n`;
+    }
+    // baixar
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'respostas.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // inicializa
+  atualizaDisplay();
+})();
+</script>
+</body>
+</html>
