@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Questões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+    --amber: 255,182,39;
+    --teal: 78,205,196;
+    --coral: 255,107,107;
+    --violet: 167,139,250;
+  }
+
+  body[data-mode="normal"]{
+    --bg: #101018;
+    --bg-grid: rgba(244,241,234,.035);
+    --surface: #1b1b28;
+    --surface-2: #22222f;
+    --border: rgba(244,241,234,.08);
+    --text: #f3f1ea;
+    --text-dim: #9d9aad;
+    --text-faint: #656279;
+    --c-ava: rgb(var(--amber));
+    --c-gemini: rgb(var(--teal));
+    --c-google: rgb(var(--coral));
+    --c-outro: rgb(var(--violet));
+    --accent: rgb(var(--amber));
+    --success: rgb(var(--teal));
+    --danger: rgb(var(--coral));
+    --marker-opacity: .22;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,.6);
+  }
+
+  body[data-mode="focus"]{
+    --bg: #0c0c0d;
+    --bg-grid: rgba(255,255,255,.02);
+    --surface: #151516;
+    --surface-2: #1a1a1b;
+    --border: rgba(255,255,255,.06);
+    --text: #e4e4e4;
+    --text-dim: #7a7a7c;
+    --text-faint: #4d4d4f;
+    --c-ava: #6b6b6d;
+    --c-gemini: #7c7c7e;
+    --c-google: #55555a;
+    --c-outro: #8a8a8c;
+    --accent: #9a9a9c;
+    --success: #8a8a8c;
+    --danger: #7c7c7e;
+    --marker-opacity: 0;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,.8);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:
+      repeating-linear-gradient(180deg, var(--bg-grid) 0px, var(--bg-grid) 1px, transparent 1px, transparent 34px),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    transition: background-color .5s ease, color .5s ease;
+    padding: 28px 20px 100px;
+  }
+
+  .wrap{ max-width: 1180px; margin: 0 auto; }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    flex-wrap:wrap; gap:16px; margin-bottom:28px;
+  }
+  .brand{ display:flex; flex-direction:column; gap:2px; }
+  .brand .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--text-faint);
+  }
+  .brand h1{
+    font-family:'Fraunces', serif; font-weight:700; font-size:32px;
+    letter-spacing:-.01em;
+  }
+  .brand .greet{ font-size:13px; color:var(--text-dim); margin-top:2px; }
+
+  .header-right{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+
+  .clock-box{
+    font-family:'JetBrains Mono', monospace;
+    background:var(--surface); border:1px solid var(--border);
+    padding:10px 16px; border-radius: var(--radius-sm);
+    text-align:center; min-width:118px;
+  }
+  .clock-box .time{ font-size:18px; font-weight:700; letter-spacing:.02em;}
+  .clock-box .date{ font-size:10px; color:var(--text-faint); text-transform:capitalize; letter-spacing:.03em;}
+
+  .mode-toggle{
+    display:flex; align-items:center; gap:8px;
+    background:var(--surface); border:1px solid var(--border);
+    padding:6px; border-radius: 999px;
+  }
+  .mode-toggle button{
+    border:none; background:transparent; color:var(--text-dim);
+    font-family:'Inter'; font-size:12px; font-weight:600;
+    padding:8px 14px; border-radius:999px; cursor:pointer;
+    transition: all .25s ease; letter-spacing:.02em;
+  }
+  .mode-toggle button.active{
+    background:var(--accent); color:#101018;
+  }
+  body[data-mode="focus"] .mode-toggle button.active{ color:#0c0c0d; }
+
+  .icon-btn{
+    width:38px; height:38px; border-radius:999px; border:1px solid var(--border);
+    background:var(--surface); color:var(--text-dim); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: all .2s ease; font-size:16px;
+  }
+  .icon-btn:hover{ color:var(--danger); border-color:var(--danger); }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    display:grid; grid-template-columns: 1.35fr 1fr; gap:18px;
+    margin-bottom:18px;
+  }
+  @media (max-width: 860px){ .hero{ grid-template-columns: 1fr; } }
+
+  .card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius: var(--radius-lg); padding:26px;
+    box-shadow: var(--shadow);
+    transition: background-color .5s ease, border-color .5s ease;
+  }
+
+  .hero-main{ position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:14px;}
+  .hero-main .label{
+    font-family:'JetBrains Mono', monospace; font-size:12px; text-transform:uppercase;
+    letter-spacing:.16em; color:var(--text-faint);
+  }
+  .big-number-wrap{ position:relative; display:inline-block; }
+  .big-number-wrap::before{
+    content:''; position:absolute; left:-6px; right:-10px; bottom:10px; height:38%;
+    background: var(--accent); opacity: var(--marker-opacity);
+    transform: skewX(-8deg) rotate(-.6deg);
+    border-radius: 6px; z-index:0;
+    transition: opacity .5s ease, background-color .5s ease;
+  }
+  .big-number{
+    position:relative; z-index:1;
+    font-family:'JetBrains Mono', monospace; font-weight:800;
+    font-size: clamp(64px, 10vw, 108px); line-height:.95; letter-spacing:-.02em;
+  }
+  .hero-main .sub{ color:var(--text-dim); font-size:14px; }
+
+  .goal-row{ margin-top:8px; }
+  .goal-row .goal-top{
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;
+    font-size:12px; color:var(--text-dim); font-family:'JetBrains Mono', monospace;
+  }
+  .goal-row .goal-top button{
+    background:none; border:none; color:var(--text-faint); text-decoration:underline;
+    cursor:pointer; font-family:'Inter'; font-size:11px;
+  }
+  .goal-bar{
+    width:100%; height:10px; background:var(--surface-2); border-radius:999px; overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .goal-fill{
+    height:100%; border-radius:999px;
+    background: linear-gradient(90deg, var(--c-ava), var(--c-gemini));
+    width:0%; transition: width .6s cubic-bezier(.2,.9,.3,1), background-color .5s ease;
+  }
+  .goal-fill.done{ background: var(--success); }
+  .goal-msg{ font-size:12px; margin-top:8px; color:var(--text-dim); }
+
+  .hero-stats{ display:flex; flex-direction:column; gap:14px; }
+  .stat-card{ display:flex; flex-direction:column; gap:6px; flex:1; justify-content:center; }
+  .stat-card .stat-label{
+    font-family:'JetBrains Mono', monospace; font-size:11px; text-transform:uppercase;
+    letter-spacing:.14em; color:var(--text-faint);
+  }
+  .stat-card .stat-value{ font-family:'Fraunces', serif; font-weight:700; font-size:34px; }
+  .stat-card .stat-note{ font-size:12px; color:var(--text-dim); }
+
+  /* ---------- GRID 2 ---------- */
+  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:18px; }
+  @media (max-width: 860px){ .grid-2{ grid-template-columns: 1fr; } }
+
+  .card h2{
+    font-family:'Fraunces', serif; font-size:19px; font-weight:600; margin-bottom:18px;
+  }
+
+  /* Chart */
+  .chart-body{ display:flex; align-items:center; gap:26px; flex-wrap:wrap; justify-content:center; }
+  .donut{
+    width:150px; height:150px; border-radius:50%; position:relative; flex-shrink:0;
+    background: conic-gradient(var(--surface-2) 0 100%);
+    transition: background 0.6s ease;
+  }
+  .donut::after{
+    content:''; position:absolute; inset:20px; background:var(--surface); border-radius:50%;
+    display:flex; transition: background-color .5s ease;
+  }
+  .donut-center{
+    position:absolute; inset:20px; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; z-index:2;
+  }
+  .donut-center .n{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:22px; }
+  .donut-center .t{ font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.1em; }
+
+  .legend{ display:flex; flex-direction:column; gap:10px; min-width:170px; }
+  .legend-row{ display:flex; align-items:center; gap:9px; font-size:13px; }
+  .legend-dot{ width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+  .legend-row .lg-label{ color:var(--text-dim); flex:1; }
+  .legend-row .lg-val{ font-family:'JetBrains Mono', monospace; font-weight:600; }
+
+  /* Timer */
+  .timer-display{
+    font-family:'JetBrains Mono', monospace; font-weight:800; font-size:48px;
+    text-align:center; letter-spacing:.02em; margin: 6px 0 20px;
+  }
+  .timer-controls{ display:flex; gap:10px; justify-content:center; }
+  .btn{
+    border:none; cursor:pointer; font-family:'Inter'; font-weight:600; font-size:13px;
+    padding:11px 20px; border-radius: var(--radius-sm); transition: all .2s ease;
+    letter-spacing:.01em;
+  }
+  .btn-primary{ background:var(--accent); color:#101018; }
+  .btn-primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+  .btn-ghost{ background:var(--surface-2); color:var(--text); border:1px solid var(--border); }
+  .btn-ghost:hover{ border-color:var(--text-faint); }
+  .btn-danger{ background:transparent; color:var(--danger); border:1px solid var(--danger); }
+  body[data-mode="focus"] .btn-primary{ color:#0c0c0d; }
+
+  .timer-sub{ text-align:center; font-size:12px; color:var(--text-faint); margin-top:12px; }
+
+  /* ---------- LOG ---------- */
+  .log-card{ margin-bottom: 30px; }
+  .log-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .log-list{ display:flex; flex-direction:column; gap:0; max-height: 320px; overflow-y:auto; }
+  .log-row{
+    display:flex; align-items:center; gap:12px; padding:12px 4px;
+    border-bottom:1px solid var(--border); font-size:13px;
+  }
+  .log-row:last-child{ border-bottom:none; }
+  .log-badge{
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+  }
+  .log-type{ font-weight:600; min-width:80px; }
+  .log-count{ color:var(--text-dim); flex:1; }
+  .log-acc{ font-family:'JetBrains Mono', monospace; font-size:12px; padding:3px 8px; border-radius:6px; background:var(--surface-2); }
+  .log-time{ font-family:'JetBrains Mono', monospace; color:var(--text-faint); font-size:11px; min-width:110px; text-align:right; }
+  .empty-state{ text-align:center; padding:36px 10px; color:var(--text-faint); font-size:13px; }
+  .empty-state .big-emoji{ font-size:26px; display:block; margin-bottom:8px; opacity:.5; }
+
+  .log-list::-webkit-scrollbar{ width:6px; }
+  .log-list::-webkit-scrollbar-thumb{ background:var(--surface-2); border-radius:6px; }
+
+  /* ---------- FAB ---------- */
+  .fab{
+    position:fixed; right:28px; bottom:28px; z-index:50;
+    background:var(--accent); color:#101018; border:none; cursor:pointer;
+    padding:16px 24px; border-radius:999px; font-family:'Inter'; font-weight:700; font-size:14px;
+    box-shadow: 0 15px 40px -10px rgba(0,0,0,.5);
+    display:flex; align-items:center; gap:8px;
+    transition: all .25s ease;
+  }
+  .fab:hover{ transform: translateY(-2px) scale(1.02); filter:brightness(1.06); }
+  body[data-mode="focus"] .fab{ color:#0c0c0d; }
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(6,6,10,.65); backdrop-filter: blur(6px);
+    display:none; align-items:center; justify-content:center; z-index:100; padding:20px;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:var(--surface); border:1px solid var(--border); border-radius: var(--radius-lg);
+    padding:28px; width:100%; max-width:420px; box-shadow: var(--shadow);
+    animation: pop .25s ease;
+  }
+  @keyframes pop{ from{ opacity:0; transform: translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
+  .modal h3{ font-family:'Fraunces', serif; font-size:22px; margin-bottom:18px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12px; color:var(--text-dim); margin-bottom:6px; font-weight:600; letter-spacing:.02em;}
+  .field input[type="number"], .field input[type="text"], .field select{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    padding:11px 13px; border-radius: var(--radius-sm); font-family:'Inter'; font-size:14px;
+    outline:none; transition: border-color .2s ease;
+  }
+  .field input:focus, .field select:focus{ border-color: var(--accent); }
+  .type-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:8px; }
+  .type-opt{
+    border:1px solid var(--border); background:var(--surface-2); color:var(--text-dim);
+    padding:10px 4px; border-radius: var(--radius-sm); text-align:center; cursor:pointer;
+    font-size:12px; font-weight:600; transition: all .2s ease;
+  }
+  .type-opt.active{ border-color: var(--accent); color:var(--text); background: rgba(var(--amber),.12); }
+  .modal-actions{ display:flex; gap:10px; margin-top:22px; }
+  .modal-actions .btn{ flex:1; }
+  .modal-close{ position:absolute; }
+
+  .modal-header{ display:flex; justify-content:space-between; align-items:center; }
+  .x-btn{ background:none; border:none; color:var(--text-faint); font-size:18px; cursor:pointer; }
+
+  .confirm-modal p{ color:var(--text-dim); font-size:14px; line-height:1.5; margin-bottom:4px;}
+
+  /* Toast */
+  #toast-container{ position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; }
+  .toast{
+    background:var(--surface); border:1px solid var(--border); color:var(--text);
+    padding:12px 20px; border-radius: 999px; font-size:13px; font-weight:600;
+    box-shadow: var(--shadow); animation: toastIn .3s ease;
+  }
+  @keyframes toastIn{ from{opacity:0; transform:translateY(-12px);} to{opacity:1; transform:none;} }
+
+  footer{ text-align:center; color:var(--text-faint); font-size:11px; margin-top:20px; font-family:'JetBrains Mono', monospace; letter-spacing:.05em;}
+
+  .confetti{ position:fixed; width:8px; height:14px; top:-20px; z-index:150; pointer-events:none; }
+
+  ::selection{ background: var(--accent); color:#101018; }
+</style>
+</head>
+<body data-mode="normal">
+
+<div id="toast-container"></div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="eyebrow">Painel de estudos</span>
+      <h1>Questões</h1>
+      <span class="greet" id="greet"></span>
+    </div>
+    <div class="header-right">
+      <div class="clock-box">
+        <div class="time" id="clockTime">00:00:00</div>
+        <div class="date" id="clockDate">—</div>
+      </div>
+      <div class="mode-toggle">
+        <button id="btnNormal" class="active" onclick="setMode('normal')">Normal</button>
+        <button id="btnFocus" onclick="setMode('focus')">Foco</button>
+      </div>
+      <button class="icon-btn" title="Resetar tudo" onclick="askReset()">↺</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="card hero-main">
+      <span class="label">Total de questões</span>
+      <div class="big-number-wrap">
+        <div class="big-number" id="totalNumber">0</div>
+      </div>
+      <span class="sub" id="totalSub">Comece adicionando suas primeiras questões.</span>
+
+      <div class="goal-row">
+        <div class="goal-top">
+          <span id="goalLabel">Meta: 0 / 100</span>
+          <button onclick="openGoalModal()">editar meta</button>
+        </div>
+        <div class="goal-bar"><div class="goal-fill" id="goalFill"></div></div>
+        <div class="goal-msg" id="goalMsg"></div>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="card stat-card">
+        <span class="stat-label">Precisão média</span>
+        <span class="stat-value" id="accValue">—</span>
+        <span class="stat-note" id="accNote">Nenhum registro ainda</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-label">Questões hoje</span>
+        <span class="stat-value" id="todayValue">0</span>
+        <span class="stat-note" id="todayNote">Ainda sem registros hoje</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-2">
+    <div class="card">
+      <h2>Origem das questões</h2>
+      <div class="chart-body">
+        <div class="donut" id="donut">
+          <div class="donut-center">
+            <span class="n" id="donutTotal">0</span>
+            <span class="t">total</span>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cronômetro de estudo</h2>
+      <div class="timer-display" id="timerDisplay">00:00:00</div>
+      <div class="timer-controls">
+        <button class="btn btn-primary" id="timerToggleBtn" onclick="toggleTimer()">Iniciar</button>
+        <button class="btn btn-ghost" onclick="resetTimer()">Zerar</button>
+      </div>
+      <div class="timer-sub">Tempo total de estudo nesta sessão</div>
+    </div>
+  </section>
+
+  <section class="card log-card">
+    <div class="log-head">
+      <h2 style="margin:0;">Extrato de questões</h2>
+      <span class="stat-note" id="logCount">0 registros</span>
+    </div>
+    <div class="log-list" id="logList">
+      <div class="empty-state" id="emptyState">
+        <span class="big-emoji">📝</span>
+        Nenhuma questão registrada ainda.<br>Clique em "Adicionar questões" para começar.
+      </div>
+    </div>
+  </section>
+
+  <footer>feito para quem estuda todo santo dia</footer>
+</div>
+
+<button class="fab" onclick="openAddModal()">＋ Adicionar questões</button>
+
+<!-- MODAL: adicionar questões -->
+<div class="overlay" id="addOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Adicionar questões</h3>
+      <button class="x-btn" onclick="closeModal('addOverlay')">✕</button>
+    </div>
+    <form id="addForm" onsubmit="submitEntry(event)">
+      <div class="field">
+        <label>Quantidade de questões feitas</label>
+        <input type="number" id="inputCount" min="1" required placeholder="Ex: 20">
+      </div>
+      <div class="field">
+        <label>Origem</label>
+        <div class="type-grid" id="typeGrid">
+          <div class="type-opt active" data-type="ava" onclick="selectType('ava')">AVA</div>
+          <div class="type-opt" data-type="gemini" onclick="selectType('gemini')">Gemini</div>
+          <div class="type-opt" data-type="google" onclick="selectType('google')">Google</div>
+          <div class="type-opt" data-type="outro" onclick="selectType('outro')">Outro</div>
+        </div>
+      </div>
+      <div class="field" id="customTypeField" style="display:none;">
+        <label>Qual outra origem?</label>
+        <input type="text" id="inputCustomType" placeholder="Ex: Khan Academy">
+      </div>
+      <div class="field">
+        <label>Quantidade de acertos</label>
+        <input type="number" id="inputCorrect" min="0" required placeholder="Ex: 16">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('addOverlay')">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL: meta -->
+<div class="overlay" id="goalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Definir meta</h3>
+      <button class="x-btn" onclick="closeModal('goalOverlay')">✕</button>
+    </div>
+    <div class="field">
+      <label>Meta de questões</label>
+      <input type="number" id="inputGoal" min="1" placeholder="Ex: 500">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('goalOverlay')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="saveGoal()">Salvar meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: confirmar reset -->
+<div class="overlay" id="resetOverlay">
+  <div class="modal confirm-modal">
+    <div class="modal-header">
+      <h3>Resetar tudo?</h3>
+      <button class="x-btn" onclick="closeModal('resetOverlay')">✕</button>
+    </div>
+    <p>Isso vai apagar todas as questões registradas e zerar seu progresso. Essa ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('resetOverlay')">Cancelar</button>
+      <button type="button" class="btn btn-danger" onclick="confirmReset()">Sim, resetar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------------- STATE (em memória) ----------------
+  let entries = [];
+  let goal = 100;
+  let selectedType = 'ava';
+  let confettiFired = false;
+
+  const typeMeta = {
+    ava:    { label: 'AVA',    color: 'var(--c-ava)' },
+    gemini: { label: 'Gemini', color: 'var(--c-gemini)' },
+    google: { label: 'Google', color: 'var(--c-google)' },
+    outro:  { label: 'Outro',  color: 'var(--c-outro)' }
+  };
+
+  // ---------------- CLOCK ----------------
+  function updateClock(){
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clockTime').textContent = `${hh}:${mm}:${ss}`;
+    const dateStr = now.toLocaleDateString('pt-BR', { weekday:'short', day:'2-digit', month:'short' });
+    document.getElementById('clockDate').textContent = dateStr;
+
+    const h = now.getHours();
+    let greet = 'Boa madrugada.';
+    if(h >= 5 && h < 12) greet = 'Bom dia. Vamos estudar?';
+    else if(h >= 12 && h < 18) greet = 'Boa tarde. Bora resolver questões?';
+    else if(h >= 18 && h < 24) greet = 'Boa noite. Última leva de questões?';
+    document.getElementById('greet').textContent = greet;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ---------------- MODE ----------------
+  function setMode(mode){
+    document.body.dataset.mode = mode;
+    document.getElementById('btnNormal').classList.toggle('active', mode==='normal');
+    document.getElementById('btnFocus').classList.toggle('active', mode==='focus');
+  }
+
+  // ---------------- MODALS ----------------
+  function openModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+  function openAddModal(){
+    document.getElementById('addForm').reset();
+    selectType('ava');
+    openModal('addOverlay');
+    setTimeout(()=>document.getElementById('inputCount').focus(), 100);
+  }
+
+  function selectType(type){
+    selectedType = type;
+    document.querySelectorAll('.type-opt').forEach(el=>{
+      el.classList.toggle('active', el.dataset.type === type);
+    });
+    document.getElementById('customTypeField').style.display = (type==='outro') ? 'block' : 'none';
+  }
+
+  function openGoalModal(){
+    document.getElementById('inputGoal').value = goal;
+    openModal('goalOverlay');
+  }
+  function saveGoal(){
+    const v = parseInt(document.getElementById('inputGoal').value);
+    if(!v || v < 1){ showToast('Digite uma meta válida.'); return; }
+    goal = v;
+    confettiFired = false;
+    closeModal('goalOverlay');
+    renderAll();
+    showToast('Meta atualizada para ' + v + ' questões 🎯');
+  }
+
+  function askReset(){ openModal('resetOverlay'); }
+  function confirmReset(){
+    entries = [];
+    confettiFired = false;
+    closeModal('resetOverlay');
+    renderAll();
+    showToast('Painel resetado.');
+  }
+
+  // ---------------- ENTRIES ----------------
+  function submitEntry(e){
+    e.preventDefault();
+    const count = parseInt(document.getElementById('inputCount').value);
+    const correct = parseInt(document.getElementById('inputCorrect').value);
+    const customLabel = document.getElementById('inputCustomType').value.trim();
+
+    if(!count || count < 1){ showToast('Informe uma quantidade válida.'); return; }
+    if(correct < 0 || correct > count){ showToast('Acertos não podem ser maiores que o total.'); return; }
+    if(selectedType === 'outro' && !customLabel){ showToast('Digite o nome da origem.'); return; }
+
+    entries.push({
+      id: Date.now(),
+      count, correct,
+      type: selectedType,
+      customLabel: selectedType === 'outro' ? customLabel : null,
+      ts: new Date()
+    });
+
+    closeModal('addOverlay');
+    renderAll();
+    showToast('Questões adicionadas! 🔥');
+  }
+
+  // ---------------- RENDER ----------------
+  function renderAll(){
+    const total = entries.reduce((s,e)=>s+e.count, 0);
+    const totalCorrect = entries.reduce((s,e)=>s+e.correct, 0);
+
+    document.getElementById('totalNumber').textContent = total;
+    document.getElementById('totalSub').textContent = total === 0
+      ? 'Comece adicionando suas primeiras questões.'
+      : (entries.length + (entries.length===1?' registro adicionado':' registros adicionados'));
+
+    // precisão média
+    const accEl = document.getElementById('accValue');
+    const accNote = document.getElementById('accNote');
+    if(total > 0){
+      const pct = Math.round((totalCorrect/total)*100);
+      accEl.textContent = pct + '%';
+      accNote.textContent = totalCorrect + ' de ' + total + ' corretas';
+    } else {
+      accEl.textContent = '—';
+      accNote.textContent = 'Nenhum registro ainda';
+    }
+
+    // hoje
+    const today = new Date();
+    const todayEntries = entries.filter(e => sameDay(e.ts, today));
+    const todayTotal = todayEntries.reduce((s,e)=>s+e.count,0);
+    document.getElementById('todayValue').textContent = todayTotal;
+    document.getElementById('todayNote').textContent = todayEntries.length > 0
+      ? todayEntries.length + ' registro(s) hoje'
+      : 'Ainda sem registros hoje';
+
+    // meta
+    const goalPct = Math.min(100, Math.round((total/goal)*100)) || 0;
+    document.getElementById('goalLabel').textContent = `Meta: ${total} / ${goal}`;
+    const fill = document.getElementById('goalFill');
+    fill.style.width = goalPct + '%';
+    const goalMsg = document.getElementById('goalMsg');
+    if(total >= goal){
+      fill.classList.add('done');
+      goalMsg.textContent = '🎉 Meta atingida! Considere definir uma nova meta.';
+      if(!confettiFired){ confettiFired = true; launchConfetti(); }
+    } else {
+      fill.classList.remove('done');
+      goalMsg.textContent = (goal-total) + ' questões restantes para bater a meta (' + goalPct + '%)';
+    }
+
+    renderChart(total);
+    renderLog();
+  }
+
+  function sameDay(a,b){
+    return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  }
+
+  function renderChart(total){
+    const counts = { ava:0, gemini:0, google:0, outro:0 };
+    entries.forEach(e => counts[e.type] += e.count);
+
+    const donut = document.getElementById('donut');
+    document.getElementById('donutTotal').textContent = total;
+
+    if(total === 0){
+      donut.style.background = 'conic-gradient(var(--surface-2) 0 100%)';
+    } else {
+      const order = ['ava','gemini','google','outro'];
+      let acc = 0;
+      const stops = [];
+      order.forEach(key=>{
+        const pct = (counts[key]/total)*100;
+        if(pct > 0){
+          stops.push(`var(--c-${key}) ${acc}% ${acc+pct}%`);
+          acc += pct;
+        }
+      });
+      donut.style.background = `conic-gradient(${stops.join(',')})`;
+    }
+
+    const legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    ['ava','gemini','google','outro'].forEach(key=>{
+      const pct = total > 0 ? Math.round((counts[key]/total)*100) : 0;
+      const row = document.createElement('div');
+      row.className = 'legend-row';
+      row.innerHTML = `
+        <span class="legend-dot" style="background: var(--c-${key})"></span>
+        <span class="lg-label">${typeMeta[key].label}</span>
+        <span class="lg-val">${counts[key]} · ${pct}%</span>
+      `;
+      legend.appendChild(row);
+    });
+  }
+
+  function renderLog(){
+    const list = document.getElementById('logList');
+    document.getElementById('logCount').textContent = entries.length + (entries.length===1 ? ' registro' : ' registros');
+
+    if(entries.length === 0){
+      list.innerHTML = `<div class="empty-state" id="emptyState">
+        <span class="big-emoji">📝</span>
+        Nenhuma questão registrada ainda.<br>Clique em "Adicionar questões" para começar.
+      </div>`;
+      return;
+    }
+
+    const sorted = [...entries].sort((a,b)=> b.ts - a.ts);
+    list.innerHTML = sorted.map(e=>{
+      const label = e.type === 'outro' ? e.customLabel : typeMeta[e.type].label;
+      const pct = Math.round((e.correct/e.count)*100);
+      const dateStr = e.ts.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+      const timeStr = e.ts.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+      return `<div class="log-row">
+        <span class="log-badge" style="background: var(--c-${e.type})"></span>
+        <span class="log-type">${label}</span>
+        <span class="log-count">${e.count} questões</span>
+        <span class="log-acc">${pct}% acerto</span>
+        <span class="log-time">${dateStr} · ${timeStr}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ---------------- STOPWATCH ----------------
+  let swElapsed = 0; // ms
+  let swRunning = false;
+  let swInterval = null;
+  let swStart = null;
+
+  function toggleTimer(){
+    const btn = document.getElementById('timerToggleBtn');
+    if(!swRunning){
+      swRunning = true;
+      swStart = Date.now() - swElapsed;
+      swInterval = setInterval(updateTimerDisplay, 500);
+      btn.textContent = 'Pausar';
+    } else {
+      swRunning = false;
+      clearInterval(swInterval);
+      btn.textContent = 'Continuar';
+    }
+  }
+  function resetTimer(){
+    swRunning = false;
+    clearInterval(swInterval);
+    swElapsed = 0;
+    document.getElementById('timerToggleBtn').textContent = 'Iniciar';
+    updateTimerDisplay();
+  }
+  function updateTimerDisplay(){
+    if(swRunning) swElapsed = Date.now() - swStart;
+    document.getElementById('timerDisplay').textContent = formatDuration(swElapsed);
+  }
+  function formatDuration(ms){
+    const totalSec = Math.floor(ms/1000);
+    const h = String(Math.floor(totalSec/3600)).padStart(2,'0');
+    const m = String(Math.floor((totalSec%3600)/60)).padStart(2,'0');
+    const s = String(totalSec%60).padStart(2,'0');
+    return `${h}:${m}:${s}`;
+  }
+
+  // ---------------- TOAST ----------------
+  function showToast(msg){
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(), 300); }, 2400);
+  }
+
+  // ---------------- CONFETTI ----------------
+  function launchConfetti(){
+    if(document.body.dataset.mode === 'focus') return;
+    const colors = ['#FFB627','#4ECDC4','#FF6B6B','#A78BFA'];
+    for(let i=0; i<60; i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      el.style.opacity = (0.7 + Math.random()*0.3).toString();
+      document.body.appendChild(el);
+      const duration = 2500 + Math.random()*1500;
+      el.animate([
+        { transform: el.style.transform + ' translateY(0)' },
+        { transform: `rotate(${Math.random()*720}deg) translateY(100vh)` }
+      ], { duration, easing:'ease-in' });
+      setTimeout(()=>el.remove(), duration);
+    }
+  }
+
+  // ---------------- KEYBOARD ----------------
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      ['addOverlay','goalOverlay','resetOverlay'].forEach(closeModal);
+    }
+  });
+  document.querySelectorAll('.overlay').forEach(ov=>{
+    ov.addEventListener('click', (e)=>{ if(e.target === ov) ov.classList.remove('open'); });
+  });
+
+  // ---------------- INIT ----------------
+  renderAll();
+  updateTimerDisplay();
+</script>
+</body>
+</html>
