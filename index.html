@@ -21,11 +21,7 @@ body {
 header {
     text-align: center;
     padding: 70px 20px 45px;
-    background: linear-gradient(
-        180deg,
-        #161b22,
-        #0d1117
-    );
+    background: linear-gradient(180deg, #161b22, #0d1117);
 }
 
 header h1 {
@@ -63,26 +59,27 @@ header p {
 
 #projects {
     display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(260px, 1fr)
+    );
 
     gap: 20px;
-
     padding-bottom: 60px;
 }
 
 .card {
     display: block;
-
     padding: 25px;
 
     background: #161b22;
-
     border: 1px solid #30363d;
     border-radius: 14px;
 
     text-decoration: none;
     color: white;
+
+    cursor: pointer;
 
     transition: .2s;
 }
@@ -107,7 +104,6 @@ header p {
     border-radius: 10px;
 
     font-size: 20px;
-
     margin-bottom: 18px;
 }
 
@@ -122,6 +118,141 @@ header p {
     font-size: 14px;
 }
 
+
+/* =========================
+   POPUP
+========================= */
+
+.modal-background {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, .72);
+
+    backdrop-filter: blur(5px);
+
+    z-index: 1000;
+}
+
+.modal-background.active {
+    display: flex;
+}
+
+.modal {
+    width: min(430px, 100%);
+
+    background: #161b22;
+
+    border: 1px solid #30363d;
+    border-radius: 18px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.6);
+
+    animation: popup .18s ease-out;
+}
+
+@keyframes popup {
+
+    from {
+        opacity: 0;
+        transform: scale(.94) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+}
+
+.modal h2 {
+    margin: 0 0 10px;
+}
+
+.modal p {
+    color: #8b949e;
+    margin-bottom: 25px;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.buttons button {
+    width: 100%;
+
+    padding: 14px;
+
+    border-radius: 9px;
+
+    border: 1px solid #30363d;
+
+    background: #21262d;
+
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .15s;
+}
+
+.buttons button:hover {
+    background: #30363d;
+}
+
+.buttons .primary {
+    background: #238636;
+    border-color: #238636;
+}
+
+.buttons .primary:hover {
+    background: #2ea043;
+}
+
+.buttons .blue {
+    background: #1f6feb;
+    border-color: #1f6feb;
+}
+
+.buttons .blue:hover {
+    background: #388bfd;
+}
+
+.cancel {
+    margin-top: 15px;
+
+    width: 100%;
+
+    padding: 11px;
+
+    background: transparent;
+
+    border: none;
+
+    color: #8b949e;
+
+    cursor: pointer;
+}
+
+.cancel:hover {
+    color: white;
+}
+
 .loading {
     text-align: center;
     color: #8b949e;
@@ -134,10 +265,19 @@ footer {
     padding: 25px;
     border-top: 1px solid #21262d;
 }
+
+@media (max-width: 600px) {
+
+    header {
+        padding-top: 45px;
+    }
+
+}
 </style>
 </head>
 
 <body>
+
 
 <header>
 
@@ -149,6 +289,7 @@ footer {
 
 </header>
 
+
 <main class="container">
 
     <input
@@ -156,6 +297,7 @@ footer {
         class="search"
         type="search"
         placeholder="Pesquisar projeto..."
+        autocomplete="off"
     >
 
     <section id="projects">
@@ -168,21 +310,94 @@ footer {
 
 </main>
 
+
 <footer>
     Rico Maker
 </footer>
 
 
+
+<!-- =========================
+     POPUP
+========================= -->
+
+<div
+    id="modalBackground"
+    class="modal-background"
+>
+
+    <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <h2 id="modalTitle">
+            Projeto
+        </h2>
+
+        <p>
+            O que você deseja fazer?
+        </p>
+
+
+        <div class="buttons">
+
+            <button
+                class="primary"
+                id="openButton"
+            >
+                🌐 Abrir
+            </button>
+
+
+            <button
+                class="blue"
+                id="editButton"
+            >
+                ✏️ Editar
+            </button>
+
+
+            <button
+                id="bothButton"
+            >
+                🌐 + ✏️ Abrir + editar
+            </button>
+
+        </div>
+
+
+        <button
+            class="cancel"
+            id="cancelButton"
+        >
+            Cancelar
+        </button>
+
+    </div>
+
+</div>
+
+
+
 <script>
 
-/*
-    CONFIGURAÇÃO DO GITHUB
-*/
+
+/* =========================
+   CONFIGURAÇÃO
+========================= */
 
 const USER = "rico-maker";
+
 const REPO = "rico-maker.github.io";
+
 const BRANCH = "main";
 
+
+/* =========================
+   ELEMENTOS
+========================= */
 
 const container =
     document.getElementById("projects");
@@ -190,13 +405,33 @@ const container =
 const search =
     document.getElementById("search");
 
+const modalBackground =
+    document.getElementById("modalBackground");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const openButton =
+    document.getElementById("openButton");
+
+const editButton =
+    document.getElementById("editButton");
+
+const bothButton =
+    document.getElementById("bothButton");
+
+const cancelButton =
+    document.getElementById("cancelButton");
+
 
 let pages = [];
 
+let selectedPage = null;
 
-/*
-    Busca todos os arquivos do repositório.
-*/
+
+/* =========================
+   GITHUB API
+========================= */
 
 async function getPages() {
 
@@ -207,7 +442,11 @@ async function getPages() {
         await fetch(url);
 
     if (!response.ok) {
-        throw new Error("Erro ao acessar o GitHub.");
+
+        throw new Error(
+            "Não foi possível acessar o GitHub."
+        );
+
     }
 
     const data =
@@ -217,17 +456,20 @@ async function getPages() {
 
         file.type === "blob" &&
 
-        file.path.toLowerCase().endsWith(".html") &&
+        file.path
+            .toLowerCase()
+            .endsWith(".html") &&
 
-        file.path.toLowerCase() !== "index.html"
+        file.path
+            .toLowerCase() !== "index.html"
 
     );
 }
 
 
-/*
-    Nome bonito para o projeto.
-*/
+/* =========================
+   NOME DO PROJETO
+========================= */
 
 function formatName(path) {
 
@@ -235,7 +477,7 @@ function formatName(path) {
         path
             .split("/")
             .pop()
-            .replace(".html", "");
+            .replace(/\.html$/i, "");
 
     name =
         name.replace(/[-_]/g, " ");
@@ -250,19 +492,216 @@ function formatName(path) {
 }
 
 
-/*
-    Cria o cartão.
-*/
+/* =========================
+   URL PUBLICADA
+========================= */
+
+function getPublicURL(page) {
+
+    return (
+        "https://" +
+        USER +
+        ".github.io/" +
+        page.path
+    );
+
+}
+
+
+/* =========================
+   URL DO EDITOR DO GITHUB
+========================= */
+
+function getEditURL(page) {
+
+    return (
+        "https://github.com/" +
+        USER +
+        "/" +
+        REPO +
+        "/edit/" +
+        BRANCH +
+        "/" +
+        page.path
+    );
+
+}
+
+
+/* =========================
+   ABRIR POPUP
+========================= */
+
+function openModal(page) {
+
+    selectedPage = page;
+
+    modalTitle.textContent =
+        formatName(page.path);
+
+    modalBackground.classList.add(
+        "active"
+    );
+
+}
+
+
+/* =========================
+   FECHAR POPUP
+========================= */
+
+function closeModal() {
+
+    modalBackground.classList.remove(
+        "active"
+    );
+
+    selectedPage = null;
+
+}
+
+
+/* =========================
+   ABRIR PROJETO
+========================= */
+
+openButton.onclick = () => {
+
+    if (!selectedPage)
+        return;
+
+    const url =
+        getPublicURL(selectedPage);
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+    closeModal();
+
+};
+
+
+/* =========================
+   EDITAR PROJETO
+========================= */
+
+editButton.onclick = () => {
+
+    if (!selectedPage)
+        return;
+
+    const url =
+        getEditURL(selectedPage);
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+    closeModal();
+
+};
+
+
+/* =========================
+   ABRIR + EDITAR
+========================= */
+
+bothButton.onclick = () => {
+
+    if (!selectedPage)
+        return;
+
+    const publicURL =
+        getPublicURL(selectedPage);
+
+    const editURL =
+        getEditURL(selectedPage);
+
+
+    /*
+        As duas chamadas acontecem
+        diretamente no clique do usuário,
+        reduzindo a chance de o navegador
+        bloquear uma das abas.
+    */
+
+    window.open(
+        publicURL,
+        "_blank"
+    );
+
+    window.open(
+        editURL,
+        "_blank"
+    );
+
+    closeModal();
+
+};
+
+
+/* =========================
+   CANCELAR
+========================= */
+
+cancelButton.onclick =
+    closeModal;
+
+
+/* =========================
+   CLICAR FORA DO POPUP
+========================= */
+
+modalBackground.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            modalBackground
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ESC
+========================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   CRIAR CARTÃO
+========================= */
 
 function createCard(page) {
 
     const card =
-        document.createElement("a");
+        document.createElement("div");
 
     card.className = "card";
-
-    card.href =
-        "./" + page.path;
 
     card.innerHTML = `
 
@@ -280,28 +719,44 @@ function createCard(page) {
 
     `;
 
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            openModal(page);
+
+        }
+    );
+
+
     return card;
 }
 
 
-/*
-    Mostra os projetos.
-*/
+/* =========================
+   MOSTRAR PROJETOS
+========================= */
 
 function render(list) {
 
     container.innerHTML = "";
 
+
     if (list.length === 0) {
 
         container.innerHTML = `
+
             <div class="loading">
                 Nenhum projeto encontrado.
             </div>
+
         `;
 
         return;
+
     }
+
 
     list.forEach(page => {
 
@@ -310,35 +765,43 @@ function render(list) {
         );
 
     });
+
 }
 
 
-/*
-    Pesquisa.
-*/
+/* =========================
+   PESQUISA
+========================= */
 
-search.addEventListener("input", () => {
+search.addEventListener(
+    "input",
+    () => {
 
-    const query =
-        search.value
-            .toLowerCase()
-            .trim();
-
-    const filtered =
-        pages.filter(page =>
-            page.path
+        const query =
+            search.value
                 .toLowerCase()
-                .includes(query)
-        );
-
-    render(filtered);
-
-});
+                .trim();
 
 
-/*
-    Inicialização.
-*/
+        const filtered =
+            pages.filter(page =>
+
+                page.path
+                    .toLowerCase()
+                    .includes(query)
+
+            );
+
+
+        render(filtered);
+
+    }
+);
+
+
+/* =========================
+   INICIALIZAÇÃO
+========================= */
 
 async function init() {
 
@@ -349,19 +812,27 @@ async function init() {
 
         render(pages);
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error);
 
         container.innerHTML = `
+
             <div class="loading">
-                Não foi possível carregar os projetos.
+
+                Não foi possível carregar
+                os projetos.
+
             </div>
+
         `;
 
     }
 
 }
+
 
 init();
 
