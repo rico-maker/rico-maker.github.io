@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rico Maker — Projetos</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0d1117;
+    color: #f0f6fc;
+}
+
+header {
+    text-align: center;
+    padding: 70px 20px 45px;
+    background: linear-gradient(
+        180deg,
+        #161b22,
+        #0d1117
+    );
+}
+
+header h1 {
+    margin: 0;
+    font-size: 42px;
+}
+
+header p {
+    color: #8b949e;
+    margin-top: 12px;
+}
+
+.container {
+    width: min(1100px, 92%);
+    margin: auto;
+}
+
+.search {
+    width: 100%;
+    padding: 15px 18px;
+    margin: 25px 0 30px;
+
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+.search:focus {
+    border-color: #58a6ff;
+}
+
+#projects {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 20px;
+
+    padding-bottom: 60px;
+}
+
+.card {
+    display: block;
+
+    padding: 25px;
+
+    background: #161b22;
+
+    border: 1px solid #30363d;
+    border-radius: 14px;
+
+    text-decoration: none;
+    color: white;
+
+    transition: .2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #58a6ff;
+    box-shadow: 0 10px 30px #0006;
+}
+
+.icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #1f6feb22;
+    color: #58a6ff;
+
+    border-radius: 10px;
+
+    font-size: 20px;
+
+    margin-bottom: 18px;
+}
+
+.card h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.card p {
+    margin: 0;
+    color: #8b949e;
+    font-size: 14px;
+}
+
+.loading {
+    text-align: center;
+    color: #8b949e;
+    padding: 50px;
+}
+
+footer {
+    text-align: center;
+    color: #8b949e;
+    padding: 25px;
+    border-top: 1px solid #21262d;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Rico Maker</h1>
+
+    <p>
+        Projetos e experimentos
+    </p>
+
+</header>
+
+<main class="container">
+
+    <input
+        id="search"
+        class="search"
+        type="search"
+        placeholder="Pesquisar projeto..."
+    >
+
+    <section id="projects">
+
+        <div class="loading">
+            Carregando projetos...
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    Rico Maker
+</footer>
+
+
+<script>
+
+/*
+    CONFIGURAÇÃO DO GITHUB
+*/
+
+const USER = "rico-maker";
+const REPO = "rico-maker.github.io";
+const BRANCH = "main";
+
+
+const container =
+    document.getElementById("projects");
+
+const search =
+    document.getElementById("search");
+
+
+let pages = [];
+
+
+/*
+    Busca todos os arquivos do repositório.
+*/
+
+async function getPages() {
+
+    const url =
+        `https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
+
+    const response =
+        await fetch(url);
+
+    if (!response.ok) {
+        throw new Error("Erro ao acessar o GitHub.");
+    }
+
+    const data =
+        await response.json();
+
+    return data.tree.filter(file =>
+
+        file.type === "blob" &&
+
+        file.path.toLowerCase().endsWith(".html") &&
+
+        file.path.toLowerCase() !== "index.html"
+
+    );
+}
+
+
+/*
+    Nome bonito para o projeto.
+*/
+
+function formatName(path) {
+
+    let name =
+        path
+            .split("/")
+            .pop()
+            .replace(".html", "");
+
+    name =
+        name.replace(/[-_]/g, " ");
+
+    return name
+        .split(" ")
+        .map(word =>
+            word.charAt(0).toUpperCase() +
+            word.slice(1)
+        )
+        .join(" ");
+}
+
+
+/*
+    Cria o cartão.
+*/
+
+function createCard(page) {
+
+    const card =
+        document.createElement("a");
+
+    card.className = "card";
+
+    card.href =
+        "./" + page.path;
+
+    card.innerHTML = `
+
+        <div class="icon">
+            &lt;/&gt;
+        </div>
+
+        <h2>
+            ${formatName(page.path)}
+        </h2>
+
+        <p>
+            ${page.path}
+        </p>
+
+    `;
+
+    return card;
+}
+
+
+/*
+    Mostra os projetos.
+*/
+
+function render(list) {
+
+    container.innerHTML = "";
+
+    if (list.length === 0) {
+
+        container.innerHTML = `
+            <div class="loading">
+                Nenhum projeto encontrado.
+            </div>
+        `;
+
+        return;
+    }
+
+    list.forEach(page => {
+
+        container.appendChild(
+            createCard(page)
+        );
+
+    });
+}
+
+
+/*
+    Pesquisa.
+*/
+
+search.addEventListener("input", () => {
+
+    const query =
+        search.value
+            .toLowerCase()
+            .trim();
+
+    const filtered =
+        pages.filter(page =>
+            page.path
+                .toLowerCase()
+                .includes(query)
+        );
+
+    render(filtered);
+
+});
+
+
+/*
+    Inicialização.
+*/
+
+async function init() {
+
+    try {
+
+        pages =
+            await getPages();
+
+        render(pages);
+
+    } catch (error) {
+
+        console.error(error);
+
+        container.innerHTML = `
+            <div class="loading">
+                Não foi possível carregar os projetos.
+            </div>
+        `;
+
+    }
+
+}
+
+init();
+
+</script>
+
+</body>
+</html>
