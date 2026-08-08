@@ -1,414 +1,255 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Corretor de Prova — Teclas Q W E R T (sem Enter)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corretor de Prova</title>
 <style>
-  body { font-family: Arial, Helvetica, sans-serif; max-width:800px; margin:30px auto; padding:16px; color:#111; }
-  h1 { margin:0 0 8px 0; font-size:1.4rem; }
-  p.lead { margin:6px 0 18px 0; color:#333; }
-  .painel { border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff; }
-  .questao { font-size:1.8rem; margin:6px 0; }
-  .resposta { font-size:1.6rem; margin:6px 0 12px 0; }
-  .status { font-weight:700; padding:8px 12px; display:inline-block; border-radius:8px; margin-bottom:8px; }
-  .correto { background:#e6ffef; color:#0a6f3a; border:1px solid #8de2b2; }
-  .errado { background:#ffecec; color:#8a1d1d; border:1px solid #f1a3a3; }
-  .info { color:#555; margin:6px 0; }
-  .barra { display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
-  button { padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fafafa; cursor:pointer; }
-  button.primary { background:#007bff; color:#fff; border-color:#0066d6; }
-  table { width:100%; border-collapse:collapse; margin-top:12px;}
-  th,td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
-  .small { font-size:0.9rem; color:#666; }
-  .kbd { display:inline-block; padding:4px 8px; border-radius:6px; background:#f2f2f2; border:1px solid #ddd; font-weight:700; }
-  footer { margin-top:18px; color:#666; font-size:0.9rem; }
+:root {
+  --bg:#0b1020; --card:#121a2b; --card2:#182238; --text:#eef3ff;
+  --muted:#9aa8c3; --accent:#6ea8fe; --accent2:#8b7cff;
+  --good:#36d399; --bad:#ff6b81; --border:rgba(255,255,255,.10);
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; min-height:100vh; display:flex; justify-content:center;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(110,168,254,.16), transparent 30%),
+    radial-gradient(circle at 85% 90%, rgba(139,124,255,.13), transparent 32%),
+    var(--bg);
+}
+.app { width:min(940px,100%); padding:32px 18px 42px; }
+header { margin-bottom:20px; }
+.eyebrow { color:var(--accent); font-size:.78rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; }
+h1 { margin:6px 0 7px; font-size:clamp(2rem,5vw,3.1rem); letter-spacing:-.04em; }
+.subtitle { margin:0; color:var(--muted); font-size:1rem; line-height:1.6; }
+.card {
+  background:linear-gradient(145deg,rgba(24,34,56,.96),rgba(14,21,37,.96));
+  border:1px solid var(--border); border-radius:24px; padding:24px;
+  box-shadow:0 24px 70px rgba(0,0,0,.28); backdrop-filter:blur(12px);
+}
+.top { display:flex; justify-content:space-between; gap:16px; align-items:center; margin-bottom:20px; }
+.badge { padding:8px 12px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:.85rem; }
+.progress { height:9px; background:rgba(255,255,255,.07); border-radius:999px; overflow:hidden; margin:12px 0 26px; }
+.progress > div { height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .25s ease; }
+.question { text-align:center; padding:24px 10px 18px; }
+.question-label { color:var(--muted); font-size:.9rem; text-transform:uppercase; letter-spacing:.12em; }
+.question-number { font-size:clamp(3.5rem,12vw,6rem); font-weight:900; line-height:1; letter-spacing:-.06em; margin:10px 0 18px; }
+.answer {
+  min-height:64px; display:flex; align-items:center; justify-content:center;
+  font-size:1.45rem; font-weight:800; color:var(--muted);
+  transition:transform .18s ease, color .18s ease;
+}
+.answer.active { color:var(--text); transform:scale(1.04); }
+.status { min-height:44px; display:flex; align-items:center; justify-content:center; margin:8px auto 18px; font-weight:800; }
+.status span { padding:10px 16px; border-radius:12px; }
+.status.good span { color:var(--good); background:rgba(54,211,153,.11); border:1px solid rgba(54,211,153,.25); }
+.status.bad span { color:var(--bad); background:rgba(255,107,129,.11); border:1px solid rgba(255,107,129,.25); }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px; }
+.stat { padding:14px; background:rgba(255,255,255,.045); border:1px solid var(--border); border-radius:15px; }
+.stat small { display:block; color:var(--muted); margin-bottom:3px; }
+.stat strong { font-size:1.25rem; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+button {
+  border:1px solid var(--border); border-radius:12px; padding:11px 15px;
+  color:var(--text); background:rgba(255,255,255,.055); cursor:pointer;
+  font-weight:700; transition:.18s ease;
+}
+button:hover { transform:translateY(-1px); background:rgba(255,255,255,.1); }
+button.primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); border:0; }
+.keys { display:flex; justify-content:center; gap:9px; flex-wrap:wrap; margin:18px 0 4px; }
+.key { min-width:48px; padding:10px 13px; text-align:center; border-radius:11px; background:#0d1526; border:1px solid var(--border); font-weight:900; box-shadow:inset 0 -2px 0 rgba(255,255,255,.04); }
+.report { margin-top:18px; }
+.report h2 { margin:0 0 5px; }
+.report p { color:var(--muted); }
+.table-wrap { overflow:auto; border:1px solid var(--border); border-radius:15px; }
+table { width:100%; border-collapse:collapse; min-width:560px; }
+th,td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--border); }
+th { color:var(--muted); font-size:.82rem; text-transform:uppercase; letter-spacing:.08em; }
+tr:last-child td { border-bottom:0; }
+.ok { color:var(--good); font-weight:800; }
+.fail { color:var(--bad); font-weight:800; }
+footer { text-align:center; color:var(--muted); font-size:.82rem; margin-top:16px; line-height:1.5; }
+@media(max-width:620px) {
+  .card { padding:18px; border-radius:19px; }
+  .top { align-items:flex-start; flex-direction:column; }
+  .stats { grid-template-columns:1fr; }
+  .question-number { font-size:4.5rem; }
+}
 </style>
 </head>
 <body>
-  <div class="painel">
-    <h1>Corretor de Prova</h1>
-    <p class="lead">Use <span class="kbd">Q</span>/<span class="kbd">W</span>/<span class="kbd">E</span>/<span class="kbd">R</span>/<span class="kbd">T</span> para responder (A/B/C/D/E). Não precisa apertar Enter. Pressione <span class="kbd">Esc</span> para encerrar antes do fim.</p>
+<main class="app">
+<header>
+  <div class="eyebrow">Modo de correção rápida</div>
+  <h1>Corretor de Prova</h1>
+  <p class="subtitle">Responda usando <strong>Q W E R T</strong>. Cada tecla corresponde a A, B, C, D e E. Não é necessário pressionar Enter.</p>
+</header>
 
-    <div id="display">
-      <div class="questao" id="num">Questão —</div>
-      <div class="resposta" id="resposta">Aguardando tecla...</div>
-      <div id="resultado" class="status" style="display:none"></div>
-
-      <div class="barra">
-        <div class="info">Acertos: <span id="acertos">0</span> / <span id="total">0</span></div>
-        <div class="info">Progresso: <span id="progresso">0%</span></div>
-        <div><button id="botaoRestart">Reiniciar</button></div>
-        <div><button id="baixar" style="display:none">Baixar CSV</button></div>
-      </div>
+<section class="card">
+  <div class="top">
+    <div>
+      <strong id="titulo">Questão 6</strong>
+      <div class="subtitle">Escolha uma alternativa pelo teclado.</div>
     </div>
-
-    <div id="relatorio" style="display:none; margin-top:14px;">
-      <h3>Resumo</h3>
-      <div class="info">Total de questões respondidas: <span id="respondidas">0</span></div>
-      <div class="info">Acertos: <span id="acertosFim">0</span> (<span id="percent">0</span>%)</div>
-      <table id="tabela">
-        <thead><tr><th>Questão</th><th>Sua resposta</th><th>Gabarito</th><th>Status</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <footer>
-      Dica: clique na janela do navegador e pressione as teclas Q W E R T. Funciona em desktop. Em alguns navegadores, atalhos do sistema podem interferir.
-    </footer>
+    <div class="badge" id="percentual">0%</div>
   </div>
 
+  <div class="progress"><div id="barra"></div></div>
+
+  <div class="question">
+    <div class="question-label">Questão atual</div>
+    <div class="question-number" id="num">6</div>
+    <div class="answer" id="resposta">Aguardando tecla...</div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="keys">
+    <div class="key">Q → A</div><div class="key">W → B</div>
+    <div class="key">E → C</div><div class="key">R → D</div><div class="key">T → E</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><small>Acertos</small><strong id="acertos">0 / 40</strong></div>
+    <div class="stat"><small>Respondidas</small><strong id="respondidas">0</strong></div>
+    <div class="stat"><small>Aproveitamento</small><strong id="aproveitamento">0%</strong></div>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="reiniciar">↻ Reiniciar</button>
+    <button id="baixar" style="display:none">↓ Baixar CSV</button>
+  </div>
+</section>
+
+<section class="card report" id="relatorio" style="display:none">
+  <h2>Resultado final</h2>
+  <p id="resumo"></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Questão</th><th>Sua resposta</th><th>Gabarito</th><th>Status</th></tr></thead>
+      <tbody id="tabela"></tbody>
+    </table>
+  </div>
+</section>
+
+<footer>Esc para encerrar a sessão. O corretor funciona diretamente no navegador e não depende de Enter.</footer>
+</main>
+
 <script>
-(function () {
-  // mapa de teclas para alternativas
-  const mapa = { q: 'A', w: 'B', e: 'C', r: 'D', t: 'E' };
+(() => {
+  const mapa = {q:"A",w:"B",e:"C",r:"D",t:"E"};
+  const gabarito = {6:'C',7:'E',8:'C',9:'E',10:'D',
+11:'A',12:'E',13:'C',14:'A',15:'E',
+16:'B',17:'C',18:'B',19:'E',20:'B',
+21:'C',22:'E',23:'C',24:'B',25:'D',
+26:'E',27:'B',28:'C',29:'E',30:'D',
+31:'B',32:'A',33:'B',34:'A',35:'B',
+36:'C',37:'D',38:'D',39:'C',40:'C',
+41:'A',42:'A',43:'B',44:'B',45:'A'};
+  const questoes = Object.keys(gabarito).map(Number).sort((a,b)=>a-b);
+  const total = questoes.length;
 
-  // gabarito (questões 6 a 45)
-  const gabarito = {
-    6: 'C',7: 'E',8: 'C',9: 'E',10: 'D',
-    11: 'A',12: 'E',13: 'C',14: 'A',15: 'E',
-    16: 'B',17: 'C',18: 'B',19: 'E',20: 'B',
-    21: 'C',22: 'E',23: 'C',24: 'B',25: 'D',
-    26: 'E',27: 'B',28: 'C',29: 'E',30: 'D',
-    31: 'B',32: 'A',33: 'B',34: 'A',35: 'B',
-    36: 'C',37: 'D',38: 'D',39: 'C',40: 'C',
-    41: 'A',42: 'A',43: 'B',44: 'B',45: 'A'
-  };
+  let indice = 0, acertos = 0, encerrado = false;
+  const respostas = [];
 
-  const questoes = Object.keys(gabarito).map(n => parseInt(n,10)).sort((a,b)=>a-b);
-  const totalQuestoes = questoes.length;
+  const $ = id => document.getElementById(id);
+  const num = $("num"), titulo = $("titulo"), resposta = $("resposta");
+  const status = $("status"), barra = $("barra"), percentual = $("percentual");
+  const acertosEl = $("acertos"), respondidasEl = $("respondidas");
+  const aproveitamento = $("aproveitamento"), relatorio = $("relatorio");
+  const tabela = $("tabela"), resumo = $("resumo"), baixar = $("baixar");
 
-  // estado
-  let indice = 0;
-  let acertos = 0;
-  const respostas = []; // {num, resposta, correta, ok}
-
-  // elementos
-  const elNum = document.getElementById('num');
-  const elResp = document.getElementById('resposta');
-  const elResultado = document.getElementById('resultado');
-  const elAcertos = document.getElementById('acertos');
-  const elTotal = document.getElementById('total');
-  const elProgresso = document.getElementById('progresso');
-  const elRelatorio = document.getElementById('relatorio');
-  const elTabelaBody = document.querySelector('#tabela tbody');
-  const elRespondidas = document.getElementById('respondidas');
-  const elAcertosFim = document.getElementById('acertosFim');
-  const elPercent = document.getElementById('percent');
-  const btnRestart = document.getElementById('botaoRestart');
-  const btnBaixar = document.getElementById('baixar');
-
-  elTotal.textContent = totalQuestoes;
-
-  function atualizaDisplay() {
-    if (indice < totalQuestoes) {
-      const num = questoes[indice];
-      elNum.textContent = `Questão ${num}:`;
-      elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
-      elResultado.style.display = 'none';
-      elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
-    } else {
-      finalizar();
-    }
-    elAcertos.textContent = acertos;
+  function atualizar() {
+    if (indice >= total) return finalizar();
+    const q = questoes[indice];
+    num.textContent = q;
+    titulo.textContent = `Questão ${q}`;
+    resposta.textContent = "Aguardando tecla...";
+    resposta.classList.remove("active");
+    status.className = "status";
+    status.innerHTML = "";
+    const p = Math.round((indice / total) * 100);
+    barra.style.width = p + "%";
+    percentual.textContent = p + "%";
+    acertosEl.textContent = `${acertos} / ${total}`;
+    respondidasEl.textContent = respostas.length;
+    aproveitamento.textContent = respostas.length ? `${((acertos/respostas.length)*100).toFixed(1)}%` : "0%";
   }
 
-  function registrarResposta(teclaChar) {
-    if (indice >= totalQuestoes) return;
-    const key = teclaChar.toLowerCase();
-    if (!(key in mapa)) return; // ignorar teclas inválidas
+  function responder(key) {
+    if (encerrado || indice >= total || !mapa[key]) return;
 
-    const num = questoes[indice];
-    const resposta = mapa[key];
-    const correta = gabarito[num];
-    const ok = resposta === correta;
-    respostas.push({ num, resposta, correta, ok });
-
-    // mostrar resultado visual
-    elResp.textContent = resposta;
-    elResultado.style.display = 'inline-block';
-    elResultado.textContent = ok ? '✔ Correto!' : `✘ Errado — certa: ${correta}`;
-    elResultado.className = 'status ' + (ok ? 'correto' : 'errado');
-
+    const q = questoes[indice], sua = mapa[key], certa = gabarito[q];
+    const ok = sua === certa;
+    respostas.push({num:q, resposta:sua, correta:certa, ok});
     if (ok) acertos++;
 
-    indice++;
-    elAcertos.textContent = acertos;
-    elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
+    resposta.textContent = `Alternativa ${sua}`;
+    resposta.classList.add("active");
+    status.className = "status " + (ok ? "good" : "bad");
+    status.innerHTML = `<span>${ok ? "✓ Correto" : `✕ Incorreto — gabarito: ${certa}`}</span>`;
 
-    // pequeno atraso antes de avançar visualmente para a próxima (sem bloquear teclado)
+    indice++;
+    acertosEl.textContent = `${acertos} / ${total}`;
+    respondidasEl.textContent = respostas.length;
+    aproveitamento.textContent = `${((acertos/respostas.length)*100).toFixed(1)}%`;
+    barra.style.width = Math.round((indice/total)*100) + "%";
+    percentual.textContent = Math.round((indice/total)*100) + "%";
+
     setTimeout(() => {
-      if (indice < totalQuestoes) {
-        elNum.textContent = `Questão ${questoes[indice]}:`;
-        elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
-        elResultado.style.display = 'none';
-      } else {
-        finalizar();
-      }
-    }, 180);
+      if (indice < total) atualizar();
+      else finalizar();
+    }, 300);
   }
 
   function finalizar() {
-    elNum.textContent = 'Fim';
-    elResp.textContent = 'Sessão finalizada.';
-    elResultado.style.display = 'none';
-    elProgresso.textContent = '100%';
-    elRelatorio.style.display = 'block';
-    elRespondidas.textContent = respostas.length;
-    elAcertosFim.textContent = acertos;
-    elPercent.textContent = ((acertos / totalQuestoes) * 100).toFixed(1);
+    if (encerrado && indice < total) return;
+    encerrado = true;
+    num.textContent = "✓";
+    titulo.textContent = "Sessão encerrada";
+    resposta.textContent = indice >= total ? "Prova concluída." : "Sessão encerrada pelo usuário.";
+    resposta.classList.add("active");
+    status.className = "status";
+    status.innerHTML = "";
+    barra.style.width = Math.round((indice/total)*100) + "%";
+    percentual.textContent = Math.round((indice/total)*100) + "%";
 
-    // tabela
-    elTabelaBody.innerHTML = '';
-    for (const r of respostas) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${r.num}</td>
-                      <td>${r.resposta}</td>
-                      <td>${r.correta}</td>
-                      <td>${r.ok ? 'Correto' : 'Errado'}</td>`;
-      elTabelaBody.appendChild(tr);
-    }
-
-    // botão de baixar
-    btnBaixar.style.display = 'inline-block';
+    relatorio.style.display = "block";
+    const pct = respostas.length ? (acertos/respostas.length*100).toFixed(1) : "0.0";
+    resumo.textContent = `${respostas.length} de ${total} questões respondidas • ${acertos} acertos • ${pct}% de aproveitamento.`;
+    tabela.innerHTML = respostas.map(r => `
+      <tr>
+        <td>${r.num}</td><td>${r.resposta}</td><td>${r.correta}</td>
+        <td class="${r.ok ? "ok" : "fail"}">${r.ok ? "Correto" : "Errado"}</td>
+      </tr>`).join("");
+    baixar.style.display = "inline-block";
   }
 
-  // evento de teclado global (na página)
-  window.addEventListener('keydown', function (ev) {
-    // evitar digitar em campos (se houver)
-    if (ev.target && (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.isContentEditable)) {
-      return;
-    }
-    if (ev.key === 'Escape') {
-      // encerrar imediatamente
-      finalizar();
-      return;
-    }
-    const key = ev.key.toLowerCa
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Corretor de Prova — Teclas Q W E R T (sem Enter)</title>
-<style>
-  body { font-family: Arial, Helvetica, sans-serif; max-width:800px; margin:30px auto; padding:16px; color:#111; }
-  h1 { margin:0 0 8px 0; font-size:1.4rem; }
-  p.lead { margin:6px 0 18px 0; color:#333; }
-  .painel { border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08); background:#fff; }
-  .questao { font-size:1.8rem; margin:6px 0; }
-  .resposta { font-size:1.6rem; margin:6px 0 12px 0; }
-  .status { font-weight:700; padding:8px 12px; display:inline-block; border-radius:8px; margin-bottom:8px; }
-  .correto { background:#e6ffef; color:#0a6f3a; border:1px solid #8de2b2; }
-  .errado { background:#ffecec; color:#8a1d1d; border:1px solid #f1a3a3; }
-  .info { color:#555; margin:6px 0; }
-  .barra { display:flex; gap:12px; align-items:center; margin-top:12px; flex-wrap:wrap;}
-  button { padding:8px 12px; border-radius:8px; border:1px solid #ccc; background:#fafafa; cursor:pointer; }
-  button.primary { background:#007bff; color:#fff; border-color:#0066d6; }
-  table { width:100%; border-collapse:collapse; margin-top:12px;}
-  th,td { border:1px solid #ddd; padding:6px 8px; text-align:left; }
-  .small { font-size:0.9rem; color:#666; }
-  .kbd { display:inline-block; padding:4px 8px; border-radius:6px; background:#f2f2f2; border:1px solid #ddd; font-weight:700; }
-  footer { margin-top:18px; color:#666; font-size:0.9rem; }
-</style>
-</head>
-<body>
-  <div class="painel">
-    <h1>Corretor de Prova</h1>
-    <p class="lead">Use <span class="kbd">Q</span>/<span class="kbd">W</span>/<span class="kbd">E</span>/<span class="kbd">R</span>/<span class="kbd">T</span> para responder (A/B/C/D/E). Não precisa apertar Enter. Pressione <span class="kbd">Esc</span> para encerrar antes do fim.</p>
-
-    <div id="display">
-      <div class="questao" id="num">Questão —</div>
-      <div class="resposta" id="resposta">Aguardando tecla...</div>
-      <div id="resultado" class="status" style="display:none"></div>
-
-      <div class="barra">
-        <div class="info">Acertos: <span id="acertos">0</span> / <span id="total">0</span></div>
-        <div class="info">Progresso: <span id="progresso">0%</span></div>
-        <div><button id="botaoRestart">Reiniciar</button></div>
-        <div><button id="baixar" style="display:none">Baixar CSV</button></div>
-      </div>
-    </div>
-
-    <div id="relatorio" style="display:none; margin-top:14px;">
-      <h3>Resumo</h3>
-      <div class="info">Total de questões respondidas: <span id="respondidas">0</span></div>
-      <div class="info">Acertos: <span id="acertosFim">0</span> (<span id="percent">0</span>%)</div>
-      <table id="tabela">
-        <thead><tr><th>Questão</th><th>Sua resposta</th><th>Gabarito</th><th>Status</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <footer>
-      Dica: clique na janela do navegador e pressione as teclas Q W E R T. Funciona em desktop. Em alguns navegadores, atalhos do sistema podem interferir.
-    </footer>
-  </div>
-
-<script>
-(function () {
-  // mapa de teclas para alternativas
-  const mapa = { q: 'A', w: 'B', e: 'C', r: 'D', t: 'E' };
-
-  // gabarito (questões 6 a 45)
-  const gabarito = {
-    6: 'C',7: 'E',8: 'C',9: 'E',10: 'D',
-    11: 'A',12: 'E',13: 'C',14: 'A',15: 'E',
-    16: 'B',17: 'C',18: 'B',19: 'E',20: 'B',
-    21: 'C',22: 'E',23: 'C',24: 'B',25: 'D',
-    26: 'E',27: 'B',28: 'C',29: 'E',30: 'D',
-    31: 'B',32: 'A',33: 'B',34: 'A',35: 'B',
-    36: 'C',37: 'D',38: 'D',39: 'C',40: 'C',
-    41: 'A',42: 'A',43: 'B',44: 'B',45: 'A'
-  };
-
-  const questoes = Object.keys(gabarito).map(n => parseInt(n,10)).sort((a,b)=>a-b);
-  const totalQuestoes = questoes.length;
-
-  // estado
-  let indice = 0;
-  let acertos = 0;
-  const respostas = []; // {num, resposta, correta, ok}
-
-  // elementos
-  const elNum = document.getElementById('num');
-  const elResp = document.getElementById('resposta');
-  const elResultado = document.getElementById('resultado');
-  const elAcertos = document.getElementById('acertos');
-  const elTotal = document.getElementById('total');
-  const elProgresso = document.getElementById('progresso');
-  const elRelatorio = document.getElementById('relatorio');
-  const elTabelaBody = document.querySelector('#tabela tbody');
-  const elRespondidas = document.getElementById('respondidas');
-  const elAcertosFim = document.getElementById('acertosFim');
-  const elPercent = document.getElementById('percent');
-  const btnRestart = document.getElementById('botaoRestart');
-  const btnBaixar = document.getElementById('baixar');
-
-  elTotal.textContent = totalQuestoes;
-
-  function atualizaDisplay() {
-    if (indice < totalQuestoes) {
-      const num = questoes[indice];
-      elNum.textContent = `Questão ${num}:`;
-      elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
-      elResultado.style.display = 'none';
-      elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
-    } else {
-      finalizar();
-    }
-    elAcertos.textContent = acertos;
-  }
-
-  function registrarResposta(teclaChar) {
-    if (indice >= totalQuestoes) return;
-    const key = teclaChar.toLowerCase();
-    if (!(key in mapa)) return; // ignorar teclas inválidas
-
-    const num = questoes[indice];
-    const resposta = mapa[key];
-    const correta = gabarito[num];
-    const ok = resposta === correta;
-    respostas.push({ num, resposta, correta, ok });
-
-    // mostrar resultado visual
-    elResp.textContent = resposta;
-    elResultado.style.display = 'inline-block';
-    elResultado.textContent = ok ? '✔ Correto!' : `✘ Errado — certa: ${correta}`;
-    elResultado.className = 'status ' + (ok ? 'correto' : 'errado');
-
-    if (ok) acertos++;
-
-    indice++;
-    elAcertos.textContent = acertos;
-    elProgresso.textContent = `${Math.round((indice/totalQuestoes)*100)}%`;
-
-    // pequeno atraso antes de avançar visualmente para a próxima (sem bloquear teclado)
-    setTimeout(() => {
-      if (indice < totalQuestoes) {
-        elNum.textContent = `Questão ${questoes[indice]}:`;
-        elResp.textContent = 'Aguardando tecla... (Q/W/E/R/T)';
-        elResultado.style.display = 'none';
-      } else {
-        finalizar();
-      }
-    }, 180);
-  }
-
-  function finalizar() {
-    elNum.textContent = 'Fim';
-    elResp.textContent = 'Sessão finalizada.';
-    elResultado.style.display = 'none';
-    elProgresso.textContent = '100%';
-    elRelatorio.style.display = 'block';
-    elRespondidas.textContent = respostas.length;
-    elAcertosFim.textContent = acertos;
-    elPercent.textContent = ((acertos / totalQuestoes) * 100).toFixed(1);
-
-    // tabela
-    elTabelaBody.innerHTML = '';
-    for (const r of respostas) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${r.num}</td>
-                      <td>${r.resposta}</td>
-                      <td>${r.correta}</td>
-                      <td>${r.ok ? 'Correto' : 'Errado'}</td>`;
-      elTabelaBody.appendChild(tr);
-    }
-
-    // botão de baixar
-    btnBaixar.style.display = 'inline-block';
-  }
-
-  // evento de teclado global (na página)
-  window.addEventListener('keydown', function (ev) {
-    // evitar digitar em campos (se houver)
-    if (ev.target && (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.isContentEditable)) {
-      return;
-    }
-    if (ev.key === 'Escape') {
-      // encerrar imediatamente
-      finalizar();
-      return;
-    }
-    const key = ev.key.toLowerCase();
-    if (key in mapa) {
-      ev.preventDefault();
-      registrarResposta(key);
-    }
+  window.addEventListener("keydown", e => {
+    const key = e.key.toLowerCase();
+    if (key === "escape") { e.preventDefault(); finalizar(); return; }
+    if (mapa[key]) { e.preventDefault(); responder(key); }
   });
 
-  btnRestart.addEventListener('click', function () {
-    // reset
-    indice = 0;
-    acertos = 0;
-    respostas.length = 0;
-    elRelatorio.style.display = 'none';
-    btnBaixar.style.display = 'none';
-    elAcertos.textContent = '0';
-    atualizaDisplay();
+  $("reiniciar").addEventListener("click", () => {
+    indice = 0; acertos = 0; encerrado = false; respostas.length = 0;
+    relatorio.style.display = "none"; baixar.style.display = "none";
+    atualizar();
   });
 
-  btnBaixar.addEventListener('click', function () {
-    // gera CSV: Questão,SuaResposta,Gabarito,Status
-    let csv = 'Questao,SuaResposta,Gabarito,Status\n';
-    for (const r of respostas) {
-      csv += `${r.num},${r.resposta},${r.correta},${r.ok ? 'Correto' : 'Errado'}\n`;
-    }
-    // baixar
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'respostas.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  baixar.addEventListener("click", () => {
+    const linhas = [["Questao","SuaResposta","Gabarito","Status"], ...respostas.map(r => [
+      r.num,r.resposta,r.correta,r.ok ? "Correto" : "Errado"
+    ])];
+    const csv = linhas.map(l => l.join(",")).join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = "respostas.csv"; a.click(); URL.revokeObjectURL(url);
   });
 
-  // inicializa
-  atualizaDisplay();
+  atualizar();
 })();
 </script>
 </body>
