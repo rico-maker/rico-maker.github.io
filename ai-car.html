@@ -5,13 +5,10 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1.0"
->
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
 
 <title>Neural Track Evolution</title>
-
 
 <style>
 
@@ -19,24 +16,13 @@
     box-sizing:border-box;
 }
 
-html,
 body{
     margin:0;
-    width:100%;
-    height:100%;
-}
-
-body{
+    background:#0b0e12;
+    color:#eee;
+    font-family:Arial,Helvetica,sans-serif;
     overflow:hidden;
-    background:#0f1115;
-    color:#e8eaed;
-    font-family:Inter,Arial,sans-serif;
 }
-
-
-/* =========================================================
-   LAYOUT
-========================================================= */
 
 #app{
     display:flex;
@@ -45,1168 +31,1251 @@ body{
 }
 
 #sidebar{
-    width:290px;
-    min-width:290px;
-    height:100vh;
-
-    padding:18px;
-
+    width:330px;
+    min-width:330px;
+    background:#171a20;
+    border-right:1px solid #30343c;
+    padding:14px;
     overflow-y:auto;
-
-    background:#15181d;
-
-    border-right:1px solid #292e36;
 }
 
-#main{
-    display:flex;
-    flex:1;
-    min-width:0;
-    height:100%;
+h1{
+    margin:0 0 4px;
+    font-size:21px;
 }
 
-#trackArea{
-    position:relative;
-
-    flex:1;
-    min-width:0;
-    height:100%;
-
-    overflow:hidden;
-
-    background:#090b0e;
+h2{
+    font-size:14px;
+    margin:16px 0 9px;
+    color:#aaa;
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.logo{
-    font-family:Orbitron,Arial,sans-serif;
-
-    font-size:17px;
-    font-weight:800;
-
-    letter-spacing:.08em;
-
-    color:#f2f4f7;
+.small{
+    font-size:11px;
+    line-height:1.45;
+    color:#888;
 }
-
-.logo span{
-    color:#00cfff;
-}
-
-.subtitle{
-    margin-top:6px;
-
-    color:#737b86;
-
-    font-size:9px;
-
-    line-height:1.5;
-
-    letter-spacing:.06em;
-}
-
-
-/* =========================================================
-   SECTIONS
-========================================================= */
 
 .section{
-    margin-top:14px;
-
-    padding:13px;
-
-    border:1px solid #292e36;
-
-    border-radius:8px;
-
-    background:#191d23;
+    background:#1d2129;
+    border:1px solid #30343d;
+    border-radius:9px;
+    padding:11px;
+    margin-bottom:10px;
 }
-
-.section-title{
-    margin-bottom:13px;
-
-    color:#aeb5bf;
-
-    font-family:Orbitron,Arial,sans-serif;
-
-    font-size:9px;
-
-    font-weight:700;
-
-    letter-spacing:.1em;
-
-    text-transform:uppercase;
-}
-
-
-/* =========================================================
-   CONTROLS
-========================================================= */
 
 .control{
-    margin-bottom:15px;
-}
-
-.control:last-child{
-    margin-bottom:0;
+    margin:9px 0;
 }
 
 .control label{
     display:flex;
-
     justify-content:space-between;
-
-    margin-bottom:7px;
-
-    color:#858d98;
-
-    font-size:9px;
-
-    font-weight:600;
+    font-size:12px;
+    margin-bottom:4px;
 }
 
-.control-value{
-    color:#00cfff;
-
-    font-family:Orbitron,monospace;
-
-    font-size:8px;
+.value{
+    color:#62d8ff;
+    font-weight:bold;
 }
 
 input[type="range"]{
     width:100%;
-    height:3px;
-
-    appearance:none;
-    -webkit-appearance:none;
-
-    outline:none;
-
-    border-radius:3px;
-
-    background:#343a43;
-
-    cursor:pointer;
 }
 
-input[type="range"]::-webkit-slider-thumb{
-    appearance:none;
-    -webkit-appearance:none;
-
-    width:11px;
-    height:11px;
-
-    border-radius:50%;
-
-    background:#00cfff;
-
-    border:2px solid #15181d;
-}
-
-input[type="range"]::-moz-range-thumb{
-    width:9px;
-    height:9px;
-
-    border-radius:50%;
-
-    background:#00cfff;
-
-    border:2px solid #15181d;
-}
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-.buttons{
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:6px;
+select{
+    width:100%;
+    padding:7px;
+    background:#252a33;
+    color:#fff;
+    border:1px solid #444;
+    border-radius:6px;
 }
 
 button{
-    padding:8px 10px;
-
-    border:1px solid #343a43;
-
+    background:#2b313b;
+    border:0;
+    color:#fff;
     border-radius:6px;
-
-    background:#242930;
-
-    color:#d9dde3;
-
-    font-family:Inter,Arial,sans-serif;
-
-    font-size:8px;
-
-    font-weight:700;
-
+    padding:8px 9px;
+    margin:2px;
     cursor:pointer;
-
-    transition:
-        background .12s,
-        border-color .12s;
+    font-size:11px;
 }
 
 button:hover{
-    background:#2c323a;
-
-    border-color:#4a525d;
+    background:#3a4350;
 }
 
-button:active{
-    transform:translateY(1px);
-}
-
-button.blue{
-    background:#073e50;
-
-    border-color:#075a73;
-
-    color:#7cddf5;
+button.active{
+    background:#147cff;
 }
 
 button.good{
-    background:#123e31;
-
-    border-color:#17634d;
-
-    color:#73e5be;
+    background:#167d46;
 }
 
 button.danger{
-    background:#401f24;
-
-    border-color:#652b34;
-
-    color:#ff8d9a;
+    background:#8c2828;
 }
 
-
-/* =========================================================
-   CHECKBOX
-========================================================= */
-
-.check{
+.buttons{
     display:flex;
+    flex-wrap:wrap;
+}
 
+.checkbox{
+    display:flex;
     align-items:center;
-
-    gap:7px;
-
-    margin:8px 0;
-
-    color:#858d98;
-
-    font-size:9px;
+    gap:6px;
+    margin:7px 0;
+    font-size:12px;
 }
 
-.check input{
-    accent-color:#00cfff;
-}
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-.stat{
+#main{
+    flex:1;
     display:flex;
-
-    justify-content:space-between;
-
-    padding:7px 0;
-
-    border-bottom:1px solid #252a31;
-
-    color:#747d88;
-
-    font-size:9px;
+    position:relative;
+    overflow:hidden;
 }
 
-.stat:last-child{
-    border-bottom:0;
+#trackPanel{
+    flex:1;
+    position:relative;
+    overflow:hidden;
 }
-
-.stat b{
-    color:#dce1e7;
-
-    font-family:Orbitron,monospace;
-
-    font-size:8px;
-}
-
-
-/* =========================================================
-   CANVAS
-========================================================= */
 
 #canvas{
-    display:block;
-
     width:100%;
     height:100%;
+    display:block;
 }
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-#status{
-    position:absolute;
-
-    top:15px;
-    left:15px;
-
-    display:flex;
-
-    gap:6px;
-
-    pointer-events:none;
-}
-
-.status-box{
-    padding:7px 9px;
-
-    border:1px solid #292e36;
-
-    border-radius:5px;
-
-    background:rgba(15,17,21,.88);
-
-    color:#89929d;
-
-    font-family:Orbitron,monospace;
-
-    font-size:8px;
-}
-
-.status-dot{
-    display:inline-block;
-
-    width:6px;
-    height:6px;
-
-    margin-right:5px;
-
-    border-radius:50%;
-
-    background:#00ff9d;
-}
-
-
-/* =========================================================
-   EDITOR
-========================================================= */
-
-#editorHint{
-    position:absolute;
-
-    left:50%;
-    bottom:18px;
-
-    transform:translateX(-50%);
-
-    padding:8px 12px;
-
-    border:1px solid #244b59;
-
-    border-radius:5px;
-
-    background:#10161a;
-
-    color:#72cfe7;
-
-    font-size:8px;
-
-    pointer-events:none;
-
-    display:none;
-}
-
-
-/* =========================================================
-   NETWORK PANEL
-========================================================= */
 
 #networkPanel{
-    position:relative;
-
-    width:520px;
-    min-width:520px;
-
-    height:100%;
-
+    width:390px;
+    min-width:390px;
     background:#111419;
-
-    border-left:1px solid #292e36;
+    border-left:1px solid #30343d;
+    position:relative;
 }
 
 #networkCanvas{
-    display:block;
-
     width:100%;
     height:100%;
+    display:block;
+}
+
+#topbar{
+    position:absolute;
+    top:10px;
+    left:10px;
+    right:10px;
+    display:flex;
+    justify-content:space-between;
+    pointer-events:none;
+}
+
+.badge{
+    background:rgba(0,0,0,.7);
+    border:1px solid #333;
+    padding:7px 10px;
+    border-radius:7px;
+    font-size:11px;
+}
+
+#editorHint{
+    display:none;
+    position:absolute;
+    bottom:12px;
+    left:12px;
+    background:rgba(0,0,0,.75);
+    border:1px solid #333;
+    border-radius:6px;
+    padding:8px 11px;
+    font-size:11px;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    padding:2px 0;
+    font-size:12px;
 }
 
 #networkTitle{
     position:absolute;
-
-    top:16px;
-    left:18px;
-
-    z-index:5;
-
-    color:#aeb5bf;
-
-    font-family:Orbitron,Arial,sans-serif;
-
-    font-size:9px;
-
-    font-weight:700;
-
-    letter-spacing:.1em;
-}
-
-#networkTitle::before{
-    content:"";
-
-    display:inline-block;
-
-    width:6px;
-    height:6px;
-
-    margin-right:7px;
-
-    border-radius:50%;
-
-    background:#00cfff;
+    top:10px;
+    left:15px;
+    font-size:13px;
+    font-weight:bold;
+    color:#ddd;
+    pointer-events:none;
 }
 
 #networkLegend{
     position:absolute;
-
-    left:18px;
-    right:18px;
-    bottom:16px;
-
-    padding:9px 10px;
-
-    border:1px solid #272c33;
-
-    border-radius:5px;
-
-    background:#15181d;
-
-    color:#737c87;
-
-    font-size:8px;
-
+    bottom:10px;
+    left:12px;
+    right:12px;
+    font-size:10px;
+    color:#888;
     line-height:1.5;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:1150px){
-
-    #networkPanel{
-        width:430px;
-        min-width:430px;
-    }
-
-}
-
-@media(max-width:900px){
-
-    #networkPanel{
-        display:none;
-    }
-
-}
-
-@media(max-width:650px){
-
-    #sidebar{
-        width:250px;
-        min-width:250px;
-    }
-
+    pointer-events:none;
 }
 
 </style>
-</head>
 
+</head>
 
 <body>
 
-
 <div id="app">
 
-
-<!-- =======================================================
+<!-- =====================================================
      SIDEBAR
-======================================================= -->
+===================================================== -->
 
 <aside id="sidebar">
 
-    <div class="logo">
-        NEURAL <span>TRACK</span>
-    </div>
-
-    <div class="subtitle">
-        Evolutionary driving laboratory
-    </div>
-
-
-    <!-- ===================================================
-         SIMULAÇÃO
-    ==================================================== -->
-
-    <div class="section">
-
-        <div class="section-title">
-            Simulação
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Carros
-                <span
-                    id="carCountValue"
-                    class="control-value"
-                >
-                    500
-                </span>
-            </label>
-
-            <input
-                id="carCount"
-                type="range"
-                min="20"
-                max="1500"
-                value="500"
-                step="10"
-            >
-
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Velocidade máxima
-                <span
-                    id="maxSpeedValue"
-                    class="control-value"
-                >
-                    20
-                </span>
-            </label>
-
-            <input
-                id="maxSpeed"
-                type="range"
-                min="5"
-                max="50"
-                value="20"
-                step="1"
-            >
-
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Velocidade mínima
-                <span
-                    id="minSpeedValue"
-                    class="control-value"
-                >
-                    8
-                </span>
-            </label>
-
-            <input
-                id="minSpeed"
-                type="range"
-                min="0"
-                max="30"
-                value="8"
-                step="1"
-            >
-
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Tamanho dos carros
-                <span
-                    id="carSizeValue"
-                    class="control-value"
-                >
-                    5
-                </span>
-            </label>
-
-            <input
-                id="carSize"
-                type="range"
-                min="2"
-                max="15"
-                value="5"
-                step="1"
-            >
-
-        </div>
-
-
-        <div class="buttons">
-
-            <button
-                id="pauseBtn"
-                class="blue"
-            >
-                PAUSAR
-            </button>
-
-            <button
-                id="restartBtn"
-            >
-                REINICIAR
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- ===================================================
-         IA
-    ==================================================== -->
-
-    <div class="section">
-
-        <div class="section-title">
-            Inteligência artificial
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Sensores
-                <span
-                    id="sensorCountValue"
-                    class="control-value"
-                >
-                    5
-                </span>
-            </label>
-
-            <input
-                id="sensorCount"
-                type="range"
-                min="3"
-                max="15"
-                value="5"
-                step="2"
-            >
-
-        </div>
-
-
-        <div class="control">
-
-            <label>
-                Mutação
-                <span
-                    id="mutationValue"
-                    class="control-value"
-                >
-                    10%
-                </span>
-            </label>
-
-            <input
-                id="mutation"
-                type="range"
-                min="0"
-                max="100"
-                value="10"
-                step="1"
-            >
+<h1>Neural Track Evolution</h1>
 
-        </div>
+<div class="small">
+Simulador evolutivo de carros controlados por uma rede neural.
+</div>
 
 
-        <div class="control">
+<!-- SIMULAÇÃO -->
 
-            <label>
-                Intensidade da mutação
-                <span
-                    id="mutationStrengthValue"
-                    class="control-value"
-                >
-                    0.30
-                </span>
-            </label>
+<div class="section">
 
-            <input
-                id="mutationStrength"
-                type="range"
-                min="1"
-                max="100"
-                value="30"
-            >
+<h2>Simulação</h2>
 
-        </div>
+<div class="buttons">
 
+<button id="pauseBtn"
+        class="good">
+Pausar
+</button>
 
-        <div class="control">
+<button id="resetBtn">
+Reiniciar
+</button>
 
-            <label>
-                Persistência / aprendizado
-                <span
-                    id="persistenceValue"
-                    class="control-value"
-                >
-                    70%
-                </span>
-            </label>
+<button id="newGenerationBtn">
+Nova geração
+</button>
 
-            <input
-                id="persistence"
-                type="range"
-                min="0"
-                max="100"
-                value="70"
-            >
+</div>
 
-        </div>
 
+<div class="checkbox">
 
-        <div class="control">
+<input
+    type="checkbox"
+    id="showSensors"
+    checked>
 
-            <label>
-                Elitismo
-                <span
-                    id="eliteValue"
-                    class="control-value"
-                >
-                    5%
-                </span>
-            </label>
+<label for="showSensors">
+Mostrar sensores
+</label>
 
-            <input
-                id="elite"
-                type="range"
-                min="0"
-                max="30"
-                value="5"
-            >
+</div>
 
-        </div>
 
+<div class="checkbox">
 
-        <label class="check">
-
-            <input
-                id="showSensors"
-                type="checkbox"
-                checked
-            >
+<input
+    type="checkbox"
+    id="showBestOnly">
 
-            Mostrar sensores
+<label for="showBestOnly">
+Mostrar somente o melhor
+</label>
 
-        </label>
+</div>
 
 
-        <label class="check">
+<div class="checkbox">
 
-            <input
-                id="showDeadCars"
-                type="checkbox"
-                checked
-            >
+<input
+    type="checkbox"
+    id="showNetwork"
+    checked>
 
-            Mostrar carros mortos
+<label for="showNetwork">
+Mostrar rede neural
+</label>
 
-        </label>
+</div>
 
-    </div>
+</div>
 
 
-    <!-- ===================================================
-         PISTA
-    ==================================================== -->
+<!-- POPULAÇÃO -->
 
-    <div class="section">
+<div class="section">
 
-        <div class="section-title">
-            Editor de pista
-        </div>
+<h2>População</h2>
 
 
-        <div class="control">
+<div class="control">
 
-            <label>
-                Largura
-                <span
-                    id="trackWidthValue"
-                    class="control-value"
-                >
-                    80
-                </span>
-            </label>
+<label>
 
-            <input
-                id="trackWidth"
-                type="range"
-                min="30"
-                max="180"
-                value="80"
-            >
+<span>Quantidade de carros</span>
 
-        </div>
+<span
+id="carCountValue"
+class="value">
+500
+</span>
 
+</label>
 
-        <div class="buttons">
+<input
+id="carCount"
+type="range"
+min="10"
+max="1000"
+step="10"
+value="500">
 
-            <button
-                id="editTrackBtn"
-                class="blue"
-            >
-                EDITAR PISTA
-            </button>
+</div>
 
-            <button
-                id="undoPointBtn"
-            >
-                DESFAZER
-            </button>
 
-            <button
-                id="finishTrackBtn"
-                class="good"
-            >
-                CONCLUIR
-            </button>
+<div class="control">
 
-            <button
-                id="clearTrackBtn"
-                class="danger"
-            >
-                LIMPAR
-            </button>
+<label>
 
-        </div>
+<span>Velocidade máxima</span>
 
+<span
+id="maxSpeedValue"
+class="value">
+20
+</span>
 
-        <div
-            class="small"
-            style="margin-top:9px"
-        >
-            No editor, clique para criar os pontos da
-            linha central. Ao concluir, o sistema cria
-            automaticamente as bordas da pista e suaviza
-            as curvas.
-        </div>
+</label>
 
-    </div>
+<input
+id="maxSpeed"
+type="range"
+min="5"
+max="50"
+value="20">
 
+</div>
 
-    <!-- ===================================================
-         DADOS
-    ==================================================== -->
 
-    <div class="section">
+<div class="control">
 
-        <div class="section-title">
-            Dados
-        </div>
+<label>
 
+<span>Velocidade mínima</span>
 
-        <div class="buttons">
+<span
+id="minSpeedValue"
+class="value">
+8
+</span>
 
-            <button
-                id="saveBtn"
-            >
-                SALVAR
-            </button>
+</label>
 
-            <button
-                id="loadBtn"
-            >
-                CARREGAR
-            </button>
+<input
+id="minSpeed"
+type="range"
+min="0"
+max="20"
+value="8">
 
-            <button
-                id="clearStorageBtn"
-                class="danger"
-            >
-                LIMPAR STORAGE
-            </button>
+</div>
 
-        </div>
 
-    </div>
+<div class="control">
 
+<label>
 
-    <!-- ===================================================
-         ESTATÍSTICAS
-    ==================================================== -->
+<span>Tamanho do carro</span>
 
-    <div class="section">
+<span
+id="carSizeValue"
+class="value">
+5
+</span>
 
-        <div class="section-title">
-            Telemetria
-        </div>
+</label>
 
+<input
+id="carSize"
+type="range"
+min="2"
+max="15"
+value="5">
 
-        <div class="stat">
-            <span>Geração</span>
-            <b id="generation">
-                1
-            </b>
-        </div>
+</div>
 
+</div>
 
-        <div class="stat">
-            <span>Vivos</span>
-            <b id="alive">
-                0
-            </b>
-        </div>
 
+<!-- SENSORES -->
 
-        <div class="stat">
-            <span>Melhor fitness</span>
-            <b id="bestFitness">
-                0
-            </b>
-        </div>
+<div class="section">
 
+<h2>Sensores</h2>
 
-        <div class="stat">
-            <span>Melhor velocidade</span>
-            <b id="bestSpeed">
-                0
-            </b>
-        </div>
 
+<div class="control">
 
-        <div class="stat">
-            <span>Pontos da pista</span>
-            <b id="trackPointsStat">
-                0
-            </b>
-        </div>
+<label>
 
+<span>Quantidade</span>
 
-        <div class="stat">
-            <span>Estado</span>
-            <b id="state">
-                EXECUTANDO
-            </b>
-        </div>
+<span
+id="sensorCountValue"
+class="value">
+8
+</span>
 
-    </div>
+</label>
+
+<input
+id="sensorCount"
+type="range"
+min="3"
+max="25"
+value="8">
+
+</div>
+
+
+<div class="control">
+
+<label>
+
+<span>Alcance</span>
+
+<span
+id="sensorRangeValue"
+class="value">
+100
+</span>
+
+</label>
+
+<input
+id="sensorRange"
+type="range"
+min="30"
+max="250"
+step="5"
+value="100">
+
+</div>
+
+</div>
+
+
+<!-- REDE -->
+
+<div class="section">
+
+<h2>Rede neural</h2>
+
+<div class="small">
+
+Arquitetura:
+
+<br>
+
+Sensores →
+12 neurônios →
+8 neurônios →
+3 saídas
+
+<br><br>
+
+Saídas:
+
+<br>
+Aceleração
+<br>
+Direção
+<br>
+Freio
+
+</div>
+
+</div>
+
+
+<!-- EVOLUÇÃO -->
+
+<div class="section">
+
+<h2>Evolução</h2>
+
+
+<div class="control">
+
+<label>
+
+<span>Taxa de mutação</span>
+
+<span
+id="mutationValue"
+class="value">
+10%
+</span>
+
+</label>
+
+<input
+id="mutation"
+type="range"
+min="0"
+max="1"
+step=".01"
+value=".10">
+
+</div>
+
+
+<div class="control">
+
+<label>
+
+<span>Força da mutação</span>
+
+<span
+id="mutationStrengthValue"
+class="value">
+0.30
+</span>
+
+</label>
+
+<input
+id="mutationStrength"
+type="range"
+min=".01"
+max="1"
+step=".01"
+value=".30">
+
+</div>
+
+
+<div class="control">
+
+<label>
+
+<span>Persistência</span>
+
+<span
+id="persistenceValue"
+class="value">
+90%
+</span>
+
+</label>
+
+<input
+id="persistence"
+type="range"
+min="0"
+max="1"
+step=".01"
+value=".90">
+
+</div>
+
+
+<div class="control">
+
+<label>
+
+<span>Elitismo</span>
+
+<span
+id="elitismValue"
+class="value">
+5
+</span>
+
+</label>
+
+<input
+id="elitism"
+type="range"
+min="0"
+max="30"
+value="5">
+
+</div>
+
+
+<div class="control">
+
+<label>
+
+<span>Seleção</span>
+
+</label>
+
+<select id="selection">
+
+<option value="best">
+Melhores
+</option>
+
+<option value="tournament">
+Torneio
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<!-- CÉREBRO -->
+
+<div class="section">
+
+<h2>Aprendizado</h2>
+
+<div class="buttons">
+
+<button id="saveBrain">
+Salvar cérebro
+</button>
+
+<button id="loadBrain">
+Carregar cérebro
+</button>
+
+<button
+id="clearBrain"
+class="danger">
+Apagar aprendizado
+</button>
+
+<button
+id="clearStorage"
+class="danger">
+Limpar dados do simulador
+</button>
+
+</div>
+
+</div>
+
+
+<!-- EDITOR -->
+
+<div class="section">
+
+<h2>Editor de pista</h2>
+
+<div class="buttons">
+
+<button
+id="simulationMode"
+class="active">
+Simulação
+</button>
+
+<button id="editorMode">
+Editar pista
+</button>
+
+</div>
+
+
+<div class="buttons">
+
+<button id="addOuter">
+Adicionar externo
+</button>
+
+<button id="addInner">
+Adicionar interno
+</button>
+
+<button id="removePoint">
+Remover selecionado
+</button>
+
+</div>
+
+
+<div class="buttons">
+
+<button id="saveTrack">
+Salvar pista
+</button>
+
+<button id="loadTrack">
+Carregar pista
+</button>
+
+<button id="resetTrack">
+Pista padrão
+</button>
+
+</div>
+
+
+<div class="small">
+
+No modo editor, arraste os pontos vermelhos
+ou azuis para modificar a pista.
+
+</div>
+
+</div>
+
+
+<!-- ESTATÍSTICAS -->
+
+<div class="section">
+
+<h2>Estatísticas</h2>
+
+
+<div class="stat">
+
+<span>Geração</span>
+
+<span
+id="generationValue"
+class="value">
+1
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<span>Carros vivos</span>
+
+<span
+id="aliveValue"
+class="value">
+0
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<span>Melhor fitness</span>
+
+<span
+id="fitnessValue"
+class="value">
+0
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<span>Recorde</span>
+
+<span
+id="recordValue"
+class="value">
+0
+</span>
+
+</div>
+
+
+<div class="stat">
+
+<span>FPS</span>
+
+<span
+id="fpsValue"
+class="value">
+60
+</span>
+
+</div>
+
+</div>
 
 </aside>
 
 
-<!-- =======================================================
-     MAIN
-======================================================= -->
+<!-- =====================================================
+     ÁREA PRINCIPAL
+===================================================== -->
 
-<main id="main">
+<div id="main">
 
+<div id="trackPanel">
 
-    <section id="trackArea">
+<canvas id="canvas"></canvas>
 
-        <canvas id="canvas"></canvas>
+<div id="topbar">
 
+<div class="badge"
+id="statusBadge">
+SIMULAÇÃO
+</div>
 
-        <div id="status">
+<div class="badge">
 
-            <div class="status-box">
+Geração:
+<span id="topGeneration">
+1
+</span>
 
-                <span class="status-dot"></span>
+</div>
 
-                <span id="statusText">
-                    SIMULAÇÃO
-                </span>
-
-            </div>
-
-
-            <div class="status-box">
-
-                GEN
-                <span id="topGeneration">
-                    1
-                </span>
-
-            </div>
-
-        </div>
+</div>
 
 
-        <div id="editorHint">
+<div id="editorHint">
 
-            CLIQUE PARA ADICIONAR PONTOS À PISTA
+Modo editor:
+arraste os pontos da pista.
 
-        </div>
+</div>
 
-    </section>
+</div>
 
 
-    <!-- ===================================================
-         NETWORK
-    ==================================================== -->
+<!-- =====================================================
+     REDE NEURAL
+===================================================== -->
 
-    <section id="networkPanel">
+<div id="networkPanel">
 
-        <div id="networkTitle">
-            REDE NEURAL — MELHOR INDIVÍDUO
-        </div>
+<div id="networkTitle">
 
-        <canvas id="networkCanvas"></canvas>
+REDE NEURAL — MELHOR INDIVÍDUO
 
-        <div id="networkLegend">
+</div>
 
-            As linhas representam os pesos da rede.
-            A intensidade visual indica a força do peso.
-            Os nós mostram a ativação atual dos neurônios.
+<canvas id="networkCanvas"></canvas>
 
-        </div>
 
-    </section>
+<div id="networkLegend">
 
-</main>
+Linha clara = peso positivo
+<br>
+
+Linha escura = peso negativo
+<br>
+
+Espessura = magnitude do peso
+<br>
+
+Brilho do neurônio = ativação
+
+</div>
+
+</div>
+
+</div>
 
 </div>
 
 
 <script>
 
-/* =========================================================
-   CONFIGURAÇÃO
-========================================================= */
-
-let CAR_COUNT = 500;
-
-let SENSOR_COUNT = 5;
-
-let MAX_SPEED = 20;
-
-let MIN_SPEED = 8;
-
-let MUTATION_RATE = .10;
-
-let MUTATION_STRENGTH = .30;
-
-let PERSISTENCE = .70;
-
-let ELITE_PERCENT = .05;
-
-let generation = 1;
-
-let cars = [];
-
-let bestCar = null;
-
-let paused = false;
-
-let editingTrack = false;
-
-let trackPoints = [];
-
-let customTrackWidth = 80;
-
-let START_X = 880;
-
-let START_Y = 450;
-
-
-/* =========================================================
+/* =====================================================
    CANVAS
-========================================================= */
+===================================================== */
 
 const canvas =
-    document.getElementById("canvas");
+document.getElementById("canvas");
 
 const ctx =
-    canvas.getContext("2d");
+canvas.getContext("2d");
 
 
 const networkCanvas =
-    document.getElementById("networkCanvas");
+document.getElementById(
+    "networkCanvas"
+);
 
 const nctx =
-    networkCanvas.getContext("2d");
+networkCanvas.getContext("2d");
 
 
-/* =========================================================
-   TRACK
-========================================================= */
+let W=1200;
+let H=700;
 
-let trackData = {
+let NW=390;
+let NH=700;
 
-    outer:[
-        {x:150,y:500},
-        {x:200,y:390},
-        {x:400,y:400},
-        {x:600,y:300},
-        {x:800,y:300},
-        {x:900,y:450},
-        {x:900,y:500},
-        {x:700,y:600},
-        {x:500,y:530},
-        {x:320,y:600},
-        {x:150,y:500}
-    ],
 
-    inner:[
-        {x:200,y:480},
-        {x:250,y:410},
-        {x:400,y:420},
-        {x:600,y:330},
-        {x:780,y:340},
-        {x:850,y:460},
-        {x:820,y:510},
-        {x:710,y:560},
-        {x:500,y:500},
-        {x:320,y:560},
-        {x:200,y:480}
-    ]
+function resize(){
+
+    const r=
+    canvas.getBoundingClientRect();
+
+    const nr=
+    networkCanvas.getBoundingClientRect();
+
+
+    const dpr=
+    window.devicePixelRatio||1;
+
+
+    canvas.width=
+    r.width*dpr;
+
+    canvas.height=
+    r.height*dpr;
+
+
+    ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
+
+
+    networkCanvas.width=
+    nr.width*dpr;
+
+    networkCanvas.height=
+    nr.height*dpr;
+
+
+    nctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
+
+
+    W=r.width;
+    H=r.height;
+
+    NW=nr.width;
+    NH=nr.height;
+
+}
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+resize();
+
+
+/* =====================================================
+   CONFIGURAÇÃO
+===================================================== */
+
+const config={
+
+    carCount:500,
+
+    sensorCount:8,
+
+    sensorRange:100,
+
+    maxSpeed:20,
+
+    minSpeed:8,
+
+    carSize:5,
+
+    mutationRate:.10,
+
+    mutationStrength:.30,
+
+    persistence:.90,
+
+    elitism:5,
+
+    selection:"best"
 
 };
 
 
-/* =========================================================
-   POINT IN POLYGON
-========================================================= */
+/* =====================================================
+   REDE
+===================================================== */
 
-function pointInPolygon(x,y,poly){
+const HIDDEN_1=12;
+
+const HIDDEN_2=8;
+
+const OUTPUTS=3;
+
+
+/*
+    Pesos:
+
+    sensores → hidden1
+    hidden1 → hidden2
+    hidden2 → outputs
+*/
+
+function randomMatrix(rows,cols){
+
+    const matrix=[];
+
+
+    for(
+        let i=0;
+        i<rows;
+        i++
+    ){
+
+        const row=[];
+
+
+        for(
+            let j=0;
+            j<cols;
+            j++
+        ){
+
+            row.push(
+                Math.random()*2-1
+            );
+
+        }
+
+
+        matrix.push(row);
+
+    }
+
+
+    return matrix;
+
+}
+
+
+function createBrain(){
+
+    return {
+
+        w1:
+        randomMatrix(
+            config.sensorCount,
+            HIDDEN_1
+        ),
+
+        w2:
+        randomMatrix(
+            HIDDEN_1,
+            HIDDEN_2
+        ),
+
+        w3:
+        randomMatrix(
+            HIDDEN_2,
+            OUTPUTS
+        )
+
+    };
+
+}
+
+
+/* =====================================================
+   REDE NEURAL
+===================================================== */
+
+function tanh(x){
+
+    return Math.tanh(x);
+
+}
+
+
+function forward(brain,inputs){
+
+    const hidden1=[];
+
+    const hidden2=[];
+
+    const output=[];
+
+
+    /* SENSOR → HIDDEN 1 */
+
+    for(
+        let j=0;
+        j<HIDDEN_1;
+        j++
+    ){
+
+        let sum=0;
+
+
+        for(
+            let i=0;
+            i<inputs.length;
+            i++
+        ){
+
+            sum+=
+            inputs[i]*
+            brain.w1[i][j];
+
+        }
+
+
+        hidden1.push(
+            tanh(sum)
+        );
+
+    }
+
+
+    /* HIDDEN 1 → HIDDEN 2 */
+
+    for(
+        let j=0;
+        j<HIDDEN_2;
+        j++
+    ){
+
+        let sum=0;
+
+
+        for(
+            let i=0;
+            i<HIDDEN_1;
+            i++
+        ){
+
+            sum+=
+            hidden1[i]*
+            brain.w2[i][j];
+
+        }
+
+
+        hidden2.push(
+            tanh(sum)
+        );
+
+    }
+
+
+    /* HIDDEN 2 → OUTPUT */
+
+    for(
+        let j=0;
+        j<OUTPUTS;
+        j++
+    ){
+
+        let sum=0;
+
+
+        for(
+            let i=0;
+            i<HIDDEN_2;
+            i++
+        ){
+
+            sum+=
+            hidden2[i]*
+            brain.w3[i][j];
+
+        }
+
+
+        output.push(
+            tanh(sum)
+        );
+
+    }
+
+
+    return {
+
+        hidden1,
+        hidden2,
+        output
+
+    };
+
+}
+
+
+/* =====================================================
+   PISTA
+===================================================== */
+
+const defaultTrack={
+
+outer:[
+
+{x:150,y:500},
+{x:200,y:390},
+{x:400,y:400},
+{x:600,y:300},
+{x:800,y:300},
+{x:900,y:450},
+{x:900,y:500},
+{x:700,y:600},
+{x:500,y:530},
+{x:320,y:600}
+
+],
+
+inner:[
+
+{x:200,y:480},
+{x:250,y:410},
+{x:400,y:420},
+{x:600,y:330},
+{x:780,y:340},
+{x:850,y:460},
+{x:820,y:510},
+{x:710,y:560},
+{x:500,y:500},
+{x:320,y:560}
+
+]
+
+};
+
+
+let trackData=
+structuredClone(defaultTrack);
+
+
+const START_X=880;
+
+const START_Y=450;
+
+
+/* =====================================================
+   GEOMETRIA
+===================================================== */
+
+function pointInPolygon(p,poly){
 
     let inside=false;
+
 
     for(
         let i=0,j=poly.length-1;
@@ -1214,26 +1283,30 @@ function pointInPolygon(x,y,poly){
         j=i++
     ){
 
-        const xi=poly[i].x;
-        const yi=poly[i].y;
+        const a=poly[i];
 
-        const xj=poly[j].x;
-        const yj=poly[j].y;
+        const b=poly[j];
 
-        const intersect =
-            ((yi>y)!=(yj>y)) &&
-            (
-                x <
-                (xj-xi) *
-                (y-yi) /
-                (yj-yi) +
-                xi
-            );
+
+        const intersect=
+        (
+            (a.y>p.y)!=(b.y>p.y)
+        )
+        &&
+        (
+            p.x<
+            (b.x-a.x)*
+            (p.y-a.y)/
+            (b.y-a.y)+
+            a.x
+        );
+
 
         if(intersect)
             inside=!inside;
 
     }
+
 
     return inside;
 
@@ -1245,16 +1318,14 @@ function pointInTrack(x,y){
     return (
 
         pointInPolygon(
-            x,
-            y,
+            {x,y},
             trackData.outer
         )
 
         &&
 
         !pointInPolygon(
-            x,
-            y,
+            {x,y},
             trackData.inner
         )
 
@@ -1263,50 +1334,13 @@ function pointInTrack(x,y){
 }
 
 
-/* =========================================================
-   NEURAL NETWORK
-========================================================= */
-
-function simpleNN(inputs,weights){
-
-    const output=[0,0];
-
-    for(
-        let i=0;
-        i<2;
-        i++
-    ){
-
-        for(
-            let j=0;
-            j<inputs.length;
-            j++
-        ){
-
-            output[i] +=
-                inputs[j] *
-                weights[j][i];
-
-        }
-
-        output[i]=Math.tanh(
-            output[i]
-        );
-
-    }
-
-    return output;
-
-}
-
-
-/* =========================================================
-   CAR
-========================================================= */
+/* =====================================================
+   CARRO
+===================================================== */
 
 class Car{
 
-    constructor(weights){
+    constructor(brain){
 
         this.x=START_X;
 
@@ -1314,28 +1348,19 @@ class Car{
 
         this.angle=-Math.PI/2;
 
-        this.speed=4;
+        this.speed=config.minSpeed;
 
-        this.size=
-            Number(
-                document.getElementById(
-                    "carSize"
-                ).value
-            );
+        this.size=config.carSize;
 
         this.alive=true;
 
         this.fitness=0;
 
-        this.sensors=[];
+        this.age=0;
 
-        this.activations=[0,0];
+        this.distanceTravelled=0;
 
-        this.weights =
-            weights ||
-            this.createRandomWeights();
-
-        this.forwardTimer=0;
+        this.stuckTimer=0;
 
         this.slowTimer=0;
 
@@ -1343,132 +1368,182 @@ class Car{
 
         this.lastY=this.y;
 
-        this.age=0;
+
+        this.brain=
+        brain||
+        createBrain();
+
+
+        this.sensors=[];
+
+        this.activations={
+            hidden1:
+            new Array(HIDDEN_1).fill(0),
+
+            hidden2:
+            new Array(HIDDEN_2).fill(0),
+
+            output:
+            new Array(OUTPUTS).fill(0)
+        };
 
     }
 
 
-    createRandomWeights(){
-
-        const w=[];
-
-        for(
-            let i=0;
-            i<SENSOR_COUNT;
-            i++
-        ){
-
-            w.push([
-                Math.random()*2-1,
-                Math.random()*2-1
-            ]);
-
-        }
-
-        return w;
-
-    }
-
-
-    update(dt=.016){
+    update(dt){
 
         if(!this.alive)
             return;
 
 
-        this.age += dt;
+        this.age+=dt;
 
 
-        /* sensores */
+        /* =============================
+           SENSORES
+        ============================= */
 
         this.sensors=[];
 
 
         for(
             let i=0;
-            i<SENSOR_COUNT;
+            i<config.sensorCount;
             i++
         ){
 
-            let offset;
+            let angle;
 
-            if(SENSOR_COUNT===1){
 
-                offset=0;
+            if(
+                config.sensorCount===1
+            ){
+
+                angle=0;
 
             }else{
 
-                offset=
-                    -Math.PI/2 +
-                    i *
-                    (
-                        Math.PI /
-                        (SENSOR_COUNT-1)
-                    );
+                angle=
+                -Math.PI/2+
+                i*
+                (
+                    Math.PI/
+                    (config.sensorCount-1)
+                );
 
             }
 
 
             this.sensors.push(
-                this.castRay(offset)/120
+
+                this.castRay(
+                    angle
+                )/
+                config.sensorRange
+
             );
 
         }
 
 
-        /* rede */
+        /* =============================
+           REDE
+        ============================= */
 
-        this.activations =
-            simpleNN(
-                this.sensors,
-                this.weights
-            );
-
-
-        const throttle =
-            this.activations[0];
-
-        const turn =
-            this.activations[1];
+        const result=
+        forward(
+            this.brain,
+            this.sensors
+        );
 
 
-        /* direção */
-
-        this.angle +=
-            turn * .23;
+        this.activations=
+        result;
 
 
-        /* aceleração */
+        const acceleration=
+        result.output[0];
 
-        this.speed +=
-            throttle * .18;
+        const turn=
+        result.output[1];
 
-
-        this.speed -= .035;
-
-
-        this.speed =
-            Math.max(
-                0,
-                Math.min(
-                    this.speed,
-                    MAX_SPEED
-                )
-            );
+        const brake=
+        result.output[2];
 
 
-        /* movimento */
+        /* =============================
+           DIREÇÃO
+        ============================= */
 
-        this.x +=
-            Math.cos(this.angle) *
-            this.speed;
-
-        this.y +=
-            Math.sin(this.angle) *
-            this.speed;
+        this.angle+=
+        turn*.09;
 
 
-        /* colisão */
+        /* =============================
+           ACELERAÇÃO
+        ============================= */
+
+        this.speed+=
+        acceleration*.35;
+
+
+        /* =============================
+           FREIO
+        ============================= */
+
+        if(
+            brake>0
+        ){
+
+            this.speed-=
+            brake*.7;
+
+        }
+
+
+        this.speed=
+        Math.max(
+            0,
+            Math.min(
+                config.maxSpeed,
+                this.speed
+            )
+        );
+
+
+        /* =============================
+           MOVIMENTO
+        ============================= */
+
+        const ox=this.x;
+
+        const oy=this.y;
+
+
+        this.x+=
+        Math.cos(this.angle)*
+        this.speed;
+
+
+        this.y+=
+        Math.sin(this.angle)*
+        this.speed;
+
+
+        const movement=
+        Math.hypot(
+            this.x-ox,
+            this.y-oy
+        );
+
+
+        this.distanceTravelled+=
+        movement;
+
+
+        /* =============================
+           COLISÃO
+        ============================= */
 
         if(
             !pointInTrack(
@@ -1482,35 +1557,57 @@ class Car{
         }
 
 
-        /* travamento */
+        /* =============================
+           PARADO
+        ============================= */
 
-        const moved =
-            Math.hypot(
-                this.x-this.lastX,
-                this.y-this.lastY
-            );
+        if(
+            movement<.2
+        ){
+
+            this.stuckTimer+=dt;
+
+        }else{
+
+            this.stuckTimer=0;
+
+        }
 
 
-        if(moved<.5)
-            this.forwardTimer += dt;
-        else
-            this.forwardTimer=0;
+        if(
+            this.stuckTimer>1.5
+        ){
 
-
-        if(this.forwardTimer>1)
             this.alive=false;
 
+        }
 
-        /* velocidade muito baixa */
 
-        if(this.speed<MIN_SPEED)
-            this.slowTimer += dt;
-        else
+        /* =============================
+           MUITO LENTO
+        ============================= */
+
+        if(
+            this.speed<
+            config.minSpeed
+        ){
+
+            this.slowTimer+=dt;
+
+        }else{
+
             this.slowTimer=0;
 
+        }
 
-        if(this.slowTimer>1)
+
+        if(
+            this.slowTimer>1.5
+        ){
+
             this.alive=false;
+
+        }
 
 
         this.lastX=this.x;
@@ -1518,13 +1615,17 @@ class Car{
         this.lastY=this.y;
 
 
+        /* =============================
+           FITNESS
+        ============================= */
+
         if(this.alive){
 
-            this.fitness +=
-                Math.max(
-                    .1,
-                    this.speed
-                );
+            this.fitness+=
+            this.speed*
+            dt;
+
+            this.fitness+=.05;
 
         }
 
@@ -1533,294 +1634,209 @@ class Car{
 
     castRay(offset){
 
-        const rayLength=120;
-
         const angle=
-            this.angle+offset;
+        this.angle+offset;
 
 
         for(
-            let i=0;
-            i<rayLength;
-            i+=2
+            let d=0;
+            d<config.sensorRange;
+            d+=2
         ){
 
-            const rx=
-                this.x+
-                Math.cos(angle)*i;
+            const x=
+            this.x+
+            Math.cos(angle)*d;
 
-            const ry=
-                this.y+
-                Math.sin(angle)*i;
+
+            const y=
+            this.y+
+            Math.sin(angle)*d;
 
 
             if(
-                !pointInTrack(
-                    rx,
-                    ry
-                )
+                !pointInTrack(x,y)
             ){
 
-                return i;
+                return d;
 
             }
 
         }
 
-        return rayLength;
+
+        return config.sensorRange;
 
     }
 
 
-    draw(isBest){
+    draw(best){
 
         if(
-            !this.alive &&
-            !document.getElementById(
-                "showDeadCars"
-            ).checked
+            document.getElementById(
+                "showBestOnly"
+            ).checked &&
+            !best
         )
             return;
 
 
         ctx.save();
 
+
         ctx.translate(
             this.x,
             this.y
         );
+
 
         ctx.rotate(
             this.angle
         );
 
 
-        ctx.fillStyle =
-            !this.alive
-            ? "rgba(255,60,60,.35)"
-            : isBest
-            ? "#00ff9d"
-            : "#00cfff";
-
-
-        ctx.shadowColor =
-            !this.alive
-            ? "#ff3333"
-            : isBest
-            ? "#00ff9d"
-            : "#00cfff";
-
-
-        ctx.shadowBlur =
-            isBest ? 14 : 4;
+        ctx.fillStyle=
+        best
+        ?
+        "#00ff55"
+        :
+        this.alive
+        ?
+        "#00d9ff"
+        :
+        "#8c2222";
 
 
         ctx.fillRect(
+
             -this.size/2,
+
             -this.size/2,
+
             this.size,
+
             this.size
+
         );
 
 
         ctx.restore();
 
-    }
-
-}
-
-
-/* =========================================================
-   GENERATION
-========================================================= */
-
-function nextGeneration(){
-
-    cars.sort(
-        (a,b)=>
-            b.fitness-a.fitness
-    );
-
-
-    bestCar=cars[0];
-
-
-    if(!bestCar)
-        return;
-
-
-    const newCars=[];
-
-
-    const eliteCount =
-        Math.max(
-            1,
-            Math.floor(
-                CAR_COUNT *
-                ELITE_PERCENT
-            )
-        );
-
-
-    /*
-       Persistência:
-
-       quanto maior o valor,
-       maior a quantidade de indivíduos
-       próximos do melhor indivíduo.
-
-       Com persistência baixa:
-       mais exploração.
-
-       Com persistência alta:
-       mais exploração local.
-    */
-
-
-    for(
-        let i=0;
-        i<CAR_COUNT;
-        i++
-    ){
-
-        let parent;
-
 
         if(
-            i<eliteCount
+            best &&
+            document.getElementById(
+                "showSensors"
+            ).checked
         ){
 
-            parent =
-                cars[
-                    i %
-                    Math.min(
-                        eliteCount,
-                        cars.length
-                    )
-                ];
-
-        }else{
-
-            /*
-               seleção ponderada.
-
-               melhores indivíduos têm
-               maior chance de reprodução.
-            */
-
-            const pressure =
-                Math.max(
-                    .05,
-                    PERSISTENCE
-                );
-
-
-            const index =
-                Math.floor(
-                    Math.pow(
-                        Math.random(),
-                        pressure
-                    ) *
-                    Math.min(
-                        cars.length,
-                        Math.max(
-                            2,
-                            Math.floor(
-                                CAR_COUNT*.35
-                            )
-                        )
-                    )
-                );
-
-
-            parent =
-                cars[index];
+            this.drawSensors();
 
         }
 
-
-        const newWeights =
-            parent.weights.map(
-                row =>
-                    row.map(
-                        value => {
-
-                            if(
-                                Math.random() <
-                                MUTATION_RATE
-                            ){
-
-                                return (
-                                    value +
-                                    (
-                                        Math.random()-.5
-                                    ) *
-                                    MUTATION_STRENGTH
-                                );
-
-                            }
-
-                            /*
-                               pequena aprendizagem
-                               também pode alterar pesos
-                               fora da mutação principal
-                            */
-
-                            if(
-                                PERSISTENCE < 1 &&
-                                Math.random() >
-                                PERSISTENCE
-                            ){
-
-                                return (
-                                    value +
-                                    (
-                                        Math.random()-.5
-                                    ) *
-                                    MUTATION_STRENGTH *
-                                    .15
-                                );
-
-                            }
-
-
-                            return value;
-
-                        }
-                    )
-            );
-
-
-        newCars.push(
-            new Car(
-                newWeights
-            )
-        );
-
     }
 
 
-    cars=newCars;
+    drawSensors(){
 
-    generation++;
+        for(
+            let i=0;
+            i<config.sensorCount;
+            i++
+        ){
+
+            let angle;
 
 
-    updateStats();
+            if(
+                config.sensorCount===1
+            ){
+
+                angle=0;
+
+            }else{
+
+                angle=
+                -Math.PI/2+
+                i*
+                (
+                    Math.PI/
+                    (config.sensorCount-1)
+                );
+
+            }
+
+
+            const length=
+            this.sensors[i]*
+            config.sensorRange;
+
+
+            ctx.beginPath();
+
+
+            ctx.moveTo(
+                this.x,
+                this.y
+            );
+
+
+            ctx.lineTo(
+
+                this.x+
+                Math.cos(
+                    this.angle+angle
+                )*
+                length,
+
+                this.y+
+                Math.sin(
+                    this.angle+angle
+                )*
+                length
+
+            );
+
+
+            ctx.strokeStyle=
+            "#fff200";
+
+
+            ctx.lineWidth=1;
+
+
+            ctx.stroke();
+
+        }
+
+    }
 
 }
 
 
-/* =========================================================
-   INIT
-========================================================= */
+/* =====================================================
+   POPULAÇÃO
+===================================================== */
+
+let cars=[];
+
+let bestCar=null;
+
+let generation=1;
+
+let recordFitness=0;
+
 
 function init(){
 
     cars=[];
 
+    generation=1;
+
+
     for(
         let i=0;
-        i<CAR_COUNT;
+        i<config.carCount;
         i++
     ){
 
@@ -1831,24 +1847,445 @@ function init(){
     }
 
 
-    generation=1;
-
-    bestCar=null;
-
-    updateStats();
+    bestCar=cars[0];
 
 }
 
 
-/* =========================================================
-   TRACK DRAW
-========================================================= */
+/* =====================================================
+   CLONAGEM
+===================================================== */
 
-function drawPolygon(poly,fill){
+function cloneBrain(brain){
 
-    if(!poly.length)
+    return {
+
+        w1:
+        brain.w1.map(
+            row=>row.slice()
+        ),
+
+        w2:
+        brain.w2.map(
+            row=>row.slice()
+        ),
+
+        w3:
+        brain.w3.map(
+            row=>row.slice()
+        )
+
+    };
+
+}
+
+
+/* =====================================================
+   MUTAÇÃO
+===================================================== */
+
+function mutateMatrix(matrix){
+
+    return matrix.map(
+        row=>
+        row.map(
+            value=>{
+
+                if(
+                    Math.random()<
+                    config.mutationRate
+                ){
+
+                    return value+
+                    (
+                        Math.random()*2-1
+                    )*
+                    config.mutationStrength;
+
+                }
+
+
+                return value;
+
+            }
+        )
+    );
+
+}
+
+
+function mutateBrain(brain){
+
+    return {
+
+        w1:
+        mutateMatrix(
+            brain.w1
+        ),
+
+        w2:
+        mutateMatrix(
+            brain.w2
+        ),
+
+        w3:
+        mutateMatrix(
+            brain.w3
+        )
+
+    };
+
+}
+
+
+/* =====================================================
+   SELEÇÃO
+===================================================== */
+
+function selectParent(){
+
+    if(
+        config.selection===
+        "tournament"
+    ){
+
+        let selected=null;
+
+
+        for(
+            let i=0;
+            i<5;
+            i++
+        ){
+
+            const candidate=
+            cars[
+                Math.floor(
+                    Math.random()*
+                    cars.length
+                )
+            ];
+
+
+            if(
+                !selected ||
+                candidate.fitness>
+                selected.fitness
+            ){
+
+                selected=
+                candidate;
+
+            }
+
+        }
+
+
+        return selected;
+
+    }
+
+
+    const count=
+    Math.max(
+        1,
+        Math.floor(
+            cars.length*.2
+        )
+    );
+
+
+    return cars[
+        Math.floor(
+            Math.random()*count
+        )
+    ];
+
+}
+
+
+/* =====================================================
+   PERSISTÊNCIA
+===================================================== */
+
+function applyPersistence(brain){
+
+    const saved=
+    localStorage.getItem(
+        "neural-best-brain"
+    );
+
+
+    if(!saved)
+        return brain;
+
+
+    try{
+
+        const data=
+        JSON.parse(saved);
+
+
+        if(
+            data.sensorCount !==
+            config.sensorCount
+        ){
+
+            return brain;
+
+        }
+
+
+        const p=
+        config.persistence;
+
+
+        function blend(a,b){
+
+            return (
+                a*(1-p)+
+                b*p
+            );
+
+        }
+
+
+        for(
+            let i=0;
+            i<brain.w1.length;
+            i++
+        ){
+
+            for(
+                let j=0;
+                j<brain.w1[i].length;
+                j++
+            ){
+
+                brain.w1[i][j]=
+                blend(
+                    brain.w1[i][j],
+                    data.brain.w1[i][j]
+                );
+
+            }
+
+        }
+
+
+        for(
+            let i=0;
+            i<brain.w2.length;
+            i++
+        ){
+
+            for(
+                let j=0;
+                j<brain.w2[i].length;
+                j++
+            ){
+
+                brain.w2[i][j]=
+                blend(
+                    brain.w2[i][j],
+                    data.brain.w2[i][j]
+                );
+
+            }
+
+        }
+
+
+        for(
+            let i=0;
+            i<brain.w3.length;
+            i++
+        ){
+
+            for(
+                let j=0;
+                j<brain.w3[i].length;
+                j++
+            ){
+
+                brain.w3[i][j]=
+                blend(
+                    brain.w3[i][j],
+                    data.brain.w3[i][j]
+                );
+
+            }
+
+        }
+
+
+    }catch(e){}
+
+
+    return brain;
+
+}
+
+
+/* =====================================================
+   NOVA GERAÇÃO
+===================================================== */
+
+function nextGeneration(){
+
+    if(
+        !cars.length
+    )
         return;
 
+
+    cars.sort(
+        (a,b)=>
+        b.fitness-
+        a.fitness
+    );
+
+
+    bestCar=cars[0];
+
+
+    if(
+        bestCar.fitness>
+        recordFitness
+    ){
+
+        recordFitness=
+        bestCar.fitness;
+
+    }
+
+
+    let seedBrain=
+    cloneBrain(
+        bestCar.brain
+    );
+
+
+    seedBrain=
+    applyPersistence(
+        seedBrain
+    );
+
+
+    /* SALVA MELHOR */
+
+    localStorage.setItem(
+
+        "neural-best-brain",
+
+        JSON.stringify({
+
+            version:2,
+
+            sensorCount:
+            config.sensorCount,
+
+            brain:
+            cloneBrain(
+                bestCar.brain
+            ),
+
+            fitness:
+            bestCar.fitness,
+
+            generation:
+            generation
+
+        })
+
+    );
+
+
+    const next=[];
+
+
+    const elite=
+    Math.min(
+        config.elitism,
+        config.carCount
+    );
+
+
+    /* ELITE */
+
+    for(
+        let i=0;
+        i<elite;
+        i++
+    ){
+
+        next.push(
+            new Car(
+                cloneBrain(
+                    cars[i].brain
+                )
+            )
+        );
+
+    }
+
+
+    /* RESTANTE */
+
+    while(
+        next.length<
+        config.carCount
+    ){
+
+        let parent=
+        selectParent();
+
+
+        let brain=
+        cloneBrain(
+            parent.brain
+        );
+
+
+        brain=
+        mutateBrain(
+            brain
+        );
+
+
+        next.push(
+            new Car(brain)
+        );
+
+    }
+
+
+    /* PRIMEIRO INDIVÍDUO RECEBE
+       A MEMÓRIA PERSISTENTE */
+
+    if(
+        next.length>0 &&
+        config.persistence>0
+    ){
+
+        next[0].brain=
+        seedBrain;
+
+    }
+
+
+    cars=next;
+
+    generation++;
+
+}
+
+
+/* =====================================================
+   DESENHAR PISTA
+===================================================== */
+
+function polygon(poly){
 
     ctx.beginPath();
 
@@ -1874,49 +2311,40 @@ function drawPolygon(poly,fill){
 
     ctx.closePath();
 
-    ctx.fillStyle=fill;
-
-    ctx.fill();
-
 }
 
 
 function drawTrack(){
 
-    /* fundo */
-
-    ctx.fillStyle="#080b10";
+    ctx.fillStyle="#090c10";
 
     ctx.fillRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        W,
+        H
     );
 
 
-    /* grade */
+    /* GRADE */
 
     ctx.strokeStyle=
-        "rgba(255,255,255,.025)";
+    "rgba(255,255,255,.035)";
 
     ctx.lineWidth=1;
 
 
     for(
         let x=0;
-        x<canvas.width;
-        x+=40
+        x<W;
+        x+=50
     ){
 
         ctx.beginPath();
 
         ctx.moveTo(x,0);
 
-        ctx.lineTo(
-            x,
-            canvas.height
-        );
+        ctx.lineTo(x,H);
 
         ctx.stroke();
 
@@ -1925,143 +2353,94 @@ function drawTrack(){
 
     for(
         let y=0;
-        y<canvas.height;
-        y+=40
+        y<H;
+        y+=50
     ){
 
         ctx.beginPath();
 
         ctx.moveTo(0,y);
 
-        ctx.lineTo(
-            canvas.width,
-            y
-        );
+        ctx.lineTo(W,y);
 
         ctx.stroke();
 
     }
 
 
-    /* pista */
+    /* EXTERNA */
+
+    polygon(
+        trackData.outer
+    );
+
+    ctx.fillStyle="#555a62";
+
+    ctx.fill();
+
+
+    /* INTERNA */
+
+    polygon(
+        trackData.inner
+    );
+
+    ctx.fillStyle="#0c1014";
+
+    ctx.fill();
+
+
+    /* BORDAS */
+
+    polygon(
+        trackData.outer
+    );
+
+    ctx.strokeStyle="#eee";
+
+    ctx.lineWidth=3;
+
+    ctx.stroke();
+
+
+    polygon(
+        trackData.inner
+    );
+
+    ctx.strokeStyle="#eee";
+
+    ctx.lineWidth=3;
+
+    ctx.stroke();
+
+
+    /* LARGADA */
 
     ctx.save();
 
-    ctx.shadowColor=
-        "rgba(0,0,0,.5)";
+    ctx.setLineDash([
+        7,
+        7
+    ]);
 
-    ctx.shadowBlur=18;
+    ctx.strokeStyle="#fff";
 
-
-    drawPolygon(
-        trackData.outer,
-        "#555e68"
-    );
-
-
-    ctx.restore();
-
-
-    drawPolygon(
-        trackData.inner,
-        "#080b10"
-    );
-
-
-    /* bordas */
-
-    ctx.strokeStyle=
-        "rgba(255,255,255,.15)";
-
-    ctx.lineWidth=2;
+    ctx.lineWidth=4;
 
 
     ctx.beginPath();
 
     ctx.moveTo(
-        trackData.outer[0].x,
-        trackData.outer[0].y
+        START_X-20,
+        START_Y-16
     );
 
-
-    for(
-        let i=1;
-        i<trackData.outer.length;
-        i++
-    ){
-
-        ctx.lineTo(
-            trackData.outer[i].x,
-            trackData.outer[i].y
-        );
-
-    }
-
-
-    ctx.closePath();
+    ctx.lineTo(
+        START_X-20,
+        START_Y+16
+    );
 
     ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        trackData.inner[0].x,
-        trackData.inner[0].y
-    );
-
-
-    for(
-        let i=1;
-        i<trackData.inner.length;
-        i++
-    ){
-
-        ctx.lineTo(
-            trackData.inner[i].x,
-            trackData.inner[i].y
-        );
-
-    }
-
-
-    ctx.closePath();
-
-    ctx.stroke();
-
-
-    /* largada */
-
-    ctx.save();
-
-    ctx.translate(
-        START_X,
-        START_Y
-    );
-
-    ctx.rotate(-Math.PI/2);
-
-
-    for(
-        let i=-2;
-        i<3;
-        i++
-    ){
-
-        ctx.fillStyle =
-            i%2===0
-            ? "#ffffff"
-            : "#111111";
-
-
-        ctx.fillRect(
-            i*6,
-            -18,
-            6,
-            36
-        );
-
-    }
 
 
     ctx.restore();
@@ -2069,623 +2448,309 @@ function drawTrack(){
 }
 
 
-/* =========================================================
-   SENSORES
-========================================================= */
-
-function drawSensors(car){
-
-    if(
-        !car ||
-        !car.alive
-    )
-        return;
-
-
-    if(
-        !document.getElementById(
-            "showSensors"
-        ).checked
-    )
-        return;
-
-
-    ctx.save();
-
-
-    for(
-        let i=0;
-        i<SENSOR_COUNT;
-        i++
-    ){
-
-        let offset;
-
-        if(SENSOR_COUNT===1){
-
-            offset=0;
-
-        }else{
-
-            offset=
-                -Math.PI/2 +
-                i *
-                (
-                    Math.PI/
-                    (SENSOR_COUNT-1)
-                );
-
-        }
-
-
-        const length =
-            car.sensors[i] *
-            120;
-
-
-        const angle =
-            car.angle+offset;
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            car.x,
-            car.y
-        );
-
-
-        ctx.lineTo(
-            car.x+
-            Math.cos(angle)*
-            length,
-
-            car.y+
-            Math.sin(angle)*
-            length
-        );
-
-
-        ctx.strokeStyle=
-            `rgba(
-                0,
-                220,
-                255,
-                ${.15+.45*(1-car.sensors[i])}
-            )`;
-
-
-        ctx.lineWidth=1;
-
-        ctx.stroke();
-
-    }
-
-
-    ctx.restore();
-
-}
-
-
-/* =========================================================
-   NETWORK VISUALIZATION
-========================================================= */
-
-function drawNetwork(){
-
-    const w=
-        networkCanvas.width;
-
-    const h=
-        networkCanvas.height;
-
-
-    nctx.clearRect(
-        0,
-        0,
-        w,
-        h
-    );
-
-
-    /* grid */
-
-    nctx.strokeStyle=
-        "rgba(255,255,255,.025)";
-
-    nctx.lineWidth=1;
-
-
-    for(
-        let x=0;
-        x<w;
-        x+=32
-    ){
-
-        nctx.beginPath();
-
-        nctx.moveTo(x,0);
-
-        nctx.lineTo(
-            x,
-            h
-        );
-
-        nctx.stroke();
-
-    }
-
-
-    for(
-        let y=0;
-        y<h;
-        y+=32
-    ){
-
-        nctx.beginPath();
-
-        nctx.moveTo(0,y);
-
-        nctx.lineTo(
-            w,
-            y
-        );
-
-        nctx.stroke();
-
-    }
-
-
-    if(!bestCar){
-
-        nctx.fillStyle="#4c5866";
-
-        nctx.font=
-            "11px Inter";
-
-        nctx.textAlign="center";
-
-        nctx.fillText(
-            "Aguardando melhor indivíduo...",
-            w/2,
-            h/2
-        );
-
-        return;
-
-    }
-
-
-    const inputX=70;
-
-    const outputX=w-70;
-
-    const top=80;
-
-    const bottom=h-90;
-
-
-    const inputPositions=[];
-
-
-    for(
-        let i=0;
-        i<SENSOR_COUNT;
-        i++
-    ){
-
-        const y=
-            SENSOR_COUNT===1
-            ? (top+bottom)/2
-            : top+
-            i*
-            (
-                (bottom-top)/
-                (SENSOR_COUNT-1)
-            );
-
-
-        inputPositions.push({
-            x:inputX,
-            y:y
-        });
-
-    }
-
-
-    const outputPositions=[
-        {
-            x:outputX,
-            y:h/2-45
-        },
-        {
-            x:outputX,
-            y:h/2+45
-        }
-    ];
-
-
-    /* conexões */
-
-    for(
-        let i=0;
-        i<SENSOR_COUNT;
-        i++
-    ){
-
-        for(
-            let j=0;
-            j<2;
-            j++
-        ){
-
-            const weight =
-                bestCar.weights[i][j];
-
-
-            const alpha =
-                Math.min(
-                    1,
-                    .12+
-                    Math.abs(weight)
-                );
-
-
-            nctx.beginPath();
-
-            nctx.moveTo(
-                inputPositions[i].x,
-                inputPositions[i].y
-            );
-
-
-            nctx.lineTo(
-                outputPositions[j].x,
-                outputPositions[j].y
-            );
-
-
-            nctx.strokeStyle =
-                weight>=0
-                ? `rgba(0,220,255,${alpha})`
-                : `rgba(255,75,95,${alpha})`;
-
-
-            nctx.lineWidth =
-                1+
-                Math.min(
-                    4,
-                    Math.abs(weight)*2
-                );
-
-
-            nctx.stroke();
-
-        }
-
-    }
-
-
-    /* sensores */
-
-    for(
-        let i=0;
-        i<inputPositions.length;
-        i++
-    ){
-
-        const p=
-            inputPositions[i];
-
-
-        const activation =
-            bestCar.sensors[i];
-
-
-        nctx.beginPath();
-
-        nctx.arc(
-            p.x,
-            p.y,
-            7+
-            activation*5,
-            0,
-            Math.PI*2
-        );
-
-
-        nctx.fillStyle=
-            `rgba(
-                0,
-                215,
-                255,
-                ${.25+
-                activation*.75}
-            )`;
-
-
-        nctx.fill();
-
-
-        nctx.strokeStyle=
-            "#00d9ff";
-
-        nctx.stroke();
-
-
-        nctx.fillStyle="#718091";
-
-        nctx.font="8px Inter";
-
-        nctx.textAlign="center";
-
-        nctx.fillText(
-            "S"+(i+1),
-            p.x,
-            p.y-12
-        );
-
-    }
-
-
-    /* outputs */
-
-    for(
-        let i=0;
-        i<2;
-        i++
-    ){
-
-        const p=
-            outputPositions[i];
-
-
-        const activation =
-            bestCar.activations[i];
-
-
-        nctx.beginPath();
-
-        nctx.arc(
-            p.x,
-            p.y,
-            11+
-            Math.abs(activation)*6,
-            0,
-            Math.PI*2
-        );
-
-
-        nctx.fillStyle=
-            activation>=0
-            ? "rgba(0,255,157,.65)"
-            : "rgba(255,70,80,.65)";
-
-
-        nctx.fill();
-
-
-        nctx.strokeStyle=
-            activation>=0
-            ? "#00ff9d"
-            : "#ff4d5e";
-
-
-        nctx.lineWidth=2;
-
-        nctx.stroke();
-
-
-        nctx.fillStyle="#a9b6c5";
-
-        nctx.font="9px Orbitron";
-
-        nctx.textAlign="center";
-
-        nctx.fillText(
-            i===0
-            ? "GÁS"
-            : "DIREÇÃO",
-            p.x,
-            p.y+27
-        );
-
-    }
-
-}
-
-
-/* =========================================================
+/* =====================================================
    EDITOR
-========================================================= */
+===================================================== */
 
-function startTrackEditor(){
+let editMode=false;
 
-    editingTrack=true;
+let selectedPoint=null;
 
-    trackPoints=[];
-
-    cars=[];
-
-    bestCar=null;
-
-    document
-        .getElementById(
-            "editorHint"
-        )
-        .style.display="block";
-
-
-    document
-        .getElementById(
-            "statusText"
-        )
-        .textContent=
-        "EDITOR DE PISTA";
-
-
-    document
-        .getElementById(
-            "state"
-        )
-        .textContent=
-        "EDITOR";
-
-
-    drawEditor();
-
-}
+let selectedType=null;
 
 
 function drawEditor(){
 
-    ctx.fillStyle="#080b10";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    if(!editMode)
+        return;
 
 
-    /* grade */
-
-    ctx.strokeStyle=
-        "rgba(255,255,255,.035)";
-
-    ctx.lineWidth=1;
-
-
-    for(
-        let x=0;
-        x<canvas.width;
-        x+=40
+    function drawPoints(
+        poly,
+        type
     ){
-
-        ctx.beginPath();
-
-        ctx.moveTo(x,0);
-
-        ctx.lineTo(
-            x,
-            canvas.height
-        );
-
-        ctx.stroke();
-
-    }
-
-
-    for(
-        let y=0;
-        y<canvas.height;
-        y+=40
-    ){
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,y);
-
-        ctx.lineTo(
-            canvas.width,
-            y
-        );
-
-        ctx.stroke();
-
-    }
-
-
-    /* linhas */
-
-    if(trackPoints.length>1){
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            trackPoints[0].x,
-            trackPoints[0].y
-        );
-
 
         for(
-            let i=1;
-            i<trackPoints.length;
+            let i=0;
+            i<poly.length;
             i++
         ){
 
-            ctx.lineTo(
-                trackPoints[i].x,
-                trackPoints[i].y
+            const p=poly[i];
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                p.x,
+                p.y,
+                8,
+                0,
+                Math.PI*2
+            );
+
+
+            ctx.fillStyle=
+            selectedType===type &&
+            selectedPoint===i
+            ?
+            "#ffff00"
+            :
+            type==="outer"
+            ?
+            "#ff5555"
+            :
+            "#5599ff";
+
+
+            ctx.fill();
+
+
+            ctx.strokeStyle="#fff";
+
+            ctx.lineWidth=1;
+
+            ctx.stroke();
+
+
+            ctx.fillStyle="#fff";
+
+            ctx.font="10px Arial";
+
+            ctx.fillText(
+                i,
+                p.x+10,
+                p.y-8
             );
 
         }
 
+    }
 
-        ctx.strokeStyle="#00d9ff";
 
-        ctx.lineWidth=3;
+    drawPoints(
+        trackData.outer,
+        "outer"
+    );
 
-        ctx.shadowColor="#00d9ff";
 
-        ctx.shadowBlur=10;
+    drawPoints(
+        trackData.inner,
+        "inner"
+    );
 
-        ctx.stroke();
+}
 
-        ctx.shadowBlur=0;
+
+/* =====================================================
+   REDE — DESENHO
+===================================================== */
+
+function neuronPosition(
+    layer,
+    index,
+    count
+){
+
+    const margins={
+        left:38,
+        right:45,
+        top:65,
+        bottom:100
+    };
+
+
+    const xs=[
+
+        margins.left,
+
+        NW*.36,
+
+        NW*.63,
+
+        NW-margins.right
+
+    ];
+
+
+    const x=xs[layer];
+
+
+    const usable=
+    NH-
+    margins.top-
+    margins.bottom;
+
+
+    let y;
+
+
+    if(count===1){
+
+        y=
+        margins.top+
+        usable/2;
+
+    }else{
+
+        y=
+        margins.top+
+        (
+            index/
+            (count-1)
+        )*
+        usable;
 
     }
 
 
-    /* pontos */
+    return {
+        x,
+        y
+    };
 
-    for(
-        let i=0;
-        i<trackPoints.length;
-        i++
+}
+
+
+function weightAlpha(weight){
+
+    return Math.min(
+        1,
+        .12+
+        Math.abs(weight)*
+        .75
+    );
+
+}
+
+
+function drawConnection(
+    a,
+    b,
+    weight
+){
+
+    nctx.beginPath();
+
+    nctx.moveTo(
+        a.x,
+        a.y
+    );
+
+    nctx.lineTo(
+        b.x,
+        b.y
+    );
+
+
+    const alpha=
+    weightAlpha(weight);
+
+
+    /*
+      Positivo = branco/ciano
+      Negativo = vermelho
+    */
+
+    if(weight>=0){
+
+        nctx.strokeStyle=
+        `rgba(70,210,255,${alpha})`;
+
+    }else{
+
+        nctx.strokeStyle=
+        `rgba(255,75,75,${alpha})`;
+
+    }
+
+
+    nctx.lineWidth=
+    Math.max(
+        .4,
+        Math.min(
+            4,
+            Math.abs(weight)*2
+        )
+    );
+
+
+    nctx.stroke();
+
+}
+
+
+function drawNeuron(
+    pos,
+    activation,
+    label
+){
+
+    const strength=
+    Math.abs(activation);
+
+
+    const radius=
+    6+
+    strength*6;
+
+
+    nctx.beginPath();
+
+    nctx.arc(
+        pos.x,
+        pos.y,
+        radius,
+        0,
+        Math.PI*2
+    );
+
+
+    if(
+        activation>=0
     ){
 
-        const p=
-            trackPoints[i];
+        nctx.fillStyle=
+        `rgba(
+            50,
+            220,
+            255,
+            ${.2+strength*.8}
+        )`;
+
+    }else{
+
+        nctx.fillStyle=
+        `rgba(
+            255,
+            70,
+            70,
+            ${.2+strength*.8}
+        )`;
+
+    }
 
 
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            7,
-            0,
-            Math.PI*2
-        );
+    nctx.fill();
 
 
-        ctx.fillStyle=
-            i===0
-            ? "#00ff9d"
-            : "#ffffff";
+    nctx.strokeStyle="#fff";
+
+    nctx.lineWidth=1;
+
+    nctx.stroke();
 
 
-        ctx.fill();
+    if(label){
 
+        nctx.fillStyle="#aaa";
 
-        ctx.strokeStyle="#00d9ff";
+        nctx.font="9px Arial";
 
-        ctx.lineWidth=2;
-
-        ctx.stroke();
-
-
-        ctx.fillStyle="#fff";
-
-        ctx.font=
-            "bold 10px Inter";
-
-        ctx.fillText(
-            i+1,
-            p.x+10,
-            p.y-10
+        nctx.fillText(
+            label,
+            pos.x-15,
+            pos.y+radius+12
         );
 
     }
@@ -2693,460 +2758,919 @@ function drawEditor(){
 }
 
 
-/* =========================================================
-   EDITOR CLICK
-========================================================= */
+function drawNetwork(){
+
+    nctx.clearRect(
+        0,
+        0,
+        NW,
+        NH
+    );
+
+
+    nctx.fillStyle="#111419";
+
+    nctx.fillRect(
+        0,
+        0,
+        NW,
+        NH
+    );
+
+
+    if(
+        !bestCar ||
+        !document.getElementById(
+            "showNetwork"
+        ).checked
+    ){
+
+        nctx.fillStyle="#777";
+
+        nctx.font="13px Arial";
+
+        nctx.fillText(
+            "Rede neural desativada",
+            110,
+            NH/2
+        );
+
+        return;
+
+    }
+
+
+    const sensors=
+    bestCar.sensors;
+
+
+    const a1=
+    bestCar.activations.hidden1;
+
+
+    const a2=
+    bestCar.activations.hidden2;
+
+
+    const out=
+    bestCar.activations.output;
+
+
+    const layers=[
+
+        sensors,
+
+        a1,
+
+        a2,
+
+        out
+
+    ];
+
+
+    const names=[
+
+        "SENSORES",
+
+        "CAMADA 1",
+
+        "CAMADA 2",
+
+        "SAÍDAS"
+
+    ];
+
+
+    /* TÍTULOS */
+
+    for(
+        let layer=0;
+        layer<4;
+        layer++
+    ){
+
+        const count=
+        layers[layer].length;
+
+
+        const pos=
+        neuronPosition(
+            layer,
+            0,
+            count
+        );
+
+
+        nctx.fillStyle="#888";
+
+        nctx.font="9px Arial";
+
+        nctx.textAlign="center";
+
+
+        nctx.fillText(
+            names[layer],
+            pos.x,
+            42
+        );
+
+    }
+
+
+    nctx.textAlign="left";
+
+
+    /* =============================
+       CONEXÕES
+    ============================= */
+
+    function connections(
+        layerA,
+        layerB,
+        matrix
+    ){
+
+        const A=
+        layers[layerA];
+
+        const B=
+        layers[layerB];
+
+
+        for(
+            let i=0;
+            i<A.length;
+            i++
+        ){
+
+            const p1=
+            neuronPosition(
+                layerA,
+                i,
+                A.length
+            );
+
+
+            for(
+                let j=0;
+                j<B.length;
+                j++
+            ){
+
+                const p2=
+                neuronPosition(
+                    layerB,
+                    j,
+                    B.length
+                );
+
+
+                let weight=
+                matrix[i][j];
+
+
+                /*
+                  A ativação atual também
+                  influencia visualmente
+                  a conexão.
+                */
+
+                weight*=
+                Math.abs(
+                    A[i]
+                )+.15;
+
+
+                drawConnection(
+                    p1,
+                    p2,
+                    weight
+                );
+
+            }
+
+        }
+
+    }
+
+
+    connections(
+        0,
+        1,
+        bestCar.brain.w1
+    );
+
+
+    connections(
+        1,
+        2,
+        bestCar.brain.w2
+    );
+
+
+    connections(
+        2,
+        3,
+        bestCar.brain.w3
+    );
+
+
+    /* =============================
+       NEURÔNIOS
+    ============================= */
+
+    for(
+        let layer=0;
+        layer<4;
+        layer++
+    ){
+
+        const values=
+        layers[layer];
+
+
+        for(
+            let i=0;
+            i<values.length;
+            i++
+        ){
+
+            const pos=
+            neuronPosition(
+                layer,
+                i,
+                values.length
+            );
+
+
+            let activation=
+            values[i];
+
+
+            /*
+              Sensores estão em
+              0..1. Ajuste visual.
+            */
+
+            if(
+                layer===0
+            ){
+
+                activation=
+                values[i]*2-1;
+
+            }
+
+
+            let label="";
+
+
+            if(
+                layer===0
+            ){
+
+                label=
+                "S"+
+                (i+1);
+
+            }
+
+
+            if(
+                layer===3
+            ){
+
+                label=[
+                    "ACC",
+                    "TURN",
+                    "BRAKE"
+                ][i];
+
+            }
+
+
+            drawNeuron(
+                pos,
+                activation,
+                label
+            );
+
+
+            /* valor */
+
+            nctx.fillStyle="#888";
+
+            nctx.font="8px Arial";
+
+            nctx.textAlign="center";
+
+
+            nctx.fillText(
+
+                Number(
+                    values[i]
+                ).toFixed(2),
+
+                pos.x,
+
+                pos.y-12
+
+            );
+
+        }
+
+    }
+
+
+    /* =============================
+       INFORMAÇÕES
+    ============================= */
+
+    nctx.textAlign="left";
+
+    nctx.fillStyle="#aaa";
+
+    nctx.font="10px Arial";
+
+
+    nctx.fillText(
+
+        "Fitness: "+
+        bestCar.fitness.toFixed(1),
+
+        12,
+        NH-55
+
+    );
+
+
+    nctx.fillText(
+
+        "Velocidade: "+
+        bestCar.speed.toFixed(1),
+
+        12,
+        NH-40
+
+    );
+
+
+    nctx.fillText(
+
+        "Idade: "+
+        bestCar.age.toFixed(1)+
+        " s",
+
+        12,
+        NH-25
+
+    );
+
+}
+
+
+/* =====================================================
+   EDITOR — MOUSE
+===================================================== */
+
+function mousePosition(e){
+
+    const rect=
+    canvas.getBoundingClientRect();
+
+
+    return {
+
+        x:
+        e.clientX-
+        rect.left,
+
+        y:
+        e.clientY-
+        rect.top
+
+    };
+
+}
+
 
 canvas.addEventListener(
-    "click",
-    function(e){
+    "mousedown",
+    e=>{
 
-        if(!editingTrack)
+        if(!editMode)
             return;
 
 
-        const rect=
-            canvas.getBoundingClientRect();
+        const p=
+        mousePosition(e);
 
 
-        const scaleX=
-            canvas.width/
-            rect.width;
+        let closest=null;
+
+        let min=15;
 
 
-        const scaleY=
-            canvas.height/
-            rect.height;
+        for(
+            let i=0;
+            i<trackData.outer.length;
+            i++
+        ){
+
+            const d=
+            Math.hypot(
+                p.x-
+                trackData.outer[i].x,
+
+                p.y-
+                trackData.outer[i].y
+            );
 
 
-        const x=
-            (e.clientX-rect.left)*
-            scaleX;
+            if(d<min){
+
+                min=d;
+
+                closest={
+                    type:"outer",
+                    index:i
+                };
+
+            }
+
+        }
 
 
-        const y=
-            (e.clientY-rect.top)*
-            scaleY;
+        for(
+            let i=0;
+            i<trackData.inner.length;
+            i++
+        ){
+
+            const d=
+            Math.hypot(
+                p.x-
+                trackData.inner[i].x,
+
+                p.y-
+                trackData.inner[i].y
+            );
 
 
-        trackPoints.push({
-            x:x,
-            y:y
-        });
+            if(d<min){
+
+                min=d;
+
+                closest={
+                    type:"inner",
+                    index:i
+                };
+
+            }
+
+        }
 
 
-        drawEditor();
+        if(closest){
+
+            selectedType=
+            closest.type;
+
+            selectedPoint=
+            closest.index;
+
+        }
 
     }
 );
 
 
-/* =========================================================
-   INTERPOLAÇÃO
-========================================================= */
+canvas.addEventListener(
+    "mousemove",
+    e=>{
 
-function lerp(a,b,t){
-
-    return {
-
-        x:
-            a.x+
-            (b.x-a.x)*t,
-
-        y:
-            a.y+
-            (b.y-a.y)*t
-
-    };
-
-}
-
-
-/* =========================================================
-   CURVA CATMULL-ROM
-========================================================= */
-
-function catmullRom(
-    p0,
-    p1,
-    p2,
-    p3,
-    t
-){
-
-    const t2=t*t;
-
-    const t3=t2*t;
-
-
-    return {
-
-        x:.5*(
-            2*p1.x+
-            (-p0.x+p2.x)*t+
-            (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2+
-            (-p0.x+3*p1.x-3*p2.x+p3.x)*t3
-        ),
-
-        y:.5*(
-            2*p1.y+
-            (-p0.y+p2.y)*t+
-            (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2+
-            (-p0.y+3*p1.y-3*p2.y+p3.y)*t3
+        if(
+            !editMode ||
+            selectedPoint===null ||
+            e.buttons!==1
         )
-
-    };
-
-}
+            return;
 
 
-/* =========================================================
-   SUAVIZAR PISTA
-========================================================= */
-
-function smoothTrack(points){
-
-    if(points.length<3)
-        return points.slice();
+        const p=
+        mousePosition(e);
 
 
-    const result=[];
+        trackData[
+            selectedType
+        ][
+            selectedPoint
+        ]={
+
+            x:p.x,
+
+            y:p.y
+
+        };
+
+
+        init();
+
+    }
+);
+
+
+window.addEventListener(
+    "mouseup",
+    ()=>{
+
+        selectedPoint=null;
+
+        selectedType=null;
+
+    }
+);
+
+
+/* =====================================================
+   EDITOR — ADICIONAR PONTO
+===================================================== */
+
+function addPoint(type){
+
+    const poly=
+    trackData[type];
+
+
+    let bestIndex=0;
+
+    let bestDist=Infinity;
 
 
     for(
         let i=0;
-        i<points.length;
+        i<poly.length;
         i++
     ){
 
-        const p0=
-            points[
-                (i-1+points.length)%
-                points.length
-            ];
+        const a=poly[i];
+
+        const b=
+        poly[
+            (i+1)%
+            poly.length
+        ];
 
 
-        const p1=
-            points[i];
+        const mx=
+        (a.x+b.x)/2;
+
+        const my=
+        (a.y+b.y)/2;
 
 
-        const p2=
-            points[
-                (i+1)%
-                points.length
-            ];
+        const d=
+        Math.hypot(
+            mx-START_X,
+            my-START_Y
+        );
 
 
-        const p3=
-            points[
-                (i+2)%
-                points.length
-            ];
+        if(d<bestDist){
 
+            bestDist=d;
 
-        for(
-            let t=0;
-            t<1;
-            t+=.12
-        ){
-
-            result.push(
-                catmullRom(
-                    p0,
-                    p1,
-                    p2,
-                    p3,
-                    t
-                )
-            );
+            bestIndex=i+1;
 
         }
 
     }
 
 
-    return result;
-
-}
-
-
-/* =========================================================
-   CONSTRUIR PISTA
-========================================================= */
-
-function buildTrackFromPoints(){
-
-    if(trackPoints.length<3){
-
-        alert(
-            "Adicione pelo menos 3 pontos."
-        );
-
-        return;
-
-    }
+    const a=
+    poly[
+        bestIndex-1
+    ];
 
 
-    const center=
-        smoothTrack(
-            trackPoints
-        );
+    const b=
+    poly[
+        bestIndex%
+        poly.length
+    ];
 
 
-    const outer=[];
-    const inner=[];
+    poly.splice(
 
+        bestIndex,
 
-    const halfWidth=
-        customTrackWidth/2;
+        0,
 
-
-    for(
-        let i=0;
-        i<center.length;
-        i++
-    ){
-
-        const prev=
-            center[
-                (i-1+center.length)%
-                center.length
-            ];
-
-
-        const next=
-            center[
-                (i+1)%
-                center.length
-            ];
-
-
-        let dx=
-            next.x-prev.x;
-
-
-        let dy=
-            next.y-prev.y;
-
-
-        const len=
-            Math.hypot(dx,dy);
-
-
-        if(len===0)
-            continue;
-
-
-        dx/=len;
-        dy/=len;
-
-
-        const nx=-dy;
-        const ny=dx;
-
-
-        outer.push({
+        {
 
             x:
-                center[i].x+
-                nx*halfWidth,
+            (a.x+b.x)/2,
 
             y:
-                center[i].y+
-                ny*halfWidth
+            (a.y+b.y)/2
 
-        });
+        }
 
+    );
 
-        inner.push({
-
-            x:
-                center[i].x-
-                nx*halfWidth,
-
-            y:
-                center[i].y-
-                ny*halfWidth
-
-        });
-
-    }
-
-
-    trackData.outer=outer;
-
-    trackData.inner=inner;
-
-
-    START_X=
-        center[0].x;
-
-    START_Y=
-        center[0].y;
-
-
-    editingTrack=false;
-
-
-    document
-        .getElementById(
-            "editorHint"
-        )
-        .style.display="none";
-
-
-    document
-        .getElementById(
-            "statusText"
-        )
-        .textContent=
-        "SIMULAÇÃO";
-
-
-    document
-        .getElementById(
-            "state"
-        )
-        .textContent=
-        "EXECUTANDO";
-
-
-    saveData();
 
     init();
 
 }
 
 
-/* =========================================================
-   EDITOR — DESFAZER
-========================================================= */
+document.getElementById(
+    "addOuter"
+).onclick=()=>{
+    addPoint("outer");
+};
 
-function undoPoint(){
 
-    if(!editingTrack)
+document.getElementById(
+    "addInner"
+).onclick=()=>{
+    addPoint("inner");
+};
+
+
+/* =====================================================
+   EDITOR — REMOVER
+===================================================== */
+
+document.getElementById(
+    "removePoint"
+).onclick=()=>{
+
+    if(
+        selectedPoint===null
+    ){
+
+        alert(
+            "Selecione um ponto."
+        );
+
+        return;
+
+    }
+
+
+    const poly=
+    trackData[selectedType];
+
+
+    if(
+        poly.length<=3
+    ){
+
+        alert(
+            "São necessários pelo menos 3 pontos."
+        );
+
+        return;
+
+    }
+
+
+    poly.splice(
+        selectedPoint,
+        1
+    );
+
+
+    selectedPoint=null;
+
+    selectedType=null;
+
+
+    init();
+
+};
+
+
+/* =====================================================
+   MODO EDITOR
+===================================================== */
+
+function setEditMode(value){
+
+    editMode=value;
+
+
+    document.getElementById(
+        "editorHint"
+    ).style.display=
+    editMode
+    ?
+    "block"
+    :
+    "none";
+
+
+    document.getElementById(
+        "editorMode"
+    ).classList.toggle(
+        "active",
+        editMode
+    );
+
+
+    document.getElementById(
+        "simulationMode"
+    ).classList.toggle(
+        "active",
+        !editMode
+    );
+
+
+    document.getElementById(
+        "statusBadge"
+    ).textContent=
+    editMode
+    ?
+    "EDITOR"
+    :
+    "SIMULAÇÃO";
+
+}
+
+
+document.getElementById(
+    "simulationMode"
+).onclick=()=>{
+
+    setEditMode(false);
+
+};
+
+
+document.getElementById(
+    "editorMode"
+).onclick=()=>{
+
+    setEditMode(true);
+
+};
+
+
+/* =====================================================
+   SALVAR PISTA
+===================================================== */
+
+document.getElementById(
+    "saveTrack"
+).onclick=()=>{
+
+    localStorage.setItem(
+
+        "custom-track",
+
+        JSON.stringify(
+            trackData
+        )
+
+    );
+
+
+    alert(
+        "Pista salva."
+    );
+
+};
+
+
+/* =====================================================
+   CARREGAR PISTA
+===================================================== */
+
+document.getElementById(
+    "loadTrack"
+).onclick=()=>{
+
+    const saved=
+    localStorage.getItem(
+        "custom-track"
+    );
+
+
+    if(!saved){
+
+        alert(
+            "Nenhuma pista salva."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        trackData=
+        JSON.parse(saved);
+
+        init();
+
+
+    }catch(e){
+
+        alert(
+            "Erro ao carregar pista."
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   PISTA PADRÃO
+===================================================== */
+
+document.getElementById(
+    "resetTrack"
+).onclick=()=>{
+
+    trackData=
+    structuredClone(
+        defaultTrack
+    );
+
+
+    init();
+
+};
+
+
+/* =====================================================
+   SALVAR CÉREBRO
+===================================================== */
+
+document.getElementById(
+    "saveBrain"
+).onclick=()=>{
+
+    if(!bestCar)
         return;
 
 
-    trackPoints.pop();
-
-    drawEditor();
-
-}
-
-
-/* =========================================================
-   EDITOR — LIMPAR
-========================================================= */
-
-function clearTrackEditor(){
-
-    trackPoints=[];
-
-    editingTrack=true;
-
-    cars=[];
-
-    bestCar=null;
-
-    drawEditor();
-
-}
-
-
-/* =========================================================
-   RESIZE
-========================================================= */
-
-function resize(){
-
-    canvas.width=
-        canvas.clientWidth;
-
-    canvas.height=
-        canvas.clientHeight;
-
-
-    networkCanvas.width=
-        networkCanvas.clientWidth;
-
-    networkCanvas.height=
-        networkCanvas.clientHeight;
-
-}
-
-
-window.addEventListener(
-    "resize",
-    resize
-);
-
-resize();
-
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE_KEY=
-    "neural-track-evolution-v2";
-
-
-function saveData(){
-
-    const data={
-
-        settings:{
-
-            CAR_COUNT,
-            SENSOR_COUNT,
-            MAX_SPEED,
-            MIN_SPEED,
-            MUTATION_RATE,
-            MUTATION_STRENGTH,
-            PERSISTENCE,
-            ELITE_PERCENT,
-            customTrackWidth
-
-        },
-
-
-        track:trackData,
-
-        start:{
-            x:START_X,
-            y:START_Y
-        },
-
-
-        best:
-            bestCar
-            ? bestCar.weights
-            : null
-
-    };
-
-
     localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
+
+        "neural-best-brain",
+
+        JSON.stringify({
+
+            version:2,
+
+            sensorCount:
+            config.sensorCount,
+
+            brain:
+            cloneBrain(
+                bestCar.brain
+            ),
+
+            fitness:
+            bestCar.fitness,
+
+            generation:
+            generation
+
+        })
+
     );
 
-}
+
+    alert(
+        "Cérebro salvo."
+    );
+
+};
 
 
-function loadData(){
+/* =====================================================
+   CARREGAR CÉREBRO
+===================================================== */
 
-    const raw=
-        localStorage.getItem(
-            STORAGE_KEY
-        );
+document.getElementById(
+    "loadBrain"
+).onclick=()=>{
+
+    const saved=
+    localStorage.getItem(
+        "neural-best-brain"
+    );
 
 
-    if(!raw){
+    if(!saved){
 
         alert(
-            "Nenhum projeto salvo."
+            "Nenhum cérebro salvo."
         );
 
         return;
@@ -3157,265 +3681,307 @@ function loadData(){
     try{
 
         const data=
-            JSON.parse(raw);
+        JSON.parse(saved);
 
 
-        if(data.settings){
+        if(
+            data.version!==2
+        ){
 
-            CAR_COUNT=
-                data.settings.CAR_COUNT;
+            alert(
+                "Esse cérebro pertence a uma versão antiga da rede."
+            );
 
-            SENSOR_COUNT=
-                data.settings.SENSOR_COUNT;
-
-            MAX_SPEED=
-                data.settings.MAX_SPEED;
-
-            MIN_SPEED=
-                data.settings.MIN_SPEED;
-
-            MUTATION_RATE=
-                data.settings.MUTATION_RATE;
-
-            MUTATION_STRENGTH=
-                data.settings.MUTATION_STRENGTH;
-
-            PERSISTENCE=
-                data.settings.PERSISTENCE;
-
-            ELITE_PERCENT=
-                data.settings.ELITE_PERCENT;
-
-            customTrackWidth=
-                data.settings.customTrackWidth;
+            return;
 
         }
 
 
-        if(data.track){
+        if(
+            data.sensorCount !==
+            config.sensorCount
+        ){
 
-            trackData.outer=
-                data.track.outer;
+            alert(
 
-            trackData.inner=
-                data.track.inner;
+                "Quantidade incompatível de sensores.\n\n"+
+                "Cérebro: "+
+                data.sensorCount+
+                "\n"+
+                "Atual: "+
+                config.sensorCount
+
+            );
+
+            return;
 
         }
 
 
-        if(data.start){
-
-            START_X=
-                data.start.x;
-
-            START_Y=
-                data.start.y;
-
-        }
+        cars=[];
 
 
-        syncControls();
+        for(
+            let i=0;
+            i<config.carCount;
+            i++
+        ){
 
-        init();
+            cars.push(
 
-
-        if(data.best){
-
-            bestCar=
                 new Car(
-                    data.best
-                );
+
+                    mutateBrain(
+                        cloneBrain(
+                            data.brain
+                        )
+                    )
+
+                )
+
+            );
 
         }
 
 
+        generation=
+        data.generation||
+        1;
+
+
+        bestCar=cars[0];
+
+
+    }catch(e){
+
         alert(
-            "Projeto carregado."
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        alert(
-            "Não foi possível carregar os dados."
+            "Erro ao carregar cérebro."
         );
 
     }
 
-}
+};
 
 
-/* =========================================================
-   LIMPAR STORAGE
-========================================================= */
+/* =====================================================
+   APAGAR APRENDIZADO
+===================================================== */
 
-function clearStorage(){
+document.getElementById(
+    "clearBrain"
+).onclick=()=>{
 
-    const confirmClear=
-        confirm(
-            "Isso apagará todos os dados salvos pelo sistema neste site. Continuar?"
-        );
-
-
-    if(!confirmClear)
+    if(
+        !confirm(
+            "Apagar o cérebro salvo?"
+        )
+    )
         return;
 
 
-    localStorage.clear();
-
-    sessionStorage.clear();
-
-
-    alert(
-        "Local Storage e Session Storage foram limpos."
+    localStorage.removeItem(
+        "neural-best-brain"
     );
 
 
-    location.reload();
-
-}
+    recordFitness=0;
 
 
-/* =========================================================
-   CONTROLES
-========================================================= */
+    alert(
+        "Aprendizado apagado."
+    );
 
-function syncControls(){
-
-    document.getElementById(
-        "carCount"
-    ).value=CAR_COUNT;
+};
 
 
-    document.getElementById(
-        "sensorCount"
-    ).value=SENSOR_COUNT;
-
-
-    document.getElementById(
-        "maxSpeed"
-    ).value=MAX_SPEED;
-
-
-    document.getElementById(
-        "minSpeed"
-    ).value=MIN_SPEED;
-
-
-    document.getElementById(
-        "mutation"
-    ).value=
-        MUTATION_RATE*100;
-
-
-    document.getElementById(
-        "mutationStrength"
-    ).value=
-        MUTATION_STRENGTH*100;
-
-
-    document.getElementById(
-        "persistence"
-    ).value=
-        PERSISTENCE*100;
-
-
-    document.getElementById(
-        "elite"
-    ).value=
-        ELITE_PERCENT*100;
-
-
-    document.getElementById(
-        "trackWidth"
-    ).value=
-        customTrackWidth;
-
-
-    updateControlLabels();
-
-}
-
-
-function updateControlLabels(){
-
-    document.getElementById(
-        "carCountValue"
-    ).textContent=
-        CAR_COUNT;
-
-
-    document.getElementById(
-        "sensorCountValue"
-    ).textContent=
-        SENSOR_COUNT;
-
-
-    document.getElementById(
-        "maxSpeedValue"
-    ).textContent=
-        MAX_SPEED;
-
-
-    document.getElementById(
-        "minSpeedValue"
-    ).textContent=
-        MIN_SPEED;
-
-
-    document.getElementById(
-        "mutationValue"
-    ).textContent=
-        Math.round(
-            MUTATION_RATE*100
-        )+"%";
-
-
-    document.getElementById(
-        "mutationStrengthValue"
-    ).textContent=
-        MUTATION_STRENGTH.toFixed(2);
-
-
-    document.getElementById(
-        "persistenceValue"
-    ).textContent=
-        Math.round(
-            PERSISTENCE*100
-        )+"%";
-
-
-    document.getElementById(
-        "eliteValue"
-    ).textContent=
-        Math.round(
-            ELITE_PERCENT*100
-        )+"%";
-
-
-    document.getElementById(
-        "trackWidthValue"
-    ).textContent=
-        customTrackWidth;
-
-}
-
-
-/* =========================================================
-   SLIDER EVENTS
-========================================================= */
+/* =====================================================
+   LIMPAR DADOS DO SIMULADOR
+===================================================== */
 
 document.getElementById(
-    "carCount"
+    "clearStorage"
+).onclick=()=>{
+
+    if(
+        !confirm(
+
+            "Isso apagará o cérebro salvo e a pista personalizada. "+
+            "Outros dados do navegador não serão apagados. Continuar?"
+
+        )
+    )
+        return;
+
+
+    localStorage.removeItem(
+        "neural-best-brain"
+    );
+
+
+    localStorage.removeItem(
+        "custom-track"
+    );
+
+
+    recordFitness=0;
+
+
+    generation=1;
+
+
+    trackData=
+    structuredClone(
+        defaultTrack
+    );
+
+
+    init();
+
+
+    alert(
+        "Dados do simulador apagados."
+    );
+
+};
+
+
+/* =====================================================
+   CONTROLES
+===================================================== */
+
+function slider(
+    id,
+    property,
+    output,
+    formatter
+){
+
+    const element=
+    document.getElementById(id);
+
+
+    const display=
+    document.getElementById(output);
+
+
+    function update(){
+
+        config[property]=
+        parseFloat(
+            element.value
+        );
+
+
+        display.textContent=
+        formatter
+        ?
+        formatter(
+            config[property]
+        )
+        :
+        config[property];
+
+    }
+
+
+    element.addEventListener(
+        "input",
+        update
+    );
+
+
+    update();
+
+}
+
+
+slider(
+    "carCount",
+    "carCount",
+    "carCountValue"
+);
+
+
+slider(
+    "maxSpeed",
+    "maxSpeed",
+    "maxSpeedValue"
+);
+
+
+slider(
+    "minSpeed",
+    "minSpeed",
+    "minSpeedValue"
+);
+
+
+slider(
+    "carSize",
+    "carSize",
+    "carSizeValue"
+);
+
+
+slider(
+    "sensorRange",
+    "sensorRange",
+    "sensorRangeValue"
+);
+
+
+slider(
+    "mutation",
+    "mutationRate",
+    "mutationValue",
+    v=>
+    (v*100).toFixed(0)+"%"
+);
+
+
+slider(
+    "mutationStrength",
+    "mutationStrength",
+    "mutationStrengthValue"
+);
+
+
+slider(
+    "persistence",
+    "persistence",
+    "persistenceValue",
+    v=>
+    (v*100).toFixed(0)+"%"
+);
+
+
+slider(
+    "elitism",
+    "elitism",
+    "elitismValue"
+);
+
+
+/* =====================================================
+   QUANTIDADE DE SENSORES
+===================================================== */
+
+document.getElementById(
+    "sensorCount"
 ).addEventListener(
     "input",
     e=>{
 
-        CAR_COUNT=
-            Number(e.target.value);
+        config.sensorCount=
+        parseInt(
+            e.target.value
+        );
 
-        updateControlLabels();
+
+        document.getElementById(
+            "sensorCountValue"
+        ).textContent=
+        config.sensorCount;
 
     }
 );
@@ -3424,13 +3990,13 @@ document.getElementById(
 document.getElementById(
     "sensorCount"
 ).addEventListener(
-    "input",
-    e=>{
+    "change",
+    ()=>{
 
-        SENSOR_COUNT=
-            Number(e.target.value);
-
-        updateControlLabels();
+        /*
+          Alterar o número de sensores
+          muda a dimensão da rede.
+        */
 
         init();
 
@@ -3438,247 +4004,151 @@ document.getElementById(
 );
 
 
+/* =====================================================
+   SELEÇÃO
+===================================================== */
+
 document.getElementById(
-    "maxSpeed"
+    "selection"
 ).addEventListener(
-    "input",
+    "change",
     e=>{
 
-        MAX_SPEED=
-            Number(e.target.value);
-
-        updateControlLabels();
+        config.selection=
+        e.target.value;
 
     }
 );
 
 
-document.getElementById(
-    "minSpeed"
-).addEventListener(
-    "input",
-    e=>{
+/* =====================================================
+   PAUSAR
+===================================================== */
 
-        MIN_SPEED=
-            Number(e.target.value);
+let paused=false;
 
-        updateControlLabels();
-
-    }
-);
-
-
-document.getElementById(
-    "mutation"
-).addEventListener(
-    "input",
-    e=>{
-
-        MUTATION_RATE=
-            Number(e.target.value)/100;
-
-        updateControlLabels();
-
-    }
-);
-
-
-document.getElementById(
-    "mutationStrength"
-).addEventListener(
-    "input",
-    e=>{
-
-        MUTATION_STRENGTH=
-            Number(e.target.value)/100;
-
-        updateControlLabels();
-
-    }
-);
-
-
-document.getElementById(
-    "persistence"
-).addEventListener(
-    "input",
-    e=>{
-
-        PERSISTENCE=
-            Number(e.target.value)/100;
-
-        updateControlLabels();
-
-    }
-);
-
-
-document.getElementById(
-    "elite"
-).addEventListener(
-    "input",
-    e=>{
-
-        ELITE_PERCENT=
-            Number(e.target.value)/100;
-
-        updateControlLabels();
-
-    }
-);
-
-
-document.getElementById(
-    "carSize"
-).addEventListener(
-    "input",
-    e=>{
-
-        document.getElementById(
-            "carSizeValue"
-        ).textContent=
-            e.target.value;
-
-    }
-);
-
-
-document.getElementById(
-    "trackWidth"
-).addEventListener(
-    "input",
-    e=>{
-
-        customTrackWidth=
-            Number(e.target.value);
-
-        document.getElementById(
-            "trackWidthValue"
-        ).textContent=
-            customTrackWidth;
-
-    }
-);
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
 
 document.getElementById(
     "pauseBtn"
-).onclick=function(){
+).onclick=()=>{
 
     paused=!paused;
 
 
-    this.textContent=
-        paused
-        ? "CONTINUAR"
-        : "PAUSAR";
+    document.getElementById(
+        "pauseBtn"
+    ).textContent=
+    paused
+    ?
+    "Continuar"
+    :
+    "Pausar";
 
 
     document.getElementById(
-        "state"
+        "statusBadge"
     ).textContent=
-        paused
-        ? "PAUSADO"
-        : "EXECUTANDO";
-
-
-    document.getElementById(
-        "statusText"
-    ).textContent=
-        paused
-        ? "PAUSADO"
-        : "SIMULAÇÃO";
+    paused
+    ?
+    "PAUSADO"
+    :
+    editMode
+    ?
+    "EDITOR"
+    :
+    "SIMULAÇÃO";
 
 };
 
 
+/* =====================================================
+   RESET
+===================================================== */
+
 document.getElementById(
-    "restartBtn"
-).onclick=function(){
+    "resetBtn"
+).onclick=()=>{
+
+    generation=1;
 
     init();
 
 };
 
 
-document.getElementById(
-    "editTrackBtn"
-).onclick=function(){
+/* =====================================================
+   NOVA GERAÇÃO
+===================================================== */
 
-    startTrackEditor();
+document.getElementById(
+    "newGenerationBtn"
+).onclick=()=>{
+
+    nextGeneration();
 
 };
 
 
-document.getElementById(
-    "undoPointBtn"
-).onclick=function(){
+/* =====================================================
+   TECLADO
+===================================================== */
 
-    undoPoint();
+window.addEventListener(
+    "keydown",
+    e=>{
 
-};
+        if(
+            e.code==="Space"
+        ){
 
+            e.preventDefault();
 
-document.getElementById(
-    "finishTrackBtn"
-).onclick=function(){
+            document.getElementById(
+                "pauseBtn"
+            ).click();
 
-    buildTrackFromPoints();
-
-};
-
-
-document.getElementById(
-    "clearTrackBtn"
-).onclick=function(){
-
-    clearTrackEditor();
-
-};
+        }
 
 
-document.getElementById(
-    "saveBtn"
-).onclick=function(){
+        if(
+            e.key.toLowerCase()==="e"
+        ){
 
-    saveData();
+            setEditMode(
+                !editMode
+            );
 
-    alert(
-        "Projeto salvo no navegador."
-    );
-
-};
+        }
 
 
-document.getElementById(
-    "loadBtn"
-).onclick=function(){
+        if(
+            e.key.toLowerCase()==="r"
+        ){
 
-    loadData();
+            init();
 
-};
+        }
 
-
-document.getElementById(
-    "clearStorageBtn"
-).onclick=function(){
-
-    clearStorage();
-
-};
+    }
+);
 
 
-/* =========================================================
-   STATS
-========================================================= */
+/* =====================================================
+   ESTATÍSTICAS
+===================================================== */
+
+let frames=0;
+
+let fps=60;
+
+let fpsTime=
+performance.now();
+
 
 function updateStats(){
 
     let alive=0;
+
 
     for(
         const car of cars
@@ -3690,175 +4160,129 @@ function updateStats(){
     }
 
 
+    if(bestCar){
+
+        if(
+            bestCar.fitness>
+            recordFitness
+        ){
+
+            recordFitness=
+            bestCar.fitness;
+
+        }
+
+    }
+
+
     document.getElementById(
-        "generation"
+        "generationValue"
     ).textContent=
-        generation;
+    generation;
 
 
     document.getElementById(
         "topGeneration"
     ).textContent=
-        generation;
+    generation;
 
 
     document.getElementById(
-        "alive"
+        "aliveValue"
     ).textContent=
-        alive;
+    alive;
 
 
     document.getElementById(
-        "bestFitness"
+        "fitnessValue"
     ).textContent=
-        bestCar
-        ? Math.floor(bestCar.fitness)
-        : 0;
+    bestCar
+    ?
+    bestCar.fitness.toFixed(1)
+    :
+    "0";
 
 
     document.getElementById(
-        "bestSpeed"
+        "recordValue"
     ).textContent=
-        bestCar
-        ? bestCar.speed.toFixed(1)
-        : 0;
+    recordFitness.toFixed(1);
 
 
     document.getElementById(
-        "trackPointsStat"
+        "fpsValue"
     ).textContent=
-        trackPoints.length;
-
-
-    if(!editingTrack){
-
-        document.getElementById(
-            "state"
-        ).textContent=
-            paused
-            ? "PAUSADO"
-            : "EXECUTANDO";
-
-    }
+    fps;
 
 }
 
 
-/* =========================================================
-   GAME LOOP
-========================================================= */
+/* =====================================================
+   LOOP PRINCIPAL
+===================================================== */
 
-function gameLoop(){
+let lastTime=
+performance.now();
 
-    requestAnimationFrame(
-        gameLoop
+
+function loop(now){
+
+    const dt=
+    Math.min(
+        (now-lastTime)/1000,
+        .05
     );
 
 
-    if(editingTrack){
-
-        drawEditor();
-
-        drawNetwork();
-
-        return;
-
-    }
+    lastTime=now;
 
 
-    if(paused){
+    if(!paused){
 
-        drawTrack();
+        let alive=0;
 
-        if(bestCar){
 
-            drawSensors(
-                bestCar
-            );
+        for(
+            const car of cars
+        ){
 
-            for(
-                const car of cars
-            ){
+            car.update(dt);
 
-                car.draw(
-                    car===bestCar
-                );
 
-            }
+            if(car.alive)
+                alive++;
 
         }
 
 
-        drawNetwork();
+        cars.sort(
+            (a,b)=>
+            b.fitness-
+            a.fitness
+        );
 
-        return;
+
+        bestCar=cars[0];
+
+
+        if(
+            alive===0 &&
+            cars.length
+        ){
+
+            nextGeneration();
+
+        }
 
     }
 
+
+    /* PISTA */
 
     drawTrack();
 
 
-    let aliveCount=0;
-
-
-    for(
-        const car of cars
-    ){
-
-        car.update(
-            .016
-        );
-
-
-        if(car.alive)
-            aliveCount++;
-
-    }
-
-
-    /*
-       O melhor indivíduo da geração atual
-       é recalculado continuamente.
-    */
-
-    if(cars.length){
-
-        const currentBest=
-            cars.reduce(
-                (a,b)=>
-                    b.fitness>a.fitness
-                    ? b
-                    : a
-            );
-
-
-        if(
-            !bestCar ||
-            currentBest.fitness>
-            bestCar.fitness
-        ){
-
-            bestCar=
-                currentBest;
-
-        }
-
-    }
-
-
-    /* sensores */
-
-    if(bestCar){
-
-        drawSensors(
-            bestCar
-        );
-
-    }
-
-
-    /* carros */
+    /* CARROS */
 
     for(
         const car of cars
@@ -3871,32 +4295,55 @@ function gameLoop(){
     }
 
 
+    /* EDITOR */
+
+    drawEditor();
+
+
+    /* REDE */
+
+    drawNetwork();
+
+
+    /* ESTATÍSTICAS */
+
+    updateStats();
+
+
+    /* FPS */
+
+    frames++;
+
+
     if(
-        aliveCount===0 &&
-        cars.length
+        now-fpsTime>=1000
     ){
 
-        nextGeneration();
+        fps=frames;
+
+        frames=0;
+
+        fpsTime=now;
 
     }
 
 
-    updateStats();
-
-    drawNetwork();
+    requestAnimationFrame(
+        loop
+    );
 
 }
 
 
-/* =========================================================
-   INICIALIZAÇÃO
-========================================================= */
-
-syncControls();
+/* =====================================================
+   INICIAR
+===================================================== */
 
 init();
 
-gameLoop();
+requestAnimationFrame(
+    loop
+);
 
 </script>
 
