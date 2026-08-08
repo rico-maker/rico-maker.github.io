@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,124 +8,236 @@
 <title>Rico Maker — Projetos</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #0d1117;
-    color: #f0f6fc;
-}
+    min-height: 100vh;
 
-header {
-    text-align: center;
-    padding: 70px 20px 45px;
-    background: linear-gradient(180deg, #161b22, #0d1117);
-}
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 
-header h1 {
-    margin: 0;
-    font-size: 42px;
-}
-
-header p {
-    color: #8b949e;
-    margin-top: 12px;
+    background: #0d0f12;
+    color: #f1f3f5;
 }
 
 .container {
-    width: min(1100px, 92%);
-    margin: auto;
+    width: min(1100px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 55px 0;
 }
+
+/* HEADER */
+
+h1 {
+    margin: 0;
+
+    font-size: 38px;
+    font-weight: 750;
+    letter-spacing: -1.5px;
+
+    color: #f5f6f7;
+}
+
+header p {
+    margin: 8px 0 30px;
+
+    color: #858a92;
+
+    font-size: 16px;
+}
+
+/* SEARCH */
 
 .search {
     width: 100%;
-    padding: 15px 18px;
-    margin: 25px 0 30px;
+    height: 48px;
 
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
+    padding: 0 16px;
 
-    color: white;
-    font-size: 16px;
+    border: 1px solid #292d33;
+    border-radius: 12px;
+
     outline: none;
+
+    background: #15181c;
+    color: #f1f3f5;
+
+    font: inherit;
+    font-size: 15px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.search::placeholder {
+    color: #666c74;
 }
 
 .search:focus {
-    border-color: #58a6ff;
+    border-color: #505761;
+
+    background: #181b20;
+
+    box-shadow:
+        0 0 0 3px rgba(255,255,255,.04);
 }
+
+/* PROJECTS */
 
 #projects {
     display: grid;
-    grid-template-columns: repeat(
-        auto-fit,
-        minmax(260px, 1fr)
-    );
 
-    gap: 20px;
-    padding-bottom: 60px;
+    grid-template-columns:
+        repeat(auto-fill, minmax(250px, 1fr));
+
+    gap: 14px;
+
+    margin-top: 20px;
 }
 
-.card {
-    display: block;
-    padding: 25px;
+/* PROJECT CARD */
 
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 14px;
+.project {
+    min-height: 150px;
 
-    text-decoration: none;
-    color: white;
+    padding: 20px;
+
+    border: 1px solid #292d33;
+    border-radius: 15px;
+
+    background: #15181c;
+    color: #f1f3f5;
+
+    text-align: left;
 
     cursor: pointer;
 
-    transition: .2s;
+    font: inherit;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease,
+        background .18s ease;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    border-color: #58a6ff;
-    box-shadow: 0 10px 30px #0006;
+.project:hover {
+    transform: translateY(-3px);
+
+    border-color: #3a4048;
+
+    background: #191c21;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.25);
 }
 
-.icon {
-    width: 45px;
-    height: 45px;
+.project:active {
+    transform: translateY(-1px);
+}
 
+.project-icon {
     display: flex;
+
+    width: 38px;
+    height: 38px;
+
+    margin-bottom: 14px;
+
     align-items: center;
     justify-content: center;
 
-    background: #1f6feb22;
-    color: #58a6ff;
-
     border-radius: 10px;
 
-    font-size: 20px;
-    margin-bottom: 18px;
+    background: #22262c;
+
+    color: #c8cdd4;
+
+    font-size: 19px;
 }
 
-.card h2 {
-    margin: 0 0 8px;
-    font-size: 20px;
+.project-name {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #f1f3f5;
+
+    font-size: 17px;
+    font-weight: 650;
 }
 
-.card p {
-    margin: 0;
-    color: #8b949e;
-    font-size: 14px;
+.project-description {
+    display: block;
+
+    color: #7f858d;
+
+    font-size: 13px;
+    line-height: 1.4;
 }
 
+/* CRIAR */
 
-/* =========================
-   POPUP
-========================= */
+.create-project {
+    border: 1px dashed #416b94;
 
-.modal-background {
+    background: #121c27;
+
+    color: #dcecff;
+}
+
+.create-project .project-icon {
+    background: #1b3045;
+
+    color: #74b4f5;
+}
+
+.create-project .project-name {
+    color: #dcecff;
+}
+
+.create-project .project-description {
+    color: #718ba4;
+}
+
+.create-project:hover {
+    border-color: #5b91c5;
+
+    background: #162333;
+}
+
+.create-project:hover .project-icon {
+    background: #24415d;
+}
+
+/* LOADING */
+
+.loading {
+    grid-column: 1 / -1;
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #666c74;
+}
+
+/* MODAL OVERLAY */
+
+.modal-overlay {
     position: fixed;
+
     inset: 0;
 
     display: none;
@@ -134,38 +247,42 @@ header p {
 
     padding: 20px;
 
-    background: rgba(0, 0, 0, .72);
+    background: rgba(0,0,0,.68);
 
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(6px);
 
     z-index: 1000;
 }
 
-.modal-background.active {
+.modal-overlay.active {
     display: flex;
 }
 
+/* MODAL */
+
 .modal {
-    width: min(430px, 100%);
+    width: min(420px, 100%);
 
-    background: #161b22;
+    padding: 26px;
 
-    border: 1px solid #30363d;
+    border: 1px solid #2b3037;
     border-radius: 18px;
 
-    padding: 30px;
+    background: #15181c;
+
+    color: #f1f3f5;
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,.6);
+        0 25px 70px rgba(0,0,0,.5);
 
-    animation: popup .18s ease-out;
+    animation: modalIn .18s ease;
 }
 
-@keyframes popup {
+@keyframes modalIn {
 
     from {
         opacity: 0;
-        transform: scale(.94) translateY(10px);
+        transform: scale(.96) translateY(8px);
     }
 
     to {
@@ -176,129 +293,150 @@ header p {
 }
 
 .modal h2 {
-    margin: 0 0 10px;
+    margin: 0 0 7px;
+
+    color: #f5f6f7;
+
+    font-size: 22px;
 }
 
 .modal p {
-    color: #8b949e;
-    margin-bottom: 25px;
+    margin: 0 0 22px;
+
+    color: #818790;
+
+    font-size: 14px;
 }
+
+/* MODAL BUTTONS */
 
 .buttons {
     display: flex;
+
     flex-direction: column;
-    gap: 10px;
+
+    gap: 9px;
 }
 
-.buttons button {
+.buttons button,
+.cancel {
     width: 100%;
+    height: 44px;
 
-    padding: 14px;
+    border: 0;
+    border-radius: 10px;
 
-    border-radius: 9px;
+    font: inherit;
 
-    border: 1px solid #30363d;
-
-    background: #21262d;
-
-    color: white;
-
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: .15s;
+    transition:
+        background .15s ease,
+        transform .15s ease;
 }
 
-.buttons button:hover {
-    background: #30363d;
+.buttons button:hover,
+.cancel:hover {
+    transform: translateY(-1px);
 }
 
-.buttons .primary {
-    background: #238636;
-    border-color: #238636;
+/* ABRIR */
+
+.primary {
+    background: #f1f3f5;
+    color: #111318;
 }
 
-.buttons .primary:hover {
-    background: #2ea043;
+.primary:hover {
+    background: #ffffff;
 }
 
-.buttons .blue {
-    background: #1f6feb;
-    border-color: #1f6feb;
+/* EDITAR */
+
+.blue {
+    background: #172b3e;
+    color: #79baff;
 }
 
-.buttons .blue:hover {
-    background: #388bfd;
+.blue:hover {
+    background: #1d3851;
 }
+
+/* ABRIR + EDITAR */
+
+#bothButton {
+    background: #22262c;
+    color: #d2d6dc;
+}
+
+#bothButton:hover {
+    background: #292e35;
+}
+
+/* CANCELAR */
 
 .cancel {
-    margin-top: 15px;
-
-    width: 100%;
-
-    padding: 11px;
+    margin-top: 10px;
 
     background: transparent;
 
-    border: none;
-
-    color: #8b949e;
-
-    cursor: pointer;
+    color: #777e87;
 }
 
 .cancel:hover {
-    color: white;
+    background: #20242a;
+
+    color: #aeb4bc;
 }
 
-.loading {
-    text-align: center;
-    color: #8b949e;
-    padding: 50px;
-}
-
-footer {
-    text-align: center;
-    color: #8b949e;
-    padding: 25px;
-    border-top: 1px solid #21262d;
-}
+/* MOBILE */
 
 @media (max-width: 600px) {
 
-    header {
-        padding-top: 45px;
+    .container {
+        width: min(100% - 22px, 1100px);
+
+        padding: 35px 0;
+    }
+
+    h1 {
+        font-size: 31px;
+    }
+
+    #projects {
+        grid-template-columns: 1fr;
     }
 
 }
 </style>
 </head>
 
+
 <body>
 
+<div class="container">
 
-<header>
+    <header>
 
-    <h1>Rico Maker</h1>
+        <h1>Rico Maker</h1>
 
-    <p>
-        Projetos e experimentos
-    </p>
+        <p>
+            Projetos e experimentos
+        </p>
 
-</header>
+        <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="Pesquisar projeto..."
+            autocomplete="off"
+        >
 
+    </header>
 
-<main class="container">
-
-    <input
-        id="search"
-        class="search"
-        type="search"
-        placeholder="Pesquisar projeto..."
-        autocomplete="off"
-    >
 
     <section id="projects">
 
@@ -308,22 +446,14 @@ footer {
 
     </section>
 
-</main>
+</div>
 
 
-<footer>
-    Rico Maker
-</footer>
-
-
-
-<!-- =========================
-     POPUP
-========================= -->
+<!-- MODAL -->
 
 <div
-    id="modalBackground"
-    class="modal-background"
+    class="modal-overlay"
+    id="modalOverlay"
 >
 
     <div
@@ -380,33 +510,26 @@ footer {
 </div>
 
 
-
 <script>
 
-
-/* =========================
-   CONFIGURAÇÃO
-========================= */
-
-const USER = "rico-maker";
-
+const OWNER = "rico-maker";
 const REPO = "rico-maker.github.io";
 
-const BRANCH = "main";
+const GITHUB_API =
+    `https://api.github.com/repos/${OWNER}/${REPO}/contents/`;
+
+const GITHUB_BASE =
+    `https://${OWNER}.github.io/`;
+
+const REPOSITORY =
+    `https://github.com/${OWNER}/${REPO}`;
 
 
-/* =========================
-   ELEMENTOS
-========================= */
+const projects = document.getElementById("projects");
+const search = document.getElementById("search");
 
-const container =
-    document.getElementById("projects");
-
-const search =
-    document.getElementById("search");
-
-const modalBackground =
-    document.getElementById("modalBackground");
+const modalOverlay =
+    document.getElementById("modalOverlay");
 
 const modalTitle =
     document.getElementById("modalTitle");
@@ -424,393 +547,57 @@ const cancelButton =
     document.getElementById("cancelButton");
 
 
-let pages = [];
+let allProjects = [];
+let selectedProject = null;
 
-let selectedPage = null;
 
+/* --------------------------------
+   CARREGAR PROJETOS
+-------------------------------- */
 
-/* =========================
-   GITHUB API
-========================= */
-
-async function getPages() {
-
-    const url =
-        `https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
-
-    const response =
-        await fetch(url);
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Não foi possível acessar o GitHub."
-        );
-
-    }
-
-    const data =
-        await response.json();
-
-    return data.tree.filter(file =>
-
-        file.type === "blob" &&
-
-        file.path
-            .toLowerCase()
-            .endsWith(".html") &&
-
-        file.path
-            .toLowerCase() !== "index.html"
-
-    );
-}
-
-
-/* =========================
-   NOME DO PROJETO
-========================= */
-
-function formatName(path) {
-
-    let name =
-        path
-            .split("/")
-            .pop()
-            .replace(/\.html$/i, "");
-
-    name =
-        name.replace(/[-_]/g, " ");
-
-    return name
-        .split(" ")
-        .map(word =>
-            word.charAt(0).toUpperCase() +
-            word.slice(1)
-        )
-        .join(" ");
-}
-
-
-/* =========================
-   URL PUBLICADA
-========================= */
-
-function getPublicURL(page) {
-
-    return (
-        "https://" +
-        USER +
-        ".github.io/" +
-        page.path
-    );
-
-}
-
-
-/* =========================
-   URL DO EDITOR DO GITHUB
-========================= */
-
-function getEditURL(page) {
-
-    return (
-        "https://github.com/" +
-        USER +
-        "/" +
-        REPO +
-        "/edit/" +
-        BRANCH +
-        "/" +
-        page.path
-    );
-
-}
-
-
-/* =========================
-   ABRIR POPUP
-========================= */
-
-function openModal(page) {
-
-    selectedPage = page;
-
-    modalTitle.textContent =
-        formatName(page.path);
-
-    modalBackground.classList.add(
-        "active"
-    );
-
-}
-
-
-/* =========================
-   FECHAR POPUP
-========================= */
-
-function closeModal() {
-
-    modalBackground.classList.remove(
-        "active"
-    );
-
-    selectedPage = null;
-
-}
-
-
-/* =========================
-   ABRIR PROJETO
-========================= */
-
-openButton.onclick = () => {
-
-    if (!selectedPage)
-        return;
-
-    const url =
-        getPublicURL(selectedPage);
-
-    window.open(
-        url,
-        "_blank"
-    );
-
-    closeModal();
-
-};
-
-
-/* =========================
-   EDITAR PROJETO
-========================= */
-
-editButton.onclick = () => {
-
-    if (!selectedPage)
-        return;
-
-    const url =
-        getEditURL(selectedPage);
-
-    window.open(
-        url,
-        "_blank"
-    );
-
-    closeModal();
-
-};
-
-
-/* =========================
-   ABRIR + EDITAR
-========================= */
-
-bothButton.onclick = () => {
-
-    if (!selectedPage)
-        return;
-
-    const publicURL =
-        getPublicURL(selectedPage);
-
-    const editURL =
-        getEditURL(selectedPage);
-
-
-    /*
-        As duas chamadas acontecem
-        diretamente no clique do usuário,
-        reduzindo a chance de o navegador
-        bloquear uma das abas.
-    */
-
-    window.open(
-        publicURL,
-        "_blank"
-    );
-
-    window.open(
-        editURL,
-        "_blank"
-    );
-
-    closeModal();
-
-};
-
-
-/* =========================
-   CANCELAR
-========================= */
-
-cancelButton.onclick =
-    closeModal;
-
-
-/* =========================
-   CLICAR FORA DO POPUP
-========================= */
-
-modalBackground.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            modalBackground
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-/* =========================
-   ESC
-========================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-/* =========================
-   CRIAR CARTÃO
-========================= */
-
-function createCard(page) {
-
-    const card =
-        document.createElement("div");
-
-    card.className = "card";
-
-    card.innerHTML = `
-
-        <div class="icon">
-            &lt;/&gt;
-        </div>
-
-        <h2>
-            ${formatName(page.path)}
-        </h2>
-
-        <p>
-            ${page.path}
-        </p>
-
-    `;
-
-
-    card.addEventListener(
-        "click",
-        () => {
-
-            openModal(page);
-
-        }
-    );
-
-
-    return card;
-}
-
-
-/* =========================
-   MOSTRAR PROJETOS
-========================= */
-
-function render(list) {
-
-    container.innerHTML = "";
-
-
-    if (list.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="loading">
-                Nenhum projeto encontrado.
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    list.forEach(page => {
-
-        container.appendChild(
-            createCard(page)
-        );
-
-    });
-
-}
-
-
-/* =========================
-   PESQUISA
-========================= */
-
-search.addEventListener(
-    "input",
-    () => {
-
-        const query =
-            search.value
-                .toLowerCase()
-                .trim();
-
-
-        const filtered =
-            pages.filter(page =>
-
-                page.path
-                    .toLowerCase()
-                    .includes(query)
-
-            );
-
-
-        render(filtered);
-
-    }
-);
-
-
-/* =========================
-   INICIALIZAÇÃO
-========================= */
-
-async function init() {
+async function loadProjects() {
 
     try {
 
-        pages =
-            await getPages();
+        const response =
+            await fetch(GITHUB_API);
 
-        render(pages);
+        if (!response.ok) {
+            throw new Error("Erro ao acessar o GitHub.");
+        }
+
+        const files =
+            await response.json();
+
+
+        allProjects = files
+
+            .filter(file =>
+                file.type === "file" &&
+                file.name.toLowerCase().endsWith(".html")
+            )
+
+            .filter(file =>
+                file.name.toLowerCase() !== "index.html"
+            )
+
+            .map(file => {
+
+                const name =
+                    file.name.replace(/\.html$/i, "");
+
+                return {
+                    name,
+                    file: file.name,
+                    url: GITHUB_BASE + file.name,
+                    edit:
+                        `https://github.com/${OWNER}/${REPO}/edit/main/${encodeURIComponent(file.name)}`
+                };
+
+            });
+
+
+        renderProjects(allProjects);
 
     }
 
@@ -818,23 +605,317 @@ async function init() {
 
         console.error(error);
 
-        container.innerHTML = `
+        projects.innerHTML = "";
 
-            <div class="loading">
+        const errorElement =
+            document.createElement("div");
 
-                Não foi possível carregar
-                os projetos.
+        errorElement.className = "loading";
 
-            </div>
+        errorElement.textContent =
+            "Não foi possível carregar os projetos.";
 
-        `;
+        projects.appendChild(errorElement);
+
+        addCreateButton();
 
     }
 
 }
 
 
-init();
+/* --------------------------------
+   RENDERIZAR PROJETOS
+-------------------------------- */
+
+function renderProjects(list) {
+
+    projects.innerHTML = "";
+
+    if (list.length === 0) {
+
+        const empty =
+            document.createElement("div");
+
+        empty.className = "loading";
+
+        empty.textContent =
+            "Nenhum projeto encontrado.";
+
+        projects.appendChild(empty);
+
+    }
+
+    else {
+
+        list.forEach(project => {
+
+            const card =
+                document.createElement("button");
+
+            card.className = "project";
+
+            card.type = "button";
+
+            card.innerHTML = `
+
+                <span class="project-icon">
+                    ◇
+                </span>
+
+                <span class="project-name">
+                    ${escapeHTML(project.name)}
+                </span>
+
+                <span class="project-description">
+                    Projeto HTML
+                </span>
+
+            `;
+
+            card.addEventListener(
+                "click",
+                () => openModal(project)
+            );
+
+            projects.appendChild(card);
+
+        });
+
+    }
+
+
+    /*
+       O botão é SEMPRE adicionado
+       depois de todos os projetos.
+    */
+
+    addCreateButton();
+
+}
+
+
+/* --------------------------------
+   BOTÃO CRIAR
+-------------------------------- */
+
+function addCreateButton() {
+
+    const button =
+        document.createElement("button");
+
+    button.type = "button";
+
+    button.className =
+        "project create-project";
+
+    button.innerHTML = `
+
+        <span class="project-icon">
+            ＋
+        </span>
+
+        <span class="project-name">
+            Criar
+        </span>
+
+        <span class="project-description">
+            Criar um novo projeto no GitHub
+        </span>
+
+    `;
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            window.open(
+                REPOSITORY,
+                "_blank"
+            );
+
+        }
+    );
+
+
+    projects.appendChild(button);
+
+}
+
+
+/* --------------------------------
+   PESQUISA
+-------------------------------- */
+
+search.addEventListener(
+    "input",
+    () => {
+
+        const query =
+            search.value
+                .trim()
+                .toLowerCase();
+
+
+        const filtered =
+            allProjects.filter(project =>
+                project.name
+                    .toLowerCase()
+                    .includes(query)
+            );
+
+
+        renderProjects(filtered);
+
+    }
+);
+
+
+/* --------------------------------
+   MODAL
+-------------------------------- */
+
+function openModal(project) {
+
+    selectedProject = project;
+
+    modalTitle.textContent =
+        project.name;
+
+    modalOverlay.classList.add("active");
+
+}
+
+
+function closeModal() {
+
+    modalOverlay.classList.remove("active");
+
+    selectedProject = null;
+
+}
+
+
+/* ABRIR */
+
+openButton.addEventListener(
+    "click",
+    () => {
+
+        if (!selectedProject) return;
+
+        window.open(
+            selectedProject.url,
+            "_blank"
+        );
+
+        closeModal();
+
+    }
+);
+
+
+/* EDITAR */
+
+editButton.addEventListener(
+    "click",
+    () => {
+
+        if (!selectedProject) return;
+
+        window.open(
+            selectedProject.edit,
+            "_blank"
+        );
+
+        closeModal();
+
+    }
+);
+
+
+/* ABRIR + EDITAR */
+
+bothButton.addEventListener(
+    "click",
+    () => {
+
+        if (!selectedProject) return;
+
+        window.open(
+            selectedProject.url,
+            "_blank"
+        );
+
+        window.open(
+            selectedProject.edit,
+            "_blank"
+        );
+
+        closeModal();
+
+    }
+);
+
+
+/* CANCELAR */
+
+cancelButton.addEventListener(
+    "click",
+    closeModal
+);
+
+
+/* CLICAR FORA DO MODAL */
+
+modalOverlay.addEventListener(
+    "click",
+    event => {
+
+        if (event.target === modalOverlay) {
+            closeModal();
+        }
+
+    }
+);
+
+
+/* ESC */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Escape") {
+            closeModal();
+        }
+
+    }
+);
+
+
+/* --------------------------------
+   SEGURANÇA
+-------------------------------- */
+
+function escapeHTML(text) {
+
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* --------------------------------
+   INICIAR
+-------------------------------- */
+
+loadProjects();
 
 </script>
 
