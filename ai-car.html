@@ -8,216 +8,1345 @@
 
 <style>
 
+/* =========================================================
+   NEURAL TRACK EVOLUTION — UI
+   Estilo: F1 / Telemetria / Laboratório de IA
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap');
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
 *{
     box-sizing:border-box;
 }
 
+html,
 body{
+    width:100%;
+    height:100%;
     margin:0;
-    background:#090c10;
-    color:#eee;
-    font-family:Arial,Helvetica,sans-serif;
-    overflow:hidden;
 }
+
+body{
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 72% 18%,
+            rgba(0,180,255,.08),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(0,255,150,.045),
+            transparent 28%
+        ),
+        #07090d;
+
+    color:#e8edf5;
+
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    letter-spacing:.01em;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
 
 #app{
     display:flex;
+
     width:100vw;
     height:100vh;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.015),
+            transparent 30%,
+            transparent 70%,
+            rgba(255,255,255,.01)
+        );
 }
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
 #sidebar{
-    width:330px;
-    min-width:330px;
-    background:#171a20;
-    border-right:1px solid #30343d;
-    padding:14px;
+
+    width:350px;
+    min-width:350px;
+
+    height:100vh;
+
+    padding:18px 15px;
+
     overflow-y:auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(23,27,35,.98),
+            rgba(10,13,18,.98)
+        );
+
+    border-right:
+        1px solid
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        12px 0 40px rgba(0,0,0,.35);
+
+    scrollbar-width:thin;
+    scrollbar-color:#303945 transparent;
 }
+
+
+/* scrollbar */
+
+#sidebar::-webkit-scrollbar{
+    width:6px;
+}
+
+#sidebar::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+#sidebar::-webkit-scrollbar-thumb{
+    background:#303945;
+    border-radius:20px;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover{
+    background:#43505f;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
 
 h1{
-    margin:0 0 4px;
-    font-size:21px;
+
+    margin:0;
+
+    font-family:
+        Orbitron,
+        Inter,
+        sans-serif;
+
+    font-size:19px;
+
+    font-weight:700;
+
+    letter-spacing:.08em;
+
+    text-transform:uppercase;
+
+    color:#f4f8ff;
+
+    text-shadow:
+        0 0 18px rgba(0,190,255,.2);
+
 }
 
-h2{
-    margin:15px 0 9px;
-    font-size:14px;
-    color:#aaa;
+
+h1::after{
+
+    content:"";
+
+    display:block;
+
+    width:72px;
+    height:3px;
+
+    margin-top:9px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00c8ff,
+            #00ff9d,
+            transparent
+        );
+
+    box-shadow:
+        0 0 12px rgba(0,220,255,.5);
+
 }
+
 
 .small{
-    color:#888;
-    font-size:11px;
-    line-height:1.45;
+
+    color:#788494;
+
+    font-size:10.5px;
+
+    line-height:1.6;
+
 }
+
+
+h1 + .small{
+
+    margin-top:10px;
+
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
 
 .section{
-    background:#1d2129;
-    border:1px solid #30343d;
-    border-radius:9px;
-    padding:11px;
-    margin-bottom:10px;
+
+    position:relative;
+
+    margin-top:12px;
+
+    padding:13px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.075);
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,35,45,.88),
+            rgba(16,19,25,.92)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.035),
+        0 8px 25px rgba(0,0,0,.18);
+
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+
 }
+
+
+.section:hover{
+
+    border-color:
+        rgba(0,190,255,.17);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04),
+        0 10px 30px rgba(0,0,0,.25);
+
+}
+
+
+.section h2{
+
+    margin:
+        0 0 12px;
+
+    padding-bottom:8px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.06);
+
+    font-family:
+        Orbitron,
+        Inter,
+        sans-serif;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+    color:#aeb9c8;
+
+}
+
+
+.section h2::before{
+
+    content:"";
+
+    display:inline-block;
+
+    width:5px;
+    height:5px;
+
+    margin:
+        0 8px 2px 0;
+
+    border-radius:50%;
+
+    background:#00d9ff;
+
+    box-shadow:
+        0 0 8px #00d9ff;
+
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
 
 .control{
-    margin:9px 0;
+
+    margin:
+        11px 0 14px;
+
 }
+
 
 .control label{
+
     display:flex;
+
     justify-content:space-between;
-    font-size:12px;
-    margin-bottom:4px;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:7px;
+
+    color:#9da9b8;
+
+    font-size:10px;
+
+    font-weight:600;
+
+    letter-spacing:.04em;
+
 }
+
 
 .value{
-    color:#62d8ff;
-    font-weight:bold;
+
+    min-width:42px;
+
+    text-align:right;
+
+    color:#42dfff;
+
+    font-family:
+        Orbitron,
+        monospace;
+
+    font-size:10px;
+
+    text-shadow:
+        0 0 8px rgba(0,220,255,.35);
+
 }
+
+
+/* =========================================================
+   RANGE SLIDERS
+========================================================= */
 
 input[type="range"]{
+
     width:100%;
+    height:4px;
+
+    margin:0;
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    border-radius:10px;
+
+    outline:none;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00c8ff,
+            #2c3947
+        );
+
+    cursor:pointer;
+
 }
+
+
+input[type="range"]::-webkit-slider-thumb{
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    width:13px;
+    height:13px;
+
+    border-radius:50%;
+
+    border:
+        2px solid
+        #0c1117;
+
+    background:#eafcff;
+
+    box-shadow:
+        0 0 0 2px #00cfff,
+        0 0 12px rgba(0,207,255,.65);
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease;
+
+}
+
+
+input[type="range"]::-webkit-slider-thumb:hover{
+
+    transform:scale(1.25);
+
+    box-shadow:
+        0 0 0 2px #00eaff,
+        0 0 18px rgba(0,230,255,.8);
+
+}
+
+
+input[type="range"]::-moz-range-thumb{
+
+    width:11px;
+    height:11px;
+
+    border:
+        2px solid
+        #0c1117;
+
+    border-radius:50%;
+
+    background:#eafcff;
+
+    box-shadow:
+        0 0 0 2px #00cfff,
+        0 0 12px rgba(0,207,255,.65);
+
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
 
 select{
+
     width:100%;
-    padding:7px;
-    background:#252a33;
-    color:#fff;
-    border:1px solid #444;
-    border-radius:6px;
-}
 
-button{
-    background:#2b313b;
-    border:0;
-    color:#fff;
-    border-radius:6px;
-    padding:8px 9px;
-    margin:2px;
+    padding:
+        9px 10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius:8px;
+
+    outline:none;
+
+    background:
+        linear-gradient(
+            180deg,
+            #252c36,
+            #1a2028
+        );
+
+    color:#dce6f1;
+
+    font-family:Inter,sans-serif;
+
+    font-size:10px;
+
     cursor:pointer;
-    font-size:11px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04);
+
 }
 
-button:hover{
-    background:#3b4450;
+
+select:hover{
+
+    border-color:
+        rgba(0,200,255,.35);
+
 }
 
-button.active{
-    background:#147cff;
+
+select:focus{
+
+    border-color:#00cfff;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(0,207,255,.1);
+
 }
 
-button.good{
-    background:#167d46;
-}
 
-button.danger{
-    background:#8c2828;
-}
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .buttons{
+
     display:flex;
+
     flex-wrap:wrap;
+
+    gap:5px;
+
 }
+
+
+button{
+
+    position:relative;
+
+    overflow:hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:7px;
+
+    padding:
+        8px 10px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #303844,
+            #222832
+        );
+
+    color:#cfd8e3;
+
+    font-family:
+        Inter,
+        sans-serif;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:.035em;
+
+    cursor:pointer;
+
+    transition:
+        transform .15s ease,
+        background .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease;
+
+}
+
+
+button::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:70%;
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.08),
+            transparent
+        );
+
+    transition:left .4s ease;
+
+}
+
+
+button:hover::before{
+
+    left:130%;
+
+}
+
+
+button:hover{
+
+    transform:translateY(-1px);
+
+    border-color:
+        rgba(255,255,255,.17);
+
+    background:
+        linear-gradient(
+            180deg,
+            #3a4451,
+            #29313c
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.25);
+
+}
+
+
+button:active{
+
+    transform:
+        translateY(1px)
+        scale(.98);
+
+}
+
+
+button.active{
+
+    border-color:
+        rgba(0,207,255,.55);
+
+    background:
+        linear-gradient(
+            180deg,
+            #0878a8,
+            #075a80
+        );
+
+    color:#fff;
+
+    box-shadow:
+        0 0 18px
+        rgba(0,190,255,.18),
+        inset 0 1px 0
+        rgba(255,255,255,.1);
+
+}
+
+
+button.good{
+
+    border-color:
+        rgba(0,255,150,.22);
+
+    background:
+        linear-gradient(
+            180deg,
+            #16704e,
+            #0d4e38
+        );
+
+}
+
+
+button.good:hover{
+
+    background:
+        linear-gradient(
+            180deg,
+            #1a8a60,
+            #106345
+        );
+
+}
+
+
+button.danger{
+
+    border-color:
+        rgba(255,70,70,.2);
+
+    background:
+        linear-gradient(
+            180deg,
+            #713031,
+            #502326
+        );
+
+}
+
+
+button.danger:hover{
+
+    border-color:
+        rgba(255,80,80,.5);
+
+    background:
+        linear-gradient(
+            180deg,
+            #91393b,
+            #63282b
+        );
+
+}
+
+
+/* =========================================================
+   CHECKBOXES
+========================================================= */
 
 .checkbox{
+
     display:flex;
+
     align-items:center;
-    gap:6px;
-    margin:7px 0;
-    font-size:12px;
+
+    gap:8px;
+
+    margin:9px 0;
+
+    color:#9ca8b7;
+
+    font-size:10px;
+
+    cursor:pointer;
+
 }
+
+
+.checkbox input{
+
+    appearance:none;
+
+    -webkit-appearance:none;
+
+    width:13px;
+    height:13px;
+
+    margin:0;
+
+    border:
+        1px solid
+        #485361;
+
+    border-radius:4px;
+
+    background:#11161c;
+
+    cursor:pointer;
+
+    transition:
+        .15s ease;
+
+}
+
+
+.checkbox input:checked{
+
+    border-color:#00d9ff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00b9ee,
+            #007da9
+        );
+
+    box-shadow:
+        0 0 10px
+        rgba(0,215,255,.25);
+
+}
+
+
+.checkbox input:checked::after{
+
+    content:"✓";
+
+    display:block;
+
+    color:#fff;
+
+    font-size:9px;
+
+    line-height:11px;
+
+    text-align:center;
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
 
 .stat{
+
     display:flex;
+
     justify-content:space-between;
-    padding:2px 0;
-    font-size:12px;
+
+    align-items:center;
+
+    padding:
+        7px 0;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.035);
+
+    color:#7f8a98;
+
+    font-size:10px;
+
 }
+
+
+.stat:last-child{
+
+    border-bottom:0;
+
+}
+
+
+.stat .value{
+
+    color:#e4faff;
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
 
 #main{
-    flex:1;
-    display:flex;
+
     position:relative;
+
+    display:flex;
+
+    flex:1;
+
+    min-width:0;
+
+    height:100%;
+
     overflow:hidden;
+
 }
+
+
+/* =========================================================
+   TRACK PANEL
+========================================================= */
 
 #trackPanel{
-    flex:1;
+
     position:relative;
+
+    flex:1;
+
+    min-width:0;
+
     overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0,180,255,.025),
+            transparent 60%
+        );
+
 }
+
+
+/* =========================================================
+   TRACK CANVAS
+========================================================= */
 
 #canvas{
+
+    display:block;
+
     width:100%;
     height:100%;
-    display:block;
+
+    cursor:default;
 }
 
-#networkPanel{
-    width:390px;
-    min-width:390px;
-    background:#111419;
-    border-left:1px solid #30343d;
-    position:relative;
-}
 
-#networkCanvas{
-    width:100%;
-    height:100%;
-    display:block;
-}
+/* =========================================================
+   TOP STATUS
+========================================================= */
 
 #topbar{
+
     position:absolute;
-    top:10px;
-    left:10px;
-    right:10px;
+
+    top:14px;
+    left:14px;
+    right:14px;
+
     display:flex;
+
     justify-content:space-between;
+
+    align-items:center;
+
     pointer-events:none;
+
 }
+
 
 .badge{
-    background:rgba(0,0,0,.72);
-    border:1px solid #333;
-    padding:7px 10px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:
+        8px 11px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
     border-radius:7px;
-    font-size:11px;
+
+    background:
+        rgba(7,11,16,.78);
+
+    backdrop-filter:
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    color:#9ba8b7;
+
+    font-family:
+        Orbitron,
+        monospace;
+
+    font-size:9px;
+
+    letter-spacing:.08em;
+
+    box-shadow:
+        0 8px 30px
+        rgba(0,0,0,.25);
+
 }
+
+
+.badge:first-child::before{
+
+    content:"";
+
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:#00ff9d;
+
+    box-shadow:
+        0 0 10px #00ff9d;
+
+}
+
+
+/* =========================================================
+   EDITOR HINT
+========================================================= */
 
 #editorHint{
-    display:none;
+
     position:absolute;
-    bottom:12px;
-    left:12px;
-    background:rgba(0,0,0,.78);
-    border:1px solid #333;
-    border-radius:6px;
-    padding:9px 12px;
-    font-size:11px;
+
+    left:50%;
+
+    bottom:22px;
+
+    transform:
+        translateX(-50%);
+
+    padding:
+        10px 15px;
+
+    border:
+        1px solid
+        rgba(0,220,255,.25);
+
+    border-radius:8px;
+
+    background:
+        rgba(5,12,18,.88);
+
+    backdrop-filter:
+        blur(12px);
+
+    color:#8ddfff;
+
+    font-size:10px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,.4),
+        0 0 20px
+        rgba(0,180,255,.08);
+
+    white-space:nowrap;
+
 }
+
+
+/* =========================================================
+   NETWORK PANEL
+========================================================= */
+
+#networkPanel{
+
+    position:relative;
+
+    width:400px;
+    min-width:400px;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #10151b,
+            #0b0e13
+        );
+
+    border-left:
+        1px solid
+        rgba(255,255,255,.08);
+
+    box-shadow:
+        -12px 0 40px
+        rgba(0,0,0,.28);
+
+    overflow:hidden;
+
+}
+
+
+/* subtle grid */
+
+#networkPanel::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        32px 32px;
+
+    pointer-events:none;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent
+        );
+
+}
+
+
+/* =========================================================
+   NETWORK TITLE
+========================================================= */
 
 #networkTitle{
+
     position:absolute;
-    top:10px;
-    left:15px;
-    font-size:13px;
-    font-weight:bold;
-    color:#ddd;
-    pointer-events:none;
+
+    top:16px;
+    left:17px;
+
+    z-index:2;
+
+    color:#aab7c6;
+
+    font-family:
+        Orbitron,
+        monospace;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    letter-spacing:.1em;
+
 }
 
+
+#networkTitle::before{
+
+    content:"";
+
+    display:inline-block;
+
+    width:7px;
+    height:7px;
+
+    margin-right:7px;
+
+    border-radius:50%;
+
+    background:#00d9ff;
+
+    box-shadow:
+        0 0 10px #00d9ff;
+
+}
+
+
+/* =========================================================
+   NETWORK CANVAS
+========================================================= */
+
+#networkCanvas{
+
+    display:block;
+
+    width:100%;
+    height:100%;
+
+}
+
+
+/* =========================================================
+   NETWORK LEGEND
+========================================================= */
+
 #networkLegend{
+
     position:absolute;
-    bottom:10px;
-    left:12px;
-    right:12px;
-    font-size:10px;
-    color:#888;
-    line-height:1.5;
+
+    left:14px;
+    right:14px;
+
+    bottom:13px;
+
+    padding:
+        9px 10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.05);
+
+    border-radius:7px;
+
+    background:
+        rgba(5,8,12,.7);
+
+    color:#626e7c;
+
+    font-size:8.5px;
+
+    line-height:1.55;
+
+    backdrop-filter:
+        blur(8px);
+
     pointer-events:none;
+
+}
+
+
+/* =========================================================
+   EDITOR MODE
+========================================================= */
+
+body:has(#editorHint[style*="block"])
+#canvas{
+
+    cursor:
+        crosshair;
+
+}
+
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+::selection{
+
+    background:
+        rgba(0,200,255,.25);
+
+    color:#fff;
+
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible{
+
+    outline:
+        2px solid
+        rgba(0,210,255,.55);
+
+    outline-offset:2px;
+
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media(max-width:1100px){
+
+    #sidebar{
+
+        width:300px;
+        min-width:300px;
+
+    }
+
+    #networkPanel{
+
+        width:320px;
+        min-width:320px;
+
+    }
+
+}
+
+
+@media(max-width:850px){
+
+    #sidebar{
+
+        width:270px;
+        min-width:270px;
+
+    }
+
+    #networkPanel{
+
+        display:none;
+
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    #sidebar{
+
+        width:235px;
+        min-width:235px;
+
+        padding:10px;
+
+    }
+
+    .section{
+
+        padding:10px;
+
+    }
+
+    h1{
+
+        font-size:15px;
+
+    }
+
+}
+
+
+/* =========================================================
+   ANIMAÇÕES
+========================================================= */
+
+@keyframes pulse{
+
+    0%,
+    100%{
+        opacity:.7;
+    }
+
+    50%{
+        opacity:1;
+    }
+
+}
+
+
+#networkTitle::before{
+
+    animation:
+        pulse 1.8s ease-in-out infinite;
+
+}
+
+
+/* =========================================================
+   GLASS EFFECT
+========================================================= */
+
+#sidebar,
+#networkPanel{
+
+    backdrop-filter:
+        blur(16px);
+
+    -webkit-backdrop-filter:
+        blur(16px);
+
 }
 
 </style>
