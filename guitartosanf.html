@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Guitar → Sanfona</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -15,22 +17,29 @@
     --panel: #111318;
     --panel2: #171a20;
     --border: #292e38;
+
     --text: #f4f6f8;
-    --muted: #89919e;
-    --accent: #d8aa50;
-    --accent2: #f1ca72;
-    --green: #72e6a0;
+    --muted: #858e9c;
+
+    --accent: #d9aa4d;
+    --accent2: #f1cb72;
+
+    --green: #65e49a;
+    --red: #ef7777;
 }
 
 body {
+
     margin: 0;
+
     min-height: 100vh;
+
     padding: 20px;
 
     background:
         radial-gradient(
             circle at 50% -10%,
-            rgba(216,170,80,.14),
+            rgba(217,170,77,.14),
             transparent 42%
         ),
         var(--bg);
@@ -46,29 +55,38 @@ body {
         sans-serif;
 
     display: flex;
+
     justify-content: center;
+
     align-items: center;
 }
 
 .app {
+
     width: min(900px, 100%);
 }
 
 header {
+
     margin-bottom: 20px;
 }
 
 .logo {
+
     display: flex;
+
     align-items: center;
+
     gap: 13px;
 }
 
-.logo-icon {
+.logoIcon {
+
     width: 50px;
     height: 50px;
 
     display: grid;
+
     place-items: center;
 
     border-radius: 15px;
@@ -83,17 +101,21 @@ header {
     font-size: 26px;
 
     box-shadow:
-        0 0 35px rgba(216,170,80,.15);
+        0 0 35px
+        rgba(216,170,80,.15);
 }
 
 h1 {
+
     margin: 0;
 
     font-size: 25px;
+
     letter-spacing: -.6px;
 }
 
 .subtitle {
+
     margin-top: 4px;
 
     color: var(--muted);
@@ -102,20 +124,27 @@ h1 {
 }
 
 .panel {
+
     padding: 22px;
 
     border: 1px solid var(--border);
+
     border-radius: 22px;
 
-    background: rgba(17,19,24,.96);
+    background:
+        rgba(17,19,24,.96);
 
     box-shadow:
-        0 25px 80px rgba(0,0,0,.4);
+        0 25px 80px
+        rgba(0,0,0,.4);
 }
 
 .status {
+
     display: flex;
+
     align-items: center;
+
     gap: 10px;
 
     padding: 13px 15px;
@@ -131,7 +160,8 @@ h1 {
     font-size: 13px;
 }
 
-.status-dot {
+.statusDot {
+
     width: 9px;
     height: 9px;
 
@@ -141,17 +171,21 @@ h1 {
 }
 
 .status.active {
+
     color: var(--text);
 }
 
-.status.active .status-dot {
+.status.active .statusDot {
+
     background: var(--green);
 
     box-shadow:
-        0 0 12px var(--green);
+        0 0 12px
+        var(--green);
 }
 
-.note-display {
+.noteDisplay {
+
     height: 210px;
 
     position: relative;
@@ -159,13 +193,19 @@ h1 {
     overflow: hidden;
 
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
+
     align-items: center;
 
     margin-bottom: 18px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        var(--border);
+
     border-radius: 18px;
 
     background:
@@ -177,11 +217,35 @@ h1 {
         #0c0e12;
 }
 
+.noteGlow {
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    border-radius: 50%;
+
+    background:
+        var(--accent);
+
+    opacity: 0;
+
+    filter:
+        blur(90px);
+
+    transition:
+        opacity .1s;
+}
+
 .note {
+
     position: relative;
+
     z-index: 2;
 
     font-size: 72px;
+
     line-height: 1;
 
     font-weight: 700;
@@ -190,7 +254,9 @@ h1 {
 }
 
 .frequency {
+
     position: relative;
+
     z-index: 2;
 
     margin-top: 10px;
@@ -198,29 +264,10 @@ h1 {
     color: var(--muted);
 
     font-size: 14px;
-
-    font-variant-numeric:
-        tabular-nums;
-}
-
-.note-glow {
-    position: absolute;
-
-    width: 220px;
-    height: 220px;
-
-    border-radius: 50%;
-
-    background: var(--accent);
-
-    opacity: 0;
-
-    filter: blur(90px);
-
-    transition: opacity .12s;
 }
 
 .controls {
+
     display: grid;
 
     grid-template-columns:
@@ -230,70 +277,86 @@ h1 {
 }
 
 .control {
+
     padding: 15px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        var(--border);
+
     border-radius: 15px;
 
-    background: var(--panel2);
+    background:
+        var(--panel2);
 }
 
-.control.full {
-    grid-column: 1 / -1;
+.full {
+
+    grid-column:
+        1 / -1;
 }
 
-.control-head {
+.controlHead {
+
     display: flex;
-    justify-content: space-between;
+
+    justify-content:
+        space-between;
+
     align-items: center;
 
     margin-bottom: 10px;
 }
 
 label {
+
     color: #d8dce3;
 
     font-size: 13px;
 }
 
 .value {
+
     color: var(--accent2);
 
     font-size: 12px;
-
-    font-variant-numeric:
-        tabular-nums;
 }
 
 select {
+
     width: 100%;
 
     padding: 12px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        var(--border);
+
     border-radius: 11px;
 
     outline: none;
 
-    background: #0d0f14;
-    color: var(--text);
+    background:
+        #0d0f14;
+
+    color:
+        var(--text);
 
     cursor: pointer;
 }
 
-select:focus {
-    border-color: var(--accent);
-}
-
 input[type="range"] {
+
     width: 100%;
 
-    accent-color: var(--accent);
+    accent-color:
+        var(--accent);
 
     cursor: pointer;
 }
 
 .buttons {
+
     display: grid;
 
     grid-template-columns:
@@ -301,43 +364,46 @@ input[type="range"] {
 
     gap: 12px;
 
-    margin-top: 17px;
+    margin-top: 18px;
 }
 
 button {
+
     width: 100%;
 
     padding: 12px;
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        var(--border);
+
     border-radius: 11px;
 
-    background: #0d0f14;
-    color: var(--text);
+    background:
+        #0d0f14;
+
+    color:
+        var(--text);
 
     font-weight: 600;
 
     cursor: pointer;
 
     transition:
-        transform .15s,
-        border-color .15s,
-        background .15s;
+        .15s;
 }
 
 button:hover {
-    border-color: #59606d;
+
+    border-color:
+        #59606d;
 
     transform:
         translateY(-1px);
 }
 
-button:active {
-    transform:
-        translateY(0);
-}
-
 button.primary {
+
     border: none;
 
     background:
@@ -347,29 +413,46 @@ button.primary {
             #9d7025
         );
 
-    color: #151108;
+    color:
+        #151108;
 }
 
-button.secondary {
-    background: #14171d;
+.signal {
+
+    margin-top: 18px;
+}
+
+.signalTop {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    margin-bottom: 7px;
+
+    color:
+        var(--muted);
+
+    font-size: 11px;
 }
 
 .meter {
-    margin-top: 17px;
-}
 
-.meter-bar {
-    height: 5px;
+    height: 6px;
 
     overflow: hidden;
 
     border-radius: 99px;
 
-    background: #20242c;
+    background:
+        #20242c;
 }
 
-.meter-fill {
+.meterFill {
+
     width: 0%;
+
     height: 100%;
 
     border-radius: inherit;
@@ -386,50 +469,44 @@ button.secondary {
 }
 
 .info {
-    margin-top: 17px;
 
-    color: var(--muted);
+    margin-top: 18px;
+
+    color:
+        var(--muted);
 
     font-size: 12px;
 
     line-height: 1.55;
 }
 
-.warning {
-    display: none;
-
-    margin-top: 12px;
-
-    padding: 12px;
-
-    border: 1px solid #523f1d;
-    border-radius: 12px;
-
-    background: #1b1710;
-
-    color: #d9bc7b;
-
-    font-size: 12px;
-}
-
 @media(max-width:650px) {
 
     .controls {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
     }
 
-    .control.full {
-        grid-column: auto;
-    }
+    .full {
 
-    .note {
-        font-size: 58px;
+        grid-column:
+            auto;
     }
 
     .buttons {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .note {
+
+        font-size:
+            58px;
     }
 }
+
 </style>
 </head>
 
@@ -439,25 +516,25 @@ button.secondary {
 
 <header>
 
-    <div class="logo">
+<div class="logo">
 
-        <div class="logo-icon">
-            🪗
-        </div>
+<div class="logoIcon">
+🪗
+</div>
 
-        <div>
+<div>
 
-            <h1>
-                Guitar → Sanfona
-            </h1>
+<h1>
+Guitar → Sanfona
+</h1>
 
-            <div class="subtitle">
-                Instrumento virtual em tempo real
-            </div>
+<div class="subtitle">
+Conversor de guitarra para sanfona em tempo real
+</div>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
 </header>
 
@@ -465,39 +542,40 @@ button.secondary {
 <main class="panel">
 
 
-<!-- STATUS -->
+<div
+    class="status"
+    id="status"
+>
 
-<div class="status" id="status">
+<div class="statusDot"></div>
 
-    <div class="status-dot"></div>
-
-    <span id="statusText">
-        Desligado
-    </span>
+<span id="statusText">
+Desligado
+</span>
 
 </div>
 
 
 <!-- NOTA -->
 
-<div class="note-display">
+<div class="noteDisplay">
 
-    <div
-        class="note-glow"
-        id="glow">
-    </div>
+<div
+    class="noteGlow"
+    id="noteGlow">
+</div>
 
-    <div
-        class="note"
-        id="note">
-        —
-    </div>
+<div
+    class="note"
+    id="note">
+—
+</div>
 
-    <div
-        class="frequency"
-        id="frequency">
-        Aguardando guitarra
-    </div>
+<div
+    class="frequency"
+    id="frequency">
+Aguardando guitarra
+</div>
 
 </div>
 
@@ -507,195 +585,201 @@ button.secondary {
 <div class="controls">
 
 
-    <!-- ENTRADA -->
+<!-- INPUT -->
 
-    <div class="control full">
+<div class="control full">
 
-        <div class="control-head">
+<div class="controlHead">
 
-            <label>
-                Entrada de áudio
-            </label>
+<label>
+Entrada da Cube Baby
+</label>
 
-        </div>
+</div>
 
-        <select id="input">
+<select id="device">
 
-            <option value="">
-                Nenhuma entrada selecionada
-            </option>
+<option value="">
+Nenhum dispositivo
+</option>
 
-        </select>
+</select>
 
-    </div>
-
-
-    <!-- VOLUME -->
-
-    <div class="control">
-
-        <div class="control-head">
-
-            <label>
-                Volume
-            </label>
-
-            <span
-                class="value"
-                id="volumeValue">
-                70%
-            </span>
-
-        </div>
-
-        <input
-            id="volume"
-            type="range"
-            min="0"
-            max="100"
-            value="70">
-
-    </div>
+</div>
 
 
-    <!-- REVERB -->
+<!-- VOLUME -->
 
-    <div class="control">
+<div class="control">
 
-        <div class="control-head">
+<div class="controlHead">
 
-            <label>
-                Reverb
-            </label>
+<label>
+Volume
+</label>
 
-            <span
-                class="value"
-                id="reverbValue">
-                18%
-            </span>
+<span
+    class="value"
+    id="volumeValue">
+70%
+</span>
 
-        </div>
+</div>
 
-        <input
-            id="reverb"
-            type="range"
-            min="0"
-            max="100"
-            value="18">
+<input
+    id="volume"
+    type="range"
+    min="0"
+    max="100"
+    value="70"
+>
 
-    </div>
-
-
-    <!-- BRILHO -->
-
-    <div class="control">
-
-        <div class="control-head">
-
-            <label>
-                Brilho
-            </label>
-
-            <span
-                class="value"
-                id="brightnessValue">
-                65%
-            </span>
-
-        </div>
-
-        <input
-            id="brightness"
-            type="range"
-            min="0"
-            max="100"
-            value="65">
-
-    </div>
+</div>
 
 
-    <!-- VIBRATO -->
+<!-- REVERB -->
 
-    <div class="control">
+<div class="control">
 
-        <div class="control-head">
+<div class="controlHead">
 
-            <label>
-                Vibrato
-            </label>
+<label>
+Reverb
+</label>
 
-            <span
-                class="value"
-                id="vibratoValue">
-                22%
-            </span>
+<span
+    class="value"
+    id="reverbValue">
+15%
+</span>
 
-        </div>
+</div>
 
-        <input
-            id="vibrato"
-            type="range"
-            min="0"
-            max="100"
-            value="22">
+<input
+    id="reverb"
+    type="range"
+    min="0"
+    max="100"
+    value="15"
+>
 
-    </div>
-
-
-    <!-- TRANSPOSIÇÃO -->
-
-    <div class="control">
-
-        <div class="control-head">
-
-            <label>
-                Transposição
-            </label>
-
-            <span
-                class="value"
-                id="transposeValue">
-                0
-            </span>
-
-        </div>
-
-        <input
-            id="transpose"
-            type="range"
-            min="-12"
-            max="12"
-            value="0">
-
-    </div>
+</div>
 
 
-    <!-- SENSIBILIDADE -->
+<!-- BRILHO -->
 
-    <div class="control">
+<div class="control">
 
-        <div class="control-head">
+<div class="controlHead">
 
-            <label>
-                Sensibilidade
-            </label>
+<label>
+Brilho
+</label>
 
-            <span
-                class="value"
-                id="sensitivityValue">
-                35%
-            </span>
+<span
+    class="value"
+    id="brightnessValue">
+65%
+</span>
 
-        </div>
+</div>
 
-        <input
-            id="sensitivity"
-            type="range"
-            min="5"
-            max="80"
-            value="35">
+<input
+    id="brightness"
+    type="range"
+    min="0"
+    max="100"
+    value="65"
+>
 
-    </div>
+</div>
+
+
+<!-- VIBRATO -->
+
+<div class="control">
+
+<div class="controlHead">
+
+<label>
+Vibrato
+</label>
+
+<span
+    class="value"
+    id="vibratoValue">
+20%
+</span>
+
+</div>
+
+<input
+    id="vibrato"
+    type="range"
+    min="0"
+    max="100"
+    value="20"
+>
+
+</div>
+
+
+<!-- TRANSPOSIÇÃO -->
+
+<div class="control">
+
+<div class="controlHead">
+
+<label>
+Transposição
+</label>
+
+<span
+    class="value"
+    id="transposeValue">
+0
+</span>
+
+</div>
+
+<input
+    id="transpose"
+    type="range"
+    min="-12"
+    max="12"
+    value="0"
+>
+
+</div>
+
+
+<!-- SENSIBILIDADE -->
+
+<div class="control">
+
+<div class="controlHead">
+
+<label>
+Sensibilidade
+</label>
+
+<span
+    class="value"
+    id="sensitivityValue">
+40%
+</span>
+
+</div>
+
+<input
+    id="sensitivity"
+    type="range"
+    min="5"
+    max="90"
+    value="40"
+>
+
+</div>
 
 
 </div>
@@ -703,16 +787,28 @@ button.secondary {
 
 <!-- MEDIDOR -->
 
+<div class="signal">
+
+<div class="signalTop">
+
+<span>
+Sinal da guitarra
+</span>
+
+<span id="signalText">
+0%
+</span>
+
+</div>
+
 <div class="meter">
 
-    <div class="meter-bar">
+<div
+    class="meterFill"
+    id="signalMeter">
+</div>
 
-        <div
-            class="meter-fill"
-            id="meter">
-        </div>
-
-    </div>
+</div>
 
 </div>
 
@@ -721,50 +817,51 @@ button.secondary {
 
 <div class="buttons">
 
-    <button
-        class="primary"
-        id="start">
-        ▶ Iniciar
-    </button>
+<button
+    class="primary"
+    id="start">
+▶ Iniciar
+</button>
 
-    <button
-        class="secondary"
-        id="apply">
-        🔄 Aplicar entrada
-    </button>
+<button
+    id="apply">
+🔄 Aplicar entrada
+</button>
 
 </div>
 
 
 <button
     id="stop"
-    style="margin-top:12px;">
-    ■ Parar
+    style="margin-top:12px;"
+>
+■ Parar
 </button>
-
-
-<div
-    class="warning"
-    id="warning">
-</div>
 
 
 <div class="info">
 
-    Conecte a Cube Baby ao computador por USB.
-    Selecione a Cube Baby como entrada e clique
-    em <b>Aplicar entrada</b>.
+<b>Configuração:</b>
 
-    <br><br>
+Guitarra →
+Cube Baby →
+USB →
+Computador →
+Sanfona.
 
-    Para obter a menor latência possível,
-    utilize fones conectados diretamente ao
-    computador e desative outros efeitos de áudio.
+<br><br>
 
-    <br><br>
+A versão atual foi projetada para
+<b>uma nota por vez</b>. Toque uma nota,
+solte completamente a corda e então toque
+a próxima.
 
-    Esta versão foi projetada principalmente
-    para tocar <b>melodias de uma nota por vez</b>.
+<br><br>
+
+O medidor "Sinal da guitarra" é importante:
+se ele não se movimentar quando você tocar,
+o problema está na entrada da Cube Baby,
+não no detector de notas.
 
 </div>
 
@@ -778,15 +875,15 @@ button.secondary {
 
 /* =========================================================
    GUITAR → SANFONA
-   Web Audio API
+   VERSÃO ESTÁVEL
    ========================================================= */
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    VARIÁVEIS
---------------------------------------------------------- */
+========================================================= */
 
-let audioContext = null;
+let ctx = null;
 
 let stream = null;
 
@@ -800,31 +897,54 @@ let compressor = null;
 
 let wet = null;
 
-let reverbDelay = null;
+let delay = null;
 
 let running = false;
 
-let currentOscillators = [];
+let raf = null;
 
-let currentGain = null;
 
-let currentFilter = null;
+/*
+ * Estado do detector
+ */
 
-let currentVibratoGain = null;
+let noteActive = false;
 
-let currentNoteFrequency = null;
+let activeMidi = null;
 
-let lastPitch = 0;
+let candidateMidi = null;
 
-let lastDetection = 0;
+let candidateCount = 0;
 
-let detectionBuffer =
+let silenceFrames = 0;
+
+let lastFrequency = 0;
+
+
+/*
+ * Buffers
+ */
+
+const buffer =
     new Float32Array(2048);
 
 
-/* ---------------------------------------------------------
+/*
+ * Osciladores
+ */
+
+let oscillators = [];
+
+let voiceGain = null;
+
+let voiceFilter = null;
+
+let vibratoGain = null;
+
+
+/* =========================================================
    ELEMENTOS
---------------------------------------------------------- */
+========================================================= */
 
 const $ =
     id => document.getElementById(id);
@@ -835,30 +955,30 @@ const status =
 const statusText =
     $("statusText");
 
-const noteDisplay =
+const noteElement =
     $("note");
 
-const frequencyDisplay =
+const frequencyElement =
     $("frequency");
 
-const inputSelect =
-    $("input");
+const noteGlow =
+    $("noteGlow");
 
-const meter =
-    $("meter");
+const signalMeter =
+    $("signalMeter");
 
-const glow =
-    $("glow");
+const signalText =
+    $("signalText");
 
-const warning =
-    $("warning");
+const deviceSelect =
+    $("device");
 
 
 /* =========================================================
    NOTAS
 ========================================================= */
 
-const noteNames = [
+const names = [
 
     "C",
     "C♯",
@@ -876,46 +996,42 @@ const noteNames = [
 ];
 
 
-function frequencyToNote(freq) {
+function midiToName(midi) {
 
-    const midi =
-        Math.round(
-            69 +
-            12 *
-            Math.log2(
-                freq / 440
-            )
-        );
+    return (
+        names[
+            ((midi % 12) + 12) % 12
+        ] +
+        (
+            Math.floor(midi / 12) - 1
+        )
+    );
 
-    const octave =
-        Math.floor(
-            midi / 12
-        ) - 1;
+}
 
-    const index =
-        ((midi % 12) + 12) % 12;
 
-    return {
+function frequencyToMidi(freq) {
 
-        midi,
+    return Math.round(
 
-        name:
-            noteNames[index] +
-            octave
-    };
+        69 +
+        12 *
+        Math.log2(
+            freq / 440
+        )
+
+    );
+
 }
 
 
 /* =========================================================
-   DETECTOR DE PITCH
+   RMS
 ========================================================= */
 
-function detectPitch(
-    buffer,
-    sampleRate
-) {
+function getRMS() {
 
-    let rms = 0;
+    let sum = 0;
 
     for (
         let i = 0;
@@ -923,17 +1039,35 @@ function detectPitch(
         i++
     ) {
 
-        rms +=
+        sum +=
             buffer[i] *
             buffer[i];
 
     }
 
-    rms =
-        Math.sqrt(
-            rms / buffer.length
-        );
+    return Math.sqrt(
+        sum / buffer.length
+    );
 
+}
+
+
+/* =========================================================
+   YIN
+========================================================= */
+
+function detectPitch(
+    samples,
+    sampleRate
+) {
+
+    const rms =
+        getRMS();
+
+
+    /*
+     * Sensibilidade.
+     */
 
     const sensitivity =
         Number(
@@ -941,63 +1075,69 @@ function detectPitch(
         ) / 100;
 
 
+    /*
+     * Threshold adaptativo.
+     */
+
     const threshold =
-        0.006 +
+        0.004 +
         (1 - sensitivity) *
-        0.035;
+        0.025;
 
 
-    if (rms < threshold)
+    if (
+        rms <
+        threshold
+    ) {
+
         return null;
 
-
-    /*
-     * Faixa útil para guitarra:
-     *
-     * aproximadamente
-     * 70 Hz → 1300 Hz
-     */
-
-    const minFreq = 70;
-
-    const maxFreq = 1300;
+    }
 
 
-    const minLag =
+    const minFreq = 75;
+
+    const maxFreq = 1200;
+
+
+    const minTau =
         Math.floor(
-            sampleRate / maxFreq
-        );
-
-    const maxLag =
-        Math.floor(
-            sampleRate / minFreq
+            sampleRate /
+            maxFreq
         );
 
 
-    let bestLag = -1;
+    const maxTau =
+        Math.floor(
+            sampleRate /
+            minFreq
+        );
 
-    let bestCorrelation = 0;
+
+    const size =
+        samples.length;
 
 
     /*
-     * Autocorrelação normalizada.
+     * Diferença quadrática.
      */
+
+    const difference =
+        new Float32Array(
+            maxTau + 1
+        );
+
 
     for (
-        let lag = minLag;
-        lag <= maxLag;
-        lag++
+        let tau = minTau;
+        tau <= maxTau;
+        tau++
     ) {
 
         let sum = 0;
 
-        let energyA = 0;
-
-        let energyB = 0;
-
-
         const limit =
-            buffer.length - lag;
+            size - tau;
 
 
         for (
@@ -1006,50 +1146,63 @@ function detectPitch(
             i++
         ) {
 
-            const a =
-                buffer[i];
-
-            const b =
-                buffer[i + lag];
+            const delta =
+                samples[i] -
+                samples[i + tau];
 
 
             sum +=
-                a * b;
-
-            energyA +=
-                a * a;
-
-            energyB +=
-                b * b;
+                delta * delta;
 
         }
 
 
-        const denominator =
-            Math.sqrt(
-                energyA *
-                energyB
+        difference[tau] =
+            sum;
+
+    }
+
+
+    /*
+     * Função cumulativa normalizada.
+     */
+
+    let runningSum = 0;
+
+    let bestTau = -1;
+
+    let bestValue = 1;
+
+
+    for (
+        let tau = minTau;
+        tau <= maxTau;
+        tau++
+    ) {
+
+        runningSum +=
+            difference[tau];
+
+
+        const value =
+            difference[tau] *
+            tau /
+            (
+                runningSum ||
+                1e-9
             );
 
 
-        if (!denominator)
-            continue;
-
-
-        const correlation =
-            sum / denominator;
-
-
         if (
-            correlation >
-            bestCorrelation
+            tau > minTau &&
+            value < bestValue
         ) {
 
-            bestCorrelation =
-                correlation;
+            bestValue =
+                value;
 
-            bestLag =
-                lag;
+            bestTau =
+                tau;
 
         }
 
@@ -1057,8 +1210,8 @@ function detectPitch(
 
 
     if (
-        bestLag < 0 ||
-        bestCorrelation < 0.52
+        bestTau < 0 ||
+        bestValue > 0.38
     ) {
 
         return null;
@@ -1070,17 +1223,77 @@ function detectPitch(
      * Frequência.
      */
 
+    let tau =
+        bestTau;
+
+
+    /*
+     * Interpolação parabólica.
+     */
+
+    if (
+        tau > minTau &&
+        tau < maxTau
+    ) {
+
+        const y1 =
+            difference[tau - 1];
+
+        const y2 =
+            difference[tau];
+
+        const y3 =
+            difference[tau + 1];
+
+
+        const denominator =
+            2 *
+            (
+                y1 -
+                2 * y2 +
+                y3
+            );
+
+
+        if (
+            Math.abs(
+                denominator
+            ) > 1e-9
+        ) {
+
+            tau +=
+                (
+                    y1 -
+                    y3
+                ) /
+                denominator;
+
+        }
+
+    }
+
+
     const frequency =
-        sampleRate /
-        bestLag;
+        sampleRate / tau;
+
+
+    /*
+     * Faixa válida.
+     */
+
+    if (
+        frequency < 70 ||
+        frequency > 1300
+    ) {
+
+        return null;
+
+    }
 
 
     return {
 
         frequency,
-
-        confidence:
-            bestCorrelation,
 
         rms
 
@@ -1090,56 +1303,18 @@ function detectPitch(
 
 
 /* =========================================================
-   REVERB
+   CRIA VOZ DE SANFONA
 ========================================================= */
 
-function createReverb() {
-
-    reverbDelay =
-        audioContext.createDelay(1);
-
-    reverbDelay.delayTime.value =
-        0.065;
-
-
-    const feedback =
-        audioContext.createGain();
-
-
-    feedback.gain.value =
-        Number(
-            $("reverb").value
-        ) / 100 * 0.3;
-
-
-    reverbDelay.connect(
-        feedback
-    );
-
-    feedback.connect(
-        reverbDelay
-    );
-
-    reverbDelay.connect(
-        wet
-    );
-
-}
-
-
-/* =========================================================
-   SANFONA
-========================================================= */
-
-function createAccordion(
+function createVoice(
     frequency
 ) {
 
-    stopCurrentNote();
+    stopVoice();
 
 
     const now =
-        audioContext.currentTime;
+        ctx.currentTime;
 
 
     /*
@@ -1160,86 +1335,71 @@ function createAccordion(
         );
 
 
-    currentNoteFrequency =
-        freq;
-
-
     /*
      * Envelope.
      */
 
-    currentGain =
-        audioContext.createGain();
+    voiceGain =
+        ctx.createGain();
 
 
-    currentGain.gain.setValueAtTime(
+    voiceGain.gain.setValueAtTime(
         0,
         now
     );
 
 
-    currentGain.gain.linearRampToValueAtTime(
+    voiceGain.gain.linearRampToValueAtTime(
         0.75,
-        now + 0.025
-    );
-
-
-    currentGain.gain.setTargetAtTime(
-        0.56,
-        now + 0.06,
-        0.08
+        now + 0.035
     );
 
 
     /*
      * Osciladores.
-     *
-     * A combinação cria um timbre
-     * semelhante a palhetas de sanfona.
      */
 
-    const osc1 =
-        audioContext.createOscillator();
+    const a =
+        ctx.createOscillator();
 
-    const osc2 =
-        audioContext.createOscillator();
+    const b =
+        ctx.createOscillator();
 
-    const osc3 =
-        audioContext.createOscillator();
+    const c =
+        ctx.createOscillator();
 
 
-    osc1.type =
+    a.type =
         "sawtooth";
 
-    osc2.type =
+    b.type =
         "square";
 
-    osc3.type =
+    c.type =
         "triangle";
 
 
-    osc1.frequency.value =
+    a.frequency.value =
         freq;
 
-    osc2.frequency.value =
+    b.frequency.value =
         freq;
 
-    osc3.frequency.value =
+    c.frequency.value =
         freq * 2;
 
 
     /*
-     * Pequena desafinação
-     * das palhetas.
+     * Pequena desafinação.
      */
 
-    osc1.detune.value =
+    a.detune.value =
         -5;
 
-    osc2.detune.value =
+    b.detune.value =
         5;
 
-    osc3.detune.value =
+    c.detune.value =
         2;
 
 
@@ -1247,39 +1407,39 @@ function createAccordion(
      * Ganhos.
      */
 
-    const gain1 =
-        audioContext.createGain();
+    const ga =
+        ctx.createGain();
 
-    const gain2 =
-        audioContext.createGain();
+    const gb =
+        ctx.createGain();
 
-    const gain3 =
-        audioContext.createGain();
+    const gc =
+        ctx.createGain();
 
 
-    gain1.gain.value =
-        0.48;
+    ga.gain.value =
+        0.50;
 
-    gain2.gain.value =
+    gb.gain.value =
         0.16;
 
-    gain3.gain.value =
-        0.07;
+    gc.gain.value =
+        0.06;
 
 
     /*
      * Filtro.
      */
 
-    currentFilter =
-        audioContext.createBiquadFilter();
+    voiceFilter =
+        ctx.createBiquadFilter();
 
 
-    currentFilter.type =
+    voiceFilter.type =
         "lowpass";
 
 
-    updateBrightness();
+    updateFilter();
 
 
     /*
@@ -1287,35 +1447,35 @@ function createAccordion(
      */
 
     const vibrato =
-        audioContext.createOscillator();
+        ctx.createOscillator();
 
 
-    currentVibratoGain =
-        audioContext.createGain();
+    vibratoGain =
+        ctx.createGain();
 
 
     vibrato.frequency.value =
-        5.3;
+        5.2;
 
 
     updateVibrato();
 
 
     vibrato.connect(
-        currentVibratoGain
+        vibratoGain
     );
 
 
-    currentVibratoGain.connect(
-        osc1.detune
+    vibratoGain.connect(
+        a.detune
     );
 
-    currentVibratoGain.connect(
-        osc2.detune
+    vibratoGain.connect(
+        b.detune
     );
 
-    currentVibratoGain.connect(
-        osc3.detune
+    vibratoGain.connect(
+        c.detune
     );
 
 
@@ -1323,87 +1483,78 @@ function createAccordion(
      * Roteamento.
      */
 
-    osc1.connect(
-        gain1
+    a.connect(ga);
+
+    b.connect(gb);
+
+    c.connect(gc);
+
+
+    ga.connect(
+        voiceFilter
     );
 
-    osc2.connect(
-        gain2
+    gb.connect(
+        voiceFilter
     );
 
-    osc3.connect(
-        gain3
-    );
-
-
-    gain1.connect(
-        currentFilter
-    );
-
-    gain2.connect(
-        currentFilter
-    );
-
-    gain3.connect(
-        currentFilter
+    gc.connect(
+        voiceFilter
     );
 
 
-    currentFilter.connect(
-        currentGain
+    voiceFilter.connect(
+        voiceGain
     );
 
 
-    currentGain.connect(
+    voiceGain.connect(
         master
     );
 
 
     /*
-     * Início.
+     * Start.
      */
 
-    osc1.start(now);
+    a.start();
 
-    osc2.start(now);
+    b.start();
 
-    osc3.start(now);
+    c.start();
 
-    vibrato.start(now);
+    vibrato.start();
 
 
-    currentOscillators = [
-
-        osc1,
-        osc2,
-        osc3,
+    oscillators = [
+        a,
+        b,
+        c,
         vibrato
-
     ];
 
 }
 
 
 /* =========================================================
-   PARAR NOTA
+   PARA VOZ
 ========================================================= */
 
-function stopCurrentNote() {
+function stopVoice() {
 
-    if (!currentGain)
+    if (!voiceGain)
         return;
 
 
     const gain =
-        currentGain;
+        voiceGain;
 
-
-    const oscillators =
-        currentOscillators;
+    const oscs =
+        oscillators;
 
 
     const now =
-        audioContext.currentTime;
+        ctx.currentTime;
 
 
     try {
@@ -1421,61 +1572,74 @@ function stopCurrentNote() {
     } catch {}
 
 
-    currentGain = null;
-
-    currentFilter = null;
-
-    currentVibratoGain = null;
-
-    currentOscillators = [];
-
-    currentNoteFrequency = null;
+    voiceGain =
+        null;
 
 
-    setTimeout(() => {
-
-        oscillators.forEach(
-            oscillator => {
-
-                try {
-                    oscillator.stop();
-                } catch {}
-
-            }
-        );
+    voiceFilter =
+        null;
 
 
-        try {
-            gain.disconnect();
-        } catch {}
+    vibratoGain =
+        null;
 
-    }, 120);
+
+    oscillators =
+        [];
+
+
+    activeMidi =
+        null;
+
+
+    noteActive =
+        false;
+
+
+    setTimeout(
+        () => {
+
+            oscs.forEach(
+                osc => {
+
+                    try {
+
+                        osc.stop();
+
+                    } catch {}
+
+                }
+            );
+
+        },
+        120
+    );
 
 }
 
 
 /* =========================================================
-   BRILHO
+   FILTRO
 ========================================================= */
 
-function updateBrightness() {
+function updateFilter() {
 
-    if (!currentFilter)
+    if (!voiceFilter)
         return;
 
 
-    const value =
+    const brightness =
         Number(
             $("brightness").value
         );
 
 
-    currentFilter.frequency.value =
+    voiceFilter.frequency.value =
         1500 +
-        value * 65;
+        brightness * 65;
 
 
-    currentFilter.Q.value =
+    voiceFilter.Q.value =
         1.1;
 
 }
@@ -1487,187 +1651,267 @@ function updateBrightness() {
 
 function updateVibrato() {
 
-    if (!currentVibratoGain)
+    if (!vibratoGain)
         return;
 
 
-    const value =
+    const amount =
         Number(
             $("vibrato").value
         );
 
 
-    currentVibratoGain.gain.value =
-        value * 0.32;
+    vibratoGain.gain.value =
+        amount * 0.3;
 
 }
 
 
 /* =========================================================
-   LOOP DE DETECÇÃO
+   PROCESSAMENTO
 ========================================================= */
 
-function detectLoop() {
+function processAudio() {
 
-    if (!running)
+    if (
+        !running ||
+        !analyser
+    )
         return;
 
 
     analyser.getFloatTimeDomainData(
-        detectionBuffer
+        buffer
     );
 
 
-    const result =
-        detectPitch(
-            detectionBuffer,
-            audioContext.sampleRate
+    const rms =
+        getRMS();
+
+
+    /*
+     * Medidor.
+     */
+
+    const level =
+        Math.min(
+            100,
+            rms * 1300
         );
 
 
-    if (result) {
+    signalMeter.style.width =
+        level + "%";
 
-        const pitch =
-            result.frequency;
+
+    signalText.textContent =
+        Math.round(level) + "%";
+
+
+    /*
+     * Pitch.
+     */
+
+    const result =
+        detectPitch(
+            buffer,
+            ctx.sampleRate
+        );
+
+
+    /*
+     * SILÊNCIO
+     */
+
+    if (!result) {
+
+        silenceFrames++;
 
 
         /*
-         * Evita saltos impossíveis.
+         * Só solta a nota depois
+         * de vários frames silenciosos.
          */
 
-        const stable =
-            lastPitch === 0 ||
-            Math.abs(
-                12 *
-                Math.log2(
-                    pitch /
-                    lastPitch
-                )
-            ) < 0.6;
+        if (
+            silenceFrames >= 4 &&
+            noteActive
+        ) {
+
+            stopVoice();
 
 
-        if (stable) {
-
-            const detectedNote =
-                frequencyToNote(
-                    pitch
-                );
+            noteElement.textContent =
+                "—";
 
 
-            /*
-             * Só cria uma nova nota
-             * quando realmente mudou.
-             */
-
-            const changed =
-                !currentNoteFrequency ||
-                Math.abs(
-                    12 *
-                    Math.log2(
-                        pitch /
-                        currentNoteFrequency
-                    )
-                ) > 0.35;
+            frequencyElement.textContent =
+                "Aguardando nota";
 
 
-            if (changed) {
-
-                createAccordion(
-                    pitch
-                );
-
-            }
-
-
-            noteDisplay.textContent =
-                detectedNote.name;
-
-
-            frequencyDisplay.textContent =
-                pitch.toFixed(1) +
-                " Hz";
-
-
-            const level =
-                Math.min(
-                    100,
-                    result.rms * 1000
-                );
-
-
-            meter.style.width =
-                level + "%";
-
-
-            glow.style.opacity =
-                Math.min(
-                    .4,
-                    result.rms * 5
-                );
-
-
-            lastPitch =
-                pitch;
-
-
-            lastDetection =
-                performance.now();
+            noteGlow.style.opacity =
+                "0";
 
         }
 
 
+        raf =
+            requestAnimationFrame(
+                processAudio
+            );
+
+
+        return;
+
+    }
+
+
+    silenceFrames =
+        0;
+
+
+    const frequency =
+        result.frequency;
+
+
+    const midi =
+        frequencyToMidi(
+            frequency
+        );
+
+
+    /*
+     * FILTRO DE NOTA
+     *
+     * Exige a mesma nota por
+     * vários frames antes de
+     * disparar.
+     */
+
+    if (
+        candidateMidi === midi
+    ) {
+
+        candidateCount++;
+
     } else {
 
+        candidateMidi =
+            midi;
+
+        candidateCount =
+            1;
+
+    }
+
+
+    /*
+     * ATIVAÇÃO
+     *
+     * Só dispara quando:
+     *
+     * 1. não há nota ativa
+     * 2. nova nota é confirmada
+     */
+
+    if (
+        !noteActive &&
+        candidateCount >= 3
+    ) {
+
+        createVoice(
+            frequency
+        );
+
+
+        activeMidi =
+            midi;
+
+
+        noteActive =
+            true;
+
+    }
+
+
+    /*
+     * Se uma nota já está ativa,
+     * NÃO cria outra voz simplesmente
+     * porque o detector continua
+     * encontrando a mesma frequência.
+     *
+     * Isso elimina o loop/retrigger.
+     */
+
+    if (noteActive) {
+
         /*
-         * Silêncio.
+         * Se o músico mudou para
+         * outra nota significativamente,
+         * troca a voz.
          */
 
         if (
-            performance.now() -
-            lastDetection >
-            140
+            midi !== activeMidi &&
+            candidateCount >= 4
         ) {
 
-            stopCurrentNote();
+            createVoice(
+                frequency
+            );
 
 
-            noteDisplay.textContent =
-                "—";
-
-
-            frequencyDisplay.textContent =
-                "Aguardando nota";
-
-
-            meter.style.width =
-                "0%";
-
-
-            glow.style.opacity =
-                "0";
+            activeMidi =
+                midi;
 
         }
 
     }
 
 
-    requestAnimationFrame(
-        detectLoop
-    );
+    /*
+     * Interface.
+     */
+
+    noteElement.textContent =
+        midiToName(midi);
+
+
+    frequencyElement.textContent =
+        frequency.toFixed(1) +
+        " Hz";
+
+
+    noteGlow.style.opacity =
+        Math.min(
+            .4,
+            rms * 5
+        );
+
+
+    lastFrequency =
+        frequency;
+
+
+    raf =
+        requestAnimationFrame(
+            processAudio
+        );
 
 }
 
 
 /* =========================================================
-   DISPOSITIVOS
+   LISTAR DISPOSITIVOS
 ========================================================= */
 
-async function enumerateDevices() {
+async function listDevices() {
 
     try {
 
         const devices =
-            await navigator.mediaDevices
+            await navigator
+                .mediaDevices
                 .enumerateDevices();
 
 
@@ -1679,21 +1923,25 @@ async function enumerateDevices() {
             );
 
 
-        inputSelect.innerHTML = "";
+        deviceSelect.innerHTML =
+            "";
 
 
-        if (!inputs.length) {
+        if (
+            inputs.length === 0
+        ) {
 
             const option =
                 document.createElement(
                     "option"
                 );
 
+
             option.textContent =
                 "Nenhuma entrada encontrada";
 
 
-            inputSelect.appendChild(
+            deviceSelect.appendChild(
                 option
             );
 
@@ -1721,7 +1969,7 @@ async function enumerateDevices() {
                     `Entrada ${index + 1}`;
 
 
-                inputSelect.appendChild(
+                deviceSelect.appendChild(
                     option
                 );
 
@@ -1730,13 +1978,13 @@ async function enumerateDevices() {
 
 
         /*
-         * Tenta encontrar a Cube Baby.
+         * Procura Cube Baby.
          */
 
         const cube =
             inputs.find(
                 device =>
-                    /cube|baby|cuvave|usb audio|usb/i
+                    /cube|baby|cuvave|m-vave|usb audio/i
                         .test(
                             device.label
                         )
@@ -1745,7 +1993,7 @@ async function enumerateDevices() {
 
         if (cube) {
 
-            inputSelect.value =
+            deviceSelect.value =
                 cube.deviceId;
 
             statusText.textContent =
@@ -1757,7 +2005,6 @@ async function enumerateDevices() {
     } catch (error) {
 
         console.error(
-            "Erro ao listar dispositivos:",
             error
         );
 
@@ -1767,92 +2014,108 @@ async function enumerateDevices() {
 
 
 /* =========================================================
-   INICIAR COM ENTRADA ESCOLHIDA
+   CRIA CONTEXTO
 ========================================================= */
 
-async function startAudio(
-    selectedDeviceId = null
+async function createAudio(
+    deviceId
 ) {
 
-    if (running)
-        return;
+    /*
+     * Contexto.
+     */
+
+    ctx =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )({
+
+            latencyHint:
+                "interactive"
+
+        });
+
+
+    await ctx.resume();
+
+
+    /*
+     * Configuração básica.
+     *
+     * NÃO força deviceId inicialmente.
+     */
+
+    const constraints = {
+
+        audio: {
+
+            echoCancellation:
+                false,
+
+            noiseSuppression:
+                false,
+
+            autoGainControl:
+                false,
+
+            channelCount:
+                1
+
+        },
+
+        video:
+            false
+
+    };
+
+
+    /*
+     * Só utiliza deviceId
+     * se realmente existir.
+     */
+
+    if (
+        deviceId
+    ) {
+
+        constraints.audio.deviceId =
+            {
+                exact:
+                    deviceId
+            };
+
+    }
 
 
     try {
 
-        statusText.textContent =
-            "Iniciando áudio...";
+        stream =
+            await navigator
+                .mediaDevices
+                .getUserMedia(
+                    constraints
+                );
 
-
-        /*
-         * Cria contexto.
-         */
-
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )({
-
-                latencyHint:
-                    "interactive"
-
-            });
-
-
-        await audioContext.resume();
-
+    } catch (error) {
 
         /*
-         * PRIMEIRO ACESSO:
-         *
-         * NÃO usa "exact".
-         *
-         * Isso evita
-         * OverconstrainedError.
+         * Fallback.
          */
 
-        const constraints = {
+        if (
+            error.name ===
+            "OverconstrainedError"
+        ) {
 
-            audio: {
-
-                echoCancellation:
-                    false,
-
-                noiseSuppression:
-                    false,
-
-                autoGainControl:
-                    false,
-
-                channelCount:
-                    1
-
-            },
-
-            video:
-                false
-
-        };
+            console.warn(
+                "Fallback para entrada padrão."
+            );
 
 
-        /*
-         * Se já conhecemos um device válido,
-         * podemos tentar utilizá-lo.
-         */
+            delete
+                constraints.audio.deviceId;
 
-        if (selectedDeviceId) {
-
-            constraints.audio.deviceId =
-                {
-                    exact:
-                        selectedDeviceId
-                };
-
-        }
-
-
-        try {
 
             stream =
                 await navigator
@@ -1861,151 +2124,190 @@ async function startAudio(
                         constraints
                     );
 
-        } catch (error) {
+        } else {
 
-            /*
-             * Se a Cube Baby rejeitar
-             * a restrição, fazemos fallback
-             * para qualquer entrada.
-             */
-
-            if (
-                error.name ===
-                "OverconstrainedError"
-            ) {
-
-                console.warn(
-                    "Entrada específica recusada. Fazendo fallback."
-                );
-
-
-                delete constraints.audio.deviceId;
-
-
-                stream =
-                    await navigator
-                        .mediaDevices
-                        .getUserMedia(
-                            constraints
-                        );
-
-            } else {
-
-                throw error;
-
-            }
+            throw error;
 
         }
 
+    }
+
+
+    /*
+     * Fonte.
+     */
+
+    source =
+        ctx.createMediaStreamSource(
+            stream
+        );
+
+
+    /*
+     * Analisador.
+     */
+
+    analyser =
+        ctx.createAnalyser();
+
+
+    analyser.fftSize =
+        2048;
+
+
+    analyser.smoothingTimeConstant =
+        0.0;
+
+
+    source.connect(
+        analyser
+    );
+
+
+    /*
+     * MASTER.
+     */
+
+    master =
+        ctx.createGain();
+
+
+    master.gain.value =
+        Number(
+            $("volume").value
+        ) / 100;
+
+
+    /*
+     * Compressor.
+     */
+
+    compressor =
+        ctx.createDynamicsCompressor();
+
+
+    compressor.threshold.value =
+        -18;
+
+    compressor.knee.value =
+        12;
+
+    compressor.ratio.value =
+        4;
+
+    compressor.attack.value =
+        0.003;
+
+    compressor.release.value =
+        0.1;
+
+
+    master.connect(
+        compressor
+    );
+
+
+    compressor.connect(
+        ctx.destination
+    );
+
+
+    /*
+     * Reverb.
+     */
+
+    wet =
+        ctx.createGain();
+
+
+    wet.gain.value =
+        Number(
+            $("reverb").value
+        ) / 100;
+
+
+    delay =
+        ctx.createDelay(
+            1
+        );
+
+
+    delay.delayTime.value =
+        0.075;
+
+
+    const feedback =
+        ctx.createGain();
+
+
+    feedback.gain.value =
+        0.2;
+
+
+    delay.connect(
+        feedback
+    );
+
+
+    feedback.connect(
+        delay
+    );
+
+
+    delay.connect(
+        wet
+    );
+
+
+    wet.connect(
+        compressor
+    );
+
+
+    master.connect(
+        delay
+    );
+
+}
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+async function start() {
+
+    if (running)
+        return;
+
+
+    statusText.textContent =
+        "Solicitando acesso ao áudio...";
+
+
+    try {
 
         /*
-         * Entrada.
+         * O navegador precisa conceder
+         * permissão antes que os nomes
+         * dos dispositivos apareçam.
          */
 
-        source =
-            audioContext
-                .createMediaStreamSource(
-                    stream
-                );
+        const selected =
+            deviceSelect.value;
 
 
-        /*
-         * Analisador.
-         */
-
-        analyser =
-            audioContext
-                .createAnalyser();
-
-
-        analyser.fftSize =
-            2048;
-
-
-        analyser.smoothingTimeConstant =
-            0.03;
-
-
-        source.connect(
-            analyser
+        await createAudio(
+            selected
         );
 
 
         /*
-         * MASTER.
+         * Agora os nomes ficam disponíveis.
          */
 
-        master =
-            audioContext
-                .createGain();
+        await listDevices();
 
-
-        master.gain.value =
-            Number(
-                $("volume").value
-            ) / 100;
-
-
-        /*
-         * COMPRESSOR.
-         */
-
-        compressor =
-            audioContext
-                .createDynamicsCompressor();
-
-
-        compressor.threshold.value =
-            -18;
-
-        compressor.knee.value =
-            10;
-
-        compressor.ratio.value =
-            4;
-
-        compressor.attack.value =
-            0.003;
-
-        compressor.release.value =
-            0.1;
-
-
-        master.connect(
-            compressor
-        );
-
-
-        compressor.connect(
-            audioContext.destination
-        );
-
-
-        /*
-         * REVERB.
-         */
-
-        wet =
-            audioContext.createGain();
-
-
-        wet.gain.value =
-            Number(
-                $("reverb").value
-            ) / 100;
-
-
-        wet.connect(
-            compressor
-        );
-
-
-        createReverb();
-
-
-        /*
-         * Estado.
-         */
 
         running =
             true;
@@ -2020,26 +2322,33 @@ async function startAudio(
             "Ativo — toque uma nota";
 
 
-        await enumerateDevices();
+        noteActive =
+            false;
 
 
-        /*
-         * Inicia processamento.
-         */
+        activeMidi =
+            null;
 
-        lastPitch =
+
+        candidateMidi =
+            null;
+
+
+        candidateCount =
             0;
 
-        lastDetection =
-            performance.now();
+
+        silenceFrames =
+            0;
 
 
-        detectLoop();
+        processAudio();
 
 
     } catch (error) {
 
         console.error(
+            "ERRO DE ÁUDIO:",
             error
         );
 
@@ -2050,7 +2359,7 @@ async function startAudio(
         ) {
 
             statusText.textContent =
-                "Permissão de microfone negada.";
+                "Permissão de áudio negada.";
 
         } else if (
             error.name ===
@@ -2058,15 +2367,15 @@ async function startAudio(
         ) {
 
             statusText.textContent =
-                "Nenhuma entrada de áudio encontrada.";
+                "Nenhum dispositivo de áudio.";
 
         } else if (
             error.name ===
-            "OverconstrainedError"
+            "NotReadableError"
         ) {
 
             statusText.textContent =
-                "A entrada selecionada não está disponível.";
+                "A entrada está sendo usada por outro programa.";
 
         } else {
 
@@ -2080,39 +2389,41 @@ async function startAudio(
         }
 
 
-        if (stream) {
-
-            stream
-                .getTracks()
-                .forEach(
-                    track =>
-                        track.stop()
-                );
-
-            stream =
-                null;
-
-        }
-
-
-        if (audioContext) {
-
-            try {
-
-                await audioContext.close();
-
-            } catch {}
-
-            audioContext =
-                null;
-
-        }
-
-
-        running =
-            false;
+        await stop();
 
     }
+
+}
+
+
+/* =========================================================
+   APLICAR ENTRADA
+========================================================= */
+
+async function applyDevice() {
+
+    const selected =
+        deviceSelect.value;
+
+
+    if (!selected) {
+
+        statusText.textContent =
+            "Nenhuma entrada selecionada.";
+
+        return;
+
+    }
+
+
+    if (running) {
+
+        await stop();
+
+    }
+
+
+    await start();
 
 }
 
@@ -2121,13 +2432,25 @@ async function startAudio(
    PARAR
 ========================================================= */
 
-async function stopAudio() {
+async function stop() {
 
     running =
         false;
 
 
-    stopCurrentNote();
+    if (raf) {
+
+        cancelAnimationFrame(
+            raf
+        );
+
+        raf =
+            null;
+
+    }
+
+
+    stopVoice();
 
 
     if (stream) {
@@ -2139,21 +2462,22 @@ async function stopAudio() {
                     track.stop()
             );
 
+
         stream =
             null;
 
     }
 
 
-    if (audioContext) {
+    if (ctx) {
 
         try {
 
-            await audioContext.close();
+            await ctx.close();
 
         } catch {}
 
-        audioContext =
+        ctx =
             null;
 
     }
@@ -2174,20 +2498,47 @@ async function stopAudio() {
     wet =
         null;
 
+    delay =
+        null;
 
-    noteDisplay.textContent =
+
+    noteActive =
+        false;
+
+
+    activeMidi =
+        null;
+
+
+    candidateMidi =
+        null;
+
+
+    candidateCount =
+        0;
+
+
+    silenceFrames =
+        0;
+
+
+    noteElement.textContent =
         "—";
 
 
-    frequencyDisplay.textContent =
+    frequencyElement.textContent =
         "Aguardando guitarra";
 
 
-    meter.style.width =
+    signalMeter.style.width =
         "0%";
 
 
-    glow.style.opacity =
+    signalText.textContent =
+        "0%";
+
+
+    noteGlow.style.opacity =
         "0";
 
 
@@ -2203,136 +2554,97 @@ async function stopAudio() {
 
 
 /* =========================================================
-   APLICAR ENTRADA
-========================================================= */
-
-async function applyInput() {
-
-    const selected =
-        inputSelect.value;
-
-
-    if (!selected) {
-
-        statusText.textContent =
-            "Selecione uma entrada.";
-
-        return;
-
-    }
-
-
-    /*
-     * Se já estiver rodando,
-     * reinicia com a entrada nova.
-     */
-
-    if (running) {
-
-        await stopAudio();
-
-    }
-
-
-    await startAudio(
-        selected
-    );
-
-}
-
-
-/* =========================================================
    CONTROLES
 ========================================================= */
 
 $("volume").oninput =
-    function () {
+function() {
 
-        $("volumeValue")
-            .textContent =
-            this.value + "%";
+    $("volumeValue")
+        .textContent =
+        this.value + "%";
 
 
-        if (master) {
+    if (master) {
 
-            master.gain.value =
-                this.value / 100;
+        master.gain.value =
+            this.value / 100;
 
-        }
+    }
 
-    };
+};
 
 
 $("reverb").oninput =
-    function () {
+function() {
 
-        $("reverbValue")
-            .textContent =
-            this.value + "%";
+    $("reverbValue")
+        .textContent =
+        this.value + "%";
 
 
-        if (wet) {
+    if (wet) {
 
-            wet.gain.value =
-                this.value / 100;
+        wet.gain.value =
+            this.value / 100;
 
-        }
+    }
 
-    };
+};
 
 
 $("brightness").oninput =
-    function () {
+function() {
 
-        $("brightnessValue")
-            .textContent =
-            this.value + "%";
+    $("brightnessValue")
+        .textContent =
+        this.value + "%";
 
 
-        updateBrightness();
+    updateFilter();
 
-    };
+};
 
 
 $("vibrato").oninput =
-    function () {
+function() {
 
-        $("vibratoValue")
-            .textContent =
-            this.value + "%";
+    $("vibratoValue")
+        .textContent =
+        this.value + "%";
 
 
-        updateVibrato();
+    updateVibrato();
 
-    };
+};
 
 
 $("transpose").oninput =
-    function () {
+function() {
 
-        const value =
-            Number(
-                this.value
-            );
+    const value =
+        Number(
+            this.value
+        );
 
 
-        $("transposeValue")
-            .textContent =
-            value > 0
-                ? "+" + value
-                : value;
+    $("transposeValue")
+        .textContent =
+        value > 0
+            ? "+" + value
+            : value;
 
-    };
+};
 
 
 $("sensitivity").oninput =
-    function () {
+function() {
 
-        $("sensitivityValue")
-            .textContent =
-            this.value + "%";
+    $("sensitivityValue")
+        .textContent =
+        this.value + "%";
 
-    };
+};
 
 
 /* =========================================================
@@ -2340,123 +2652,28 @@ $("sensitivity").oninput =
 ========================================================= */
 
 $("start").onclick =
-    async () => {
-
-        await startAudio();
-
-    };
+    start;
 
 
 $("apply").onclick =
-    async () => {
-
-        await applyInput();
-
-    };
+    applyDevice;
 
 
 $("stop").onclick =
-    async () => {
-
-        await stopAudio();
-
-    };
+    stop;
 
 
 /* =========================================================
-   DETECTAR DISPOSITIVOS
+   PRIMEIRA LISTAGEM
 ========================================================= */
 
 if (
     navigator.mediaDevices
 ) {
 
-    navigator.mediaDevices
-        .enumerateDevices()
-        .then(
-            devices => {
-
-                const inputs =
-                    devices.filter(
-                        d =>
-                            d.kind ===
-                            "audioinput"
-                    );
-
-
-                if (inputs.length) {
-
-                    inputSelect.innerHTML =
-                        "";
-
-
-                    inputs.forEach(
-                        (device, index) => {
-
-                            const option =
-                                document.createElement(
-                                    "option"
-                                );
-
-
-                            option.value =
-                                device.deviceId;
-
-
-                            option.textContent =
-                                device.label ||
-                                `Entrada ${index + 1}`;
-
-
-                            inputSelect
-                                .appendChild(
-                                    option
-                                );
-
-                        }
-                    );
-
-                }
-
-            }
-        )
-        .catch(
-            () => {}
-        );
+    listDevices();
 
 }
-
-
-/* =========================================================
-   TECLADO
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.code ===
-            "Space"
-        ) {
-
-            event.preventDefault();
-
-
-            if (running) {
-
-                stopAudio();
-
-            } else {
-
-                startAudio();
-
-            }
-
-        }
-
-    }
-);
 
 </script>
 
