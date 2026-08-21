@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Guitar → Sanfona</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #090a0d;
+    --panel: #111318;
+    --panel2: #171a21;
+    --border: #292e38;
+    --text: #f4f6f8;
+    --muted: #8d96a5;
+    --accent: #d7a84b;
+    --accent2: #f0c86c;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 0%, #211d13 0%, transparent 40%),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.app {
+    width: min(900px, 100%);
+}
+
+header {
+    margin-bottom: 22px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f2c765, #9a6d20);
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    box-shadow: 0 0 30px rgba(215,168,75,.15);
+}
+
+h1 {
+    margin: 0;
+    font-size: 25px;
+    letter-spacing: -.5px;
+}
+
+.subtitle {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.panel {
+    background: rgba(17,19,24,.94);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 25px 70px rgba(0,0,0,.35);
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 15px;
+    border-radius: 13px;
+    background: var(--panel2);
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #555;
+}
+
+.status.active .status-dot {
+    background: #6ee7a0;
+    box-shadow: 0 0 12px #6ee7a0;
+}
+
+.note-display {
+    height: 210px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at center, rgba(215,168,75,.09), transparent 55%),
+        #0c0e12;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.note {
+    font-size: 72px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -4px;
+}
+
+.frequency {
+    color: var(--muted);
+    margin-top: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+.note-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    filter: blur(90px);
+    transition: opacity .15s;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.control {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.control.full {
+    grid-column: 1 / -1;
+}
+
+.control-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+label {
+    font-size: 13px;
+    color: #d7dbe2;
+}
+
+.value {
+    color: var(--accent2);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+select,
+button {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: #0d0f14;
+    color: var(--text);
+    border-radius: 11px;
+    padding: 12px;
+    outline: none;
+}
+
+select:focus {
+    border-color: var(--accent);
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+button {
+    cursor: pointer;
+    font-weight: 600;
+    transition: .15s;
+}
+
+button:hover {
+    border-color: #555d6b;
+    transform: translateY(-1px);
+}
+
+button.primary {
+    background: linear-gradient(135deg, #e4b95c, #a77727);
+    border: none;
+    color: #14110a;
+}
+
+.meter {
+    margin-top: 18px;
+}
+
+.meter-bar {
+    height: 5px;
+    background: #20242c;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #7f5d24, #e7c266);
+    transition: width .04s linear;
+}
+
+.info {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.55;
+    margin-top: 18px;
+}
+
+@media(max-width:650px) {
+    .controls {
+        grid-template-columns: 1fr;
+    }
+
+    .control.full {
+        grid-column: auto;
+    }
+
+    .note {
+        font-size: 58px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">🪗</div>
+        <div>
+            <h1>Guitar → Sanfona</h1>
+            <div class="subtitle">
+                Instrumento virtual em tempo real
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="panel">
+
+    <div class="status" id="status">
+        <div class="status-dot"></div>
+        <span id="statusText">Desligado</span>
+    </div>
+
+    <div class="note-display">
+
+        <div class="note-glow" id="glow"></div>
+
+        <div class="note" id="note">
+            —
+        </div>
+
+        <div class="frequency" id="frequency">
+            Aguardando guitarra
+        </div>
+
+    </div>
+
+    <div class="controls">
+
+        <div class="control full">
+            <div class="control-head">
+                <label>Entrada de áudio</label>
+            </div>
+
+            <select id="input">
+                <option>Inicie o áudio para procurar dispositivos...</option>
+            </select>
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Volume</label>
+                <span class="value" id="volumeValue">70%</span>
+            </div>
+
+            <input id="volume"
+                   type="range"
+                   min="0"
+                   max="100"
+                   value="70">
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Reverb</label>
+                <span class="value" id="reverbValue">18%</span>
+            </div>
+
+            <input id="reverb"
+                   type="range"
+                   min="0"
+                   max="100"
+                   value="18">
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Brilho</label>
+                <span class="value" id="brightnessValue">65%</span>
+            </div>
+
+            <input id="brightness"
+                   type="range"
+                   min="0"
+                   max="100"
+                   value="65">
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Vibrato</label>
+                <span class="value" id="vibratoValue">22%</span>
+            </div>
+
+            <input id="vibrato"
+                   type="range"
+                   min="0"
+                   max="100"
+                   value="22">
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Transposição</label>
+                <span class="value" id="transposeValue">0</span>
+            </div>
+
+            <input id="transpose"
+                   type="range"
+                   min="-12"
+                   max="12"
+                   value="0">
+        </div>
+
+        <div class="control">
+            <div class="control-head">
+                <label>Sensibilidade</label>
+                <span class="value" id="sensitivityValue">35%</span>
+            </div>
+
+            <input id="sensitivity"
+                   type="range"
+                   min="5"
+                   max="80"
+                   value="35">
+        </div>
+
+    </div>
+
+    <div class="meter">
+        <div class="meter-bar">
+            <div class="meter-fill" id="meter"></div>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button class="primary" id="start">
+            ▶ Iniciar
+        </button>
+
+        <button id="stop">
+            ■ Parar
+        </button>
+    </div>
+
+    <div class="info">
+        Conecte a Cube Baby ao computador por USB e selecione-a
+        como entrada. Para melhor resposta, toque notas individuais
+        e evite acordes nesta versão.
+    </div>
+
+</main>
+</div>
+
+<script>
+
+/* =========================================================
+   GUITAR → ACCORDION
+   Motor de áudio sem bibliotecas externas
+   ========================================================= */
+
+let audioContext = null;
+let stream = null;
+let source = null;
+let analyser = null;
+
+let master = null;
+let dry = null;
+let wet = null;
+let compressor = null;
+
+let currentOscillators = [];
+let currentGain = null;
+let currentNote = null;
+
+let running = false;
+let lastPitch = 0;
+let lastDetection = 0;
+
+const bufferSize = 2048;
+const pitchBuffer = new Float32Array(bufferSize);
+
+const $ = id => document.getElementById(id);
+
+
+/* =========================================================
+   ELEMENTOS
+   ========================================================= */
+
+const status = $("status");
+const statusText = $("statusText");
+
+const noteDisplay = $("note");
+const frequencyDisplay = $("frequency");
+
+const inputSelect = $("input");
+
+const meter = $("meter");
+const glow = $("glow");
+
+
+/* =========================================================
+   NOTAS
+   ========================================================= */
+
+const noteNames = [
+    "C",
+    "C♯",
+    "D",
+    "D♯",
+    "E",
+    "F",
+    "F♯",
+    "G",
+    "G♯",
+    "A",
+    "A♯",
+    "B"
+];
+
+function frequencyToNote(freq) {
+
+    const midi =
+        Math.round(
+            69 + 12 * Math.log2(freq / 440)
+        );
+
+    return {
+        midi,
+        name:
+            noteNames[(midi % 12 + 12) % 12] +
+            (Math.floor(midi / 12) - 1)
+    };
+}
+
+
+/* =========================================================
+   PITCH DETECTION
+   Autocorrelação otimizada para guitarra
+   ========================================================= */
+
+function detectPitch(buffer, sampleRate) {
+
+    let rms = 0;
+
+    for (let i = 0; i < buffer.length; i++) {
+        rms += buffer[i] * buffer[i];
+    }
+
+    rms = Math.sqrt(rms / buffer.length);
+
+    const sensitivity =
+        Number($("sensitivity").value) / 100;
+
+    const threshold =
+        0.008 + (1 - sensitivity) * 0.04;
+
+    if (rms < threshold)
+        return null;
+
+    /*
+       Guitarra:
+       aproximadamente 70 Hz → 1300 Hz
+    */
+
+    const minFreq = 70;
+    const maxFreq = 1300;
+
+    const minLag =
+        Math.floor(sampleRate / maxFreq);
+
+    const maxLag =
+        Math.floor(sampleRate / minFreq);
+
+    let bestLag = -1;
+    let bestCorrelation = 0;
+
+    /*
+       Normalização parcial da autocorrelação.
+       Isso evita que amplitudes maiores dominem
+       a detecção.
+    */
+
+    for (
+        let lag = minLag;
+        lag <= maxLag;
+        lag++
+    ) {
+
+        let sum = 0;
+        let energyA = 0;
+        let energyB = 0;
+
+        const limit =
+            buffer.length - lag;
+
+        for (let i = 0; i < limit; i++) {
+
+            const a = buffer[i];
+            const b = buffer[i + lag];
+
+            sum += a * b;
+            energyA += a * a;
+            energyB += b * b;
+        }
+
+        const denominator =
+            Math.sqrt(energyA * energyB);
+
+        if (!denominator)
+            continue;
+
+        const correlation =
+            sum / denominator;
+
+        if (correlation > bestCorrelation) {
+            bestCorrelation = correlation;
+            bestLag = lag;
+        }
+    }
+
+    if (
+        bestLag < 0 ||
+        bestCorrelation < 0.55
+    ) {
+        return null;
+    }
+
+    /*
+       Interpolação parabólica para melhorar
+       a precisão da frequência.
+    */
+
+    const freq =
+        sampleRate / bestLag;
+
+    return {
+        frequency: freq,
+        confidence: bestCorrelation,
+        rms
+    };
+}
+
+
+/* =========================================================
+   MOTOR DE SANFONA
+   ========================================================= */
+
+function createAccordion(freq) {
+
+    stopCurrentNote();
+
+    const now =
+        audioContext.currentTime;
+
+    const transpose =
+        Number($("transpose").value);
+
+    const transposedFreq =
+        freq *
+        Math.pow(2, transpose / 12);
+
+    currentNote = transposedFreq;
+
+    currentGain =
+        audioContext.createGain();
+
+    currentGain.gain.setValueAtTime(
+        0,
+        now
+    );
+
+    /*
+       Ataque rápido característico.
+    */
+
+    currentGain.gain.linearRampToValueAtTime(
+        0.75,
+        now + 0.035
+    );
+
+    /*
+       Pequena sustentação.
+    */
+
+    currentGain.gain.setTargetAtTime(
+        0.58,
+        now + 0.08,
+        0.08
+    );
+
+    /*
+       Osciladores combinados.
+       A mistura gera um timbre semelhante
+       ao comportamento de palhetas da sanfona.
+    */
+
+    const osc1 =
+        audioContext.createOscillator();
+
+    const osc2 =
+        audioContext.createOscillator();
+
+    const osc3 =
+        audioContext.createOscillator();
+
+    osc1.type = "sawtooth";
+    osc2.type = "square";
+    osc3.type = "triangle";
+
+    osc1.frequency.value =
+        transposedFreq;
+
+    osc2.frequency.value =
+        transposedFreq;
+
+    osc3.frequency.value =
+        transposedFreq * 2;
+
+    /*
+       Desafinação extremamente pequena
+       entre as palhetas.
+    */
+
+    osc1.detune.value = -5;
+    osc2.detune.value = 5;
+    osc3.detune.value = 2;
+
+    /*
+       Ganhos individuais.
+    */
+
+    const g1 =
+        audioContext.createGain();
+
+    const g2 =
+        audioContext.createGain();
+
+    const g3 =
+        audioContext.createGain();
+
+    g1.gain.value = 0.50;
+    g2.gain.value = 0.18;
+    g3.gain.value = 0.08;
+
+    /*
+       Filtro para controlar o brilho.
+    */
+
+    const filter =
+        audioContext.createBiquadFilter();
+
+    filter.type = "lowpass";
+
+    updateBrightness(filter);
+
+    /*
+       Vibrato.
+    */
+
+    const vibrato =
+        audioContext.createOscillator();
+
+    const vibratoGain =
+        audioContext.createGain();
+
+    vibrato.frequency.value = 5.4;
+
+    updateVibrato(vibratoGain);
+
+    vibrato.connect(vibratoGain);
+
+    vibratoGain.connect(
+        osc1.detune
+    );
+
+    vibratoGain.connect(
+        osc2.detune
+    );
+
+    vibratoGain.connect(
+        osc3.detune
+    );
+
+    /*
+       Roteamento.
+    */
+
+    osc1.connect(g1);
+    osc2.connect(g2);
+    osc3.connect(g3);
+
+    g1.connect(filter);
+    g2.connect(filter);
+    g3.connect(filter);
+
+    filter.connect(currentGain);
+
+    currentGain.connect(master);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc3.start(now);
+
+    vibrato.start(now);
+
+    currentOscillators = [
+        osc1,
+        osc2,
+        osc3,
+        vibrato
+    ];
+
+    /*
+       Guarda referências para atualização.
+    */
+
+    currentOscillators.filter(
+        o => o.detune
+    ).forEach(
+        o => {}
+    );
+}
+
+
+/* =========================================================
+   PARAR NOTA
+   ========================================================= */
+
+function stopCurrentNote() {
+
+    if (!currentGain)
+        return;
+
+    const now =
+        audioContext.currentTime;
+
+    currentGain.gain.cancelScheduledValues(now);
+
+    currentGain.gain.setTargetAtTime(
+        0,
+        now,
+        0.035
+    );
+
+    const oldGain =
+        currentGain;
+
+    setTimeout(() => {
+
+        try {
+            currentOscillators.forEach(
+                osc => osc.stop()
+            );
+        } catch {}
+
+        try {
+            oldGain.disconnect();
+        } catch {}
+
+    }, 180);
+
+    currentGain = null;
+    currentOscillators = [];
+    currentNote = null;
+}
+
+
+/* =========================================================
+   BRILHO
+   ========================================================= */
+
+function updateBrightness(filter) {
+
+    if (!filter)
+        return;
+
+    const value =
+        Number($("brightness").value);
+
+    /*
+       1.5 kHz → 7.5 kHz
+    */
+
+    filter.frequency.value =
+        1500 + value * 60;
+
+    filter.Q.value = 1.1;
+}
+
+
+/* =========================================================
+   VIBRATO
+   ========================================================= */
+
+function updateVibrato(gain) {
+
+    if (!gain)
+        return;
+
+    const value =
+        Number($("vibrato").value);
+
+    /*
+       máximo aproximadamente ±35 cents
+    */
+
+    gain.gain.value =
+        value * 0.35;
+}
+
+
+/* =========================================================
+   REVERB SIMPLES
+   ========================================================= */
+
+function createReverb() {
+
+    const delay =
+        audioContext.createDelay(1);
+
+    delay.delayTime.value =
+        0.065;
+
+    const feedback =
+        audioContext.createGain();
+
+    feedback.gain.value =
+        Number($("reverb").value) / 100 * 0.35;
+
+    delay.connect(feedback);
+    feedback.connect(delay);
+
+    delay.connect(wet);
+
+    master.connect(delay);
+
+    return delay;
+}
+
+
+/* =========================================================
+   INICIAR ÁUDIO
+   ========================================================= */
+
+async function startAudio() {
+
+    if (running)
+        return;
+
+    try {
+
+        statusText.textContent =
+            "Solicitando acesso ao áudio...";
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )({
+                latencyHint: "interactive"
+            });
+
+        await audioContext.resume();
+
+        const deviceId =
+            inputSelect.value;
+
+        const constraints = {
+
+            audio: {
+
+                deviceId:
+                    deviceId &&
+                    deviceId !== "default"
+                        ? { exact: deviceId }
+                        : undefined,
+
+                echoCancellation: false,
+
+                noiseSuppression: false,
+
+                autoGainControl: false
+            },
+
+            video: false
+        };
+
+        stream =
+            await navigator.mediaDevices
+                .getUserMedia(constraints);
+
+        source =
+            audioContext
+                .createMediaStreamSource(stream);
+
+        analyser =
+            audioContext
+                .createAnalyser();
+
+        /*
+           fft pequeno = menor custo.
+        */
+
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.05;
+
+        source.connect(analyser);
+
+        /*
+           Saída principal.
+        */
+
+        master =
+            audioContext.createGain();
+
+        master.gain.value =
+            Number($("volume").value) / 100;
+
+        compressor =
+            audioContext.createDynamicsCompressor();
+
+        compressor.threshold.value = -18;
+        compressor.knee.value = 10;
+        compressor.ratio.value = 4;
+        compressor.attack.value = 0.003;
+        compressor.release.value = 0.1;
+
+        master.connect(compressor);
+
+        compressor.connect(
+            audioContext.destination
+        );
+
+        /*
+           Reverb.
+        */
+
+        wet =
+            audioContext.createGain();
+
+        wet.gain.value =
+            Number($("reverb").value) / 100;
+
+        wet.connect(compressor);
+
+        createReverb();
+
+        running = true;
+
+        status.classList.add("active");
+
+        statusText.textContent =
+            "Ativo — toque uma nota";
+
+        enumerateDevices();
+
+        detectLoop();
+
+    } catch (error) {
+
+        console.error(error);
+
+        statusText.textContent =
+            "Erro: " + error.message;
+
+        if (audioContext) {
+            try {
+                await audioContext.close();
+            } catch {}
+        }
+    }
+}
+
+
+/* =========================================================
+   PARAR
+   ========================================================= */
+
+async function stopAudio() {
+
+    running = false;
+
+    stopCurrentNote();
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        stream = null;
+    }
+
+    if (audioContext) {
+
+        try {
+            await audioContext.close();
+        } catch {}
+
+        audioContext = null;
+    }
+
+    noteDisplay.textContent = "—";
+
+    frequencyDisplay.textContent =
+        "Aguardando guitarra";
+
+    meter.style.width = "0%";
+
+    glow.style.opacity = "0";
+
+    status.classList.remove("active");
+
+    statusText.textContent =
+        "Desligado";
+}
+
+
+/* =========================================================
+   LOOP DE DETECÇÃO
+   ========================================================= */
+
+function detectLoop() {
+
+    if (!running)
+        return;
+
+    analyser.getFloatTimeDomainData(
+        pitchBuffer
+    );
+
+    const result =
+        detectPitch(
+            pitchBuffer,
+            audioContext.sampleRate
+        );
+
+    if (result) {
+
+        const now =
+            performance.now();
+
+        /*
+           Evita troca excessiva de notas
+           causada por ruído.
+        */
+
+        const pitch =
+            result.frequency;
+
+        const stable =
+            lastPitch === 0 ||
+            Math.abs(
+                12 *
+                Math.log2(
+                    pitch / lastPitch
+                )
+            ) < 0.45;
+
+        if (stable) {
+
+            const note =
+                frequencyToNote(pitch);
+
+            if (
+                !currentNote ||
+                Math.abs(
+                    12 *
+                    Math.log2(
+                        pitch / currentNote
+                    )
+                ) > 0.35
+            ) {
+
+                createAccordion(pitch);
+            }
+
+            noteDisplay.textContent =
+                note.name;
+
+            frequencyDisplay.textContent =
+                pitch.toFixed(1) + " Hz";
+
+            const level =
+                Math.min(
+                    100,
+                    result.rms * 900
+                );
+
+            meter.style.width =
+                level + "%";
+
+            glow.style.opacity =
+                Math.min(
+                    .35,
+                    result.rms * 4
+                );
+
+            lastPitch =
+                pitch;
+
+            lastDetection =
+                now;
+        }
+
+    } else {
+
+        /*
+           Se não houver sinal durante algum tempo,
+           libera a nota.
+        */
+
+        if (
+            performance.now() -
+            lastDetection > 130
+        ) {
+
+            stopCurrentNote();
+
+            noteDisplay.textContent =
+                "—";
+
+            frequencyDisplay.textContent =
+                "Aguardando nota";
+
+            meter.style.width =
+                "0%";
+
+            glow.style.opacity =
+                "0";
+        }
+    }
+
+    requestAnimationFrame(
+        detectLoop
+    );
+}
+
+
+/* =========================================================
+   DISPOSITIVOS
+   ========================================================= */
+
+async function enumerateDevices() {
+
+    try {
+
+        const devices =
+            await navigator.mediaDevices
+                .enumerateDevices();
+
+        inputSelect.innerHTML = "";
+
+        const inputs =
+            devices.filter(
+                d => d.kind === "audioinput"
+            );
+
+        inputs.forEach(
+            (device, index) => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value =
+                    device.deviceId;
+
+                option.textContent =
+                    device.label ||
+                    `Entrada ${index + 1}`;
+
+                inputSelect.appendChild(
+                    option
+                );
+            }
+        );
+
+        /*
+           Tenta selecionar automaticamente
+           algo que pareça Cube Baby/Cuvave.
+        */
+
+        const cube =
+            inputs.find(
+                d =>
+                    /cube|baby|cuvave|usb|audio/i
+                        .test(d.label)
+            );
+
+        if (cube) {
+            inputSelect.value =
+                cube.deviceId;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+    }
+}
+
+
+/* =========================================================
+   CONTROLES
+   ========================================================= */
+
+$("volume").oninput = e => {
+
+    $("volumeValue").textContent =
+        e.target.value + "%";
+
+    if (master)
+        master.gain.value =
+            e.target.value / 100;
+};
+
+
+$("reverb").oninput = e => {
+
+    $("reverbValue").textContent =
+        e.target.value + "%";
+
+    if (wet)
+        wet.gain.value =
+            e.target.value / 100;
+};
+
+
+$("brightness").oninput = e => {
+
+    $("brightnessValue").textContent =
+        e.target.value + "%";
+};
+
+
+$("vibrato").oninput = e => {
+
+    $("vibratoValue").textContent =
+        e.target.value + "%";
+};
+
+
+$("transpose").oninput = e => {
+
+    const value =
+        Number(e.target.value);
+
+    $("transposeValue").textContent =
+        value > 0
+            ? "+" + value
+            : value;
+};
+
+
+$("sensitivity").oninput = e => {
+
+    $("sensitivityValue").textContent =
+        e.target.value + "%";
+};
+
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+$("start").onclick =
+    startAudio;
+
+$("stop").onclick =
+    stopAudio;
+
+
+/* =========================================================
+   PERMISSÃO / DISPOSITIVOS
+   ========================================================= */
+
+if (
+    navigator.mediaDevices &&
+    navigator.mediaDevices.enumerateDevices
+) {
+
+    navigator.mediaDevices
+        .enumerateDevices()
+        .catch(() => {});
+}
+
+</script>
+
+</body>
+</html>
