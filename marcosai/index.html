@@ -4668,14 +4668,12 @@ Evite frases desnecessárias.
     }
 
 
-    const data =
-        await response.json();
-
+    const data = await response.json();
 
     return (
         data
             ?.choices
-            ?.0
+            ?.[0]
             ?.message
             ?.content
             ?.trim()
