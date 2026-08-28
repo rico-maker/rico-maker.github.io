@@ -1,0 +1,5287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<meta name="theme-color" content="#020509">
+
+<title>Marcos — Interface</title>
+
+<style>
+
+/* =========================================================
+   MARCOS
+   SINGLE FILE ARCHITECTURE
+   =========================================================
+
+   Tudo propositalmente contido em um único documento.
+
+   Sistemas:
+   01. Design tokens
+   02. Reset
+   03. Ambiente
+   04. HUD
+   05. Núcleo
+   06. Input
+   07. Neural interface
+   08. Notifications
+   09. Responsive
+   10. Animations
+   ========================================================= */
+
+
+/* =========================================================
+   01 — DESIGN TOKENS
+   ========================================================= */
+
+:root {
+
+    --bg: #020509;
+    --bg-2: #050a10;
+
+    --cyan: #78f7ff;
+    --cyan-soft: rgba(120, 247, 255, .55);
+    --cyan-dim: rgba(120, 247, 255, .16);
+
+    --white: #eaffff;
+    --text: #c6d9df;
+    --muted: #668089;
+
+    --line: rgba(120, 247, 255, .13);
+    --line-strong: rgba(120, 247, 255, .35);
+
+    --danger: #ff5570;
+    --success: #70ffcf;
+
+    --glass: rgba(4, 12, 18, .62);
+
+    --ease:
+        cubic-bezier(.16, 1, .3, 1);
+
+    --ease-soft:
+        cubic-bezier(.22, .61, .36, 1);
+
+    --shadow:
+        0 0 60px rgba(80, 230, 255, .08);
+
+    --font-display:
+        "Orbitron",
+        "Arial",
+        sans-serif;
+
+    --font:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+/* =========================================================
+   02 — RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+body {
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #08131b 0%,
+            #03080d 35%,
+            #010306 75%,
+            #000 100%
+        );
+
+    color: var(--white);
+
+    font-family: var(--font);
+
+    -webkit-font-smoothing: antialiased;
+
+    user-select: none;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+canvas {
+    display: block;
+}
+
+
+/* =========================================================
+   03 — APPLICATION
+   ========================================================= */
+
+#application {
+
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    isolation: isolate;
+}
+
+
+/* =========================================================
+   AMBIENT ENVIRONMENT
+   ========================================================= */
+
+#ambient {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: -1;
+
+    overflow: hidden;
+}
+
+
+/* grid */
+
+.ambient-grid {
+
+    position: absolute;
+
+    inset: -10%;
+
+    opacity: .28;
+
+    background-image:
+
+        linear-gradient(
+            rgba(120,247,255,.045) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(120,247,255,.045) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        70px 70px;
+
+    transform:
+        perspective(700px)
+        rotateX(62deg)
+        translateY(25%);
+
+    transform-origin: center;
+
+    animation:
+        gridDrift 18s linear infinite;
+}
+
+
+/* atmospheric lights */
+
+.ambient-glow {
+
+    position: absolute;
+
+    width: 65vw;
+    height: 65vw;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    opacity: .08;
+
+    background:
+        var(--cyan);
+
+    mix-blend-mode: screen;
+}
+
+.ambient-glow-a {
+
+    left: -25vw;
+    top: 15vh;
+}
+
+.ambient-glow-b {
+
+    right: -25vw;
+    bottom: -20vw;
+
+    opacity: .045;
+}
+
+
+/* film/noise */
+
+.ambient-noise {
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .028;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MAIN INTERFACE
+   ========================================================= */
+
+#interface {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    transition:
+        transform 1.2s var(--ease),
+        opacity .8s var(--ease),
+        filter .8s var(--ease);
+}
+
+
+/* when neural system is open */
+
+#application.neural-open #interface {
+
+    transform:
+        translateX(-31vw)
+        scale(.82);
+
+    opacity: .22;
+
+    filter:
+        blur(2px);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+#topbar {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 90px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 42px;
+
+    border-bottom:
+        1px solid
+        rgba(120,247,255,.055);
+}
+
+
+/* small corner decoration */
+
+#topbar::after {
+
+    content: "";
+
+    position: absolute;
+
+    bottom: -1px;
+    left: 42px;
+
+    width: 130px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--cyan),
+            transparent
+        );
+
+    opacity: .5;
+}
+
+
+.system-indicator {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    color:
+        var(--muted);
+
+    font-family:
+        var(--font-display);
+
+    font-size: 9px;
+
+    letter-spacing:
+        2.5px;
+}
+
+
+.status-dot {
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background:
+        var(--success);
+
+    box-shadow:
+        0 0 8px
+        var(--success);
+
+    animation:
+        statusPulse 2s ease-in-out infinite;
+}
+
+
+.clock {
+
+    font-family:
+        var(--font-display);
+
+    font-size: 12px;
+
+    letter-spacing:
+        3px;
+
+    color:
+        rgba(234,255,255,.55);
+}
+
+
+/* =========================================================
+   CORE
+   ========================================================= */
+
+.core {
+
+    position: absolute;
+
+    left: 50%;
+    top: 44%;
+
+    width: 430px;
+    height: 430px;
+
+    transform:
+        translate(-50%, -50%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* aura */
+
+.core-aura {
+
+    position: absolute;
+
+    width: 270px;
+    height: 270px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(90,240,255,.20),
+            rgba(90,240,255,.06) 35%,
+            transparent 72%
+        );
+
+    filter:
+        blur(18px);
+
+    animation:
+        auraBreath 4s ease-in-out infinite;
+}
+
+
+/* rings */
+
+.core-rings {
+
+    position: absolute;
+
+    inset: 0;
+
+    animation:
+        coreRotate 30s linear infinite;
+}
+
+
+.core-ring {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(120,247,255,.17);
+}
+
+
+.ring-outer {
+
+    inset: 10px;
+
+    border-left-color:
+        transparent;
+
+    border-right-color:
+        rgba(120,247,255,.4);
+
+    animation:
+        ringRotate 13s linear infinite;
+}
+
+
+.ring-middle {
+
+    inset: 45px;
+
+    border-top-color:
+        rgba(120,247,255,.38);
+
+    border-bottom-color:
+        transparent;
+
+    animation:
+        ringRotateReverse 8s linear infinite;
+}
+
+
+.ring-inner {
+
+    inset: 82px;
+
+    border:
+        1px dashed
+        rgba(120,247,255,.18);
+
+    animation:
+        ringRotate 18s linear infinite;
+}
+
+
+/* =========================================================
+   ORB
+   ========================================================= */
+
+.core-orb {
+
+    position: relative;
+
+    width: 155px;
+    height: 155px;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            circle at 34% 28%,
+            #eaffff 0%,
+            #9dfaff 4%,
+            #36dce9 13%,
+            #087c95 31%,
+            #031e2a 58%,
+            #01080d 78%
+        );
+
+    box-shadow:
+
+        0 0 15px
+        rgba(120,247,255,.8),
+
+        0 0 45px
+        rgba(50,220,240,.32),
+
+        0 0 100px
+        rgba(50,220,240,.14),
+
+        inset
+        0 0 35px
+        rgba(120,247,255,.25);
+
+    animation:
+        orbFloat 4.5s ease-in-out infinite;
+
+    transition:
+        transform .8s var(--ease),
+        box-shadow .8s var(--ease);
+}
+
+
+/* internal energy */
+
+.orb-inner {
+
+    position: absolute;
+
+    inset: 18px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(210,255,255,.4);
+
+    box-shadow:
+        inset 0 0 25px
+        rgba(120,247,255,.35);
+
+    animation:
+        orbInner 2.8s ease-in-out infinite;
+}
+
+
+.orb-highlight {
+
+    position: absolute;
+
+    width: 40px;
+    height: 24px;
+
+    left: 32px;
+    top: 25px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.55);
+
+    filter:
+        blur(9px);
+
+    transform:
+        rotate(-30deg);
+}
+
+
+/* energy sweep */
+
+.orb-energy {
+
+    position: absolute;
+
+    inset: -7px;
+
+    border-radius: 50%;
+
+    border:
+        2px solid transparent;
+
+    border-top-color:
+        rgba(210,255,255,.8);
+
+    border-right-color:
+        rgba(120,247,255,.2);
+
+    animation:
+        energyRotate 2.2s linear infinite;
+}
+
+
+/* =========================================================
+   PARTICLES
+   ========================================================= */
+
+.core-particles {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+}
+
+.core-particle {
+
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background:
+        var(--cyan);
+
+    box-shadow:
+        0 0 8px
+        var(--cyan);
+
+    animation:
+        particleFloat var(--duration)
+        ease-in-out infinite;
+
+    opacity:
+        var(--opacity);
+}
+
+
+/* =========================================================
+   RESPONSE AREA
+   ========================================================= */
+
+.response-area {
+
+    position: absolute;
+
+    left: 50%;
+    top: calc(44% + 235px);
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(760px, 80vw);
+
+    text-align:
+        center;
+}
+
+
+.response-label {
+
+    font-family:
+        var(--font-display);
+
+    font-size: 8px;
+
+    letter-spacing:
+        4px;
+
+    color:
+        rgba(120,247,255,.42);
+
+    margin-bottom:
+        12px;
+}
+
+
+.response-text {
+
+    min-height:
+        30px;
+
+    font-size:
+        clamp(15px, 1.3vw, 19px);
+
+    font-weight:
+        300;
+
+    letter-spacing:
+        .4px;
+
+    color:
+        rgba(234,255,255,.86);
+
+    text-shadow:
+        0 0 20px
+        rgba(120,247,255,.16);
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+
+
+/* =========================================================
+   LISTENING
+   ========================================================= */
+
+.listening-indicator {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: calc(44% + 285px);
+
+    transform:
+        translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-family:
+        var(--font-display);
+
+    font-size: 8px;
+
+    letter-spacing:
+        3px;
+
+    color:
+        var(--cyan);
+
+    transition:
+        opacity .4s ease,
+        transform .4s ease;
+}
+
+
+.listening-line {
+
+    width: 42px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--cyan)
+        );
+}
+
+
+.listening-line:last-child {
+
+    transform:
+        scaleX(-1);
+}
+
+
+.hidden {
+
+    opacity: 0 !important;
+
+    pointer-events: none !important;
+}
+
+
+/* =========================================================
+   TELEMETRY
+   ========================================================= */
+
+.telemetry {
+
+    position: absolute;
+
+    bottom: 34px;
+    left: 42px;
+
+    display: flex;
+
+    gap: 25px;
+
+    opacity: .45;
+}
+
+
+.telemetry div {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.telemetry span {
+
+    font-family:
+        var(--font-display);
+
+    font-size: 7px;
+
+    letter-spacing:
+        2px;
+
+    color:
+        var(--muted);
+}
+
+
+.telemetry strong {
+
+    font-family:
+        var(--font-display);
+
+    font-size: 8px;
+
+    font-weight:
+        400;
+
+    letter-spacing:
+        1px;
+
+    color:
+        var(--cyan);
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.input-system {
+
+    position: absolute;
+
+    bottom: 27px;
+    right: 42px;
+
+    display: flex;
+
+    gap: 8px;
+}
+
+
+.input-shell {
+
+    width:
+        min(430px, 42vw);
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0 12px;
+
+    border:
+        1px solid
+        rgba(120,247,255,.13);
+
+    background:
+        rgba(3,10,15,.55);
+
+    backdrop-filter:
+        blur(16px);
+
+    transition:
+        border .3s ease,
+        box-shadow .3s ease;
+}
+
+
+.input-shell:focus-within {
+
+    border-color:
+        rgba(120,247,255,.38);
+
+    box-shadow:
+        0 0 30px
+        rgba(120,247,255,.05);
+}
+
+
+.input-prefix {
+
+    color:
+        rgba(120,247,255,.45);
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        13px;
+
+    margin-right:
+        9px;
+}
+
+
+#text-input {
+
+    flex: 1;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color:
+        var(--white);
+
+    font-size:
+        12px;
+
+    font-weight:
+        300;
+}
+
+
+#text-input::placeholder {
+
+    color:
+        rgba(198,217,223,.28);
+}
+
+
+#send-button {
+
+    width: 25px;
+    height: 25px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    position: relative;
+}
+
+
+#send-button span {
+
+    position: absolute;
+
+    width: 8px;
+    height: 8px;
+
+    left: 7px;
+    top: 8px;
+
+    border-top:
+        1px solid
+        var(--cyan);
+
+    border-right:
+        1px solid
+        var(--cyan);
+
+    transform:
+        rotate(45deg);
+
+    transition:
+        transform .25s ease;
+}
+
+
+#send-button:hover span {
+
+    transform:
+        translateX(3px)
+        rotate(45deg);
+}
+
+
+/* microphone */
+
+.microphone-button {
+
+    width: 42px;
+    height: 42px;
+
+    border:
+        1px solid
+        rgba(120,247,255,.13);
+
+    background:
+        rgba(3,10,15,.55);
+
+    backdrop-filter:
+        blur(16px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        .3s var(--ease);
+}
+
+
+.microphone-button:hover {
+
+    border-color:
+        rgba(120,247,255,.42);
+
+    box-shadow:
+        0 0 25px
+        rgba(120,247,255,.08);
+}
+
+
+.microphone-button.active {
+
+    border-color:
+        var(--cyan);
+
+    box-shadow:
+        0 0 30px
+        rgba(120,247,255,.2);
+}
+
+
+.mic-icon {
+
+    width: 8px;
+    height: 14px;
+
+    border:
+        1px solid
+        var(--cyan);
+
+    border-radius:
+        6px;
+
+    position: relative;
+}
+
+
+.mic-icon::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 16px;
+    height: 18px;
+
+    left: -5px;
+    top: 5px;
+
+    border:
+        1px solid
+        var(--cyan);
+
+    border-top:
+        0;
+
+    border-radius:
+        0 0 10px 10px;
+}
+
+
+.mic-icon::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 1px;
+    height: 5px;
+
+    left: 3px;
+    bottom: -9px;
+
+    background:
+        var(--cyan);
+}
+
+
+/* =========================================================
+   NEURAL STAGE
+   ========================================================= */
+
+#neural-stage {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    transform:
+        translateX(14vw)
+        scale(.96);
+
+    transition:
+        opacity 1s var(--ease),
+        transform 1.2s var(--ease);
+
+    pointer-events: none;
+}
+
+
+#application.neural-open #neural-stage {
+
+    opacity: 1;
+
+    transform:
+        translateX(0)
+        scale(1);
+
+    pointer-events: auto;
+}
+
+
+/* neural header */
+
+.neural-header {
+
+    position: absolute;
+
+    top: 50px;
+    left: 56%;
+
+    width: 38%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+}
+
+
+.neural-eyebrow {
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        4px;
+
+    color:
+        rgba(120,247,255,.42);
+
+    margin-bottom:
+        10px;
+}
+
+
+.neural-header h1 {
+
+    margin: 0;
+
+    font-family:
+        var(--font-display);
+
+    font-weight:
+        400;
+
+    font-size:
+        clamp(20px, 2vw, 31px);
+
+    letter-spacing:
+        6px;
+
+    color:
+        rgba(234,255,255,.9);
+
+    text-shadow:
+        0 0 30px
+        rgba(120,247,255,.12);
+}
+
+
+.neural-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 5px;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        7px;
+
+    letter-spacing:
+        2px;
+
+    color:
+        rgba(198,217,223,.4);
+}
+
+
+/* canvas */
+
+#neural-canvas {
+
+    position: absolute;
+
+    left: 25%;
+    top: 16%;
+
+    width: 62%;
+    height: 65%;
+}
+
+
+/* neural legend */
+
+.neural-legend {
+
+    position: absolute;
+
+    left: 56%;
+    bottom: 52px;
+
+    display: flex;
+
+    gap: 25px;
+}
+
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        7px;
+
+    letter-spacing:
+        1.8px;
+
+    color:
+        rgba(198,217,223,.42);
+}
+
+
+.legend-mark,
+.legend-pulse {
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        var(--cyan);
+
+    box-shadow:
+        0 0 8px
+        var(--cyan);
+}
+
+
+.legend-pulse {
+
+    animation:
+        statusPulse 1s infinite;
+}
+
+
+.legend-line {
+
+    width: 20px;
+    height: 1px;
+
+    background:
+        var(--cyan);
+
+    opacity: .5;
+}
+
+
+/* information */
+
+.neural-information {
+
+    position: absolute;
+
+    right: 40px;
+    top: 37%;
+
+    width: 145px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 22px;
+
+    border-left:
+        1px solid
+        rgba(120,247,255,.1);
+
+    padding-left:
+        18px;
+}
+
+
+.neural-info-block {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.neural-info-block span {
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        6px;
+
+    letter-spacing:
+        2px;
+
+    color:
+        rgba(198,217,223,.35);
+}
+
+
+.neural-info-block strong {
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        10px;
+
+    font-weight:
+        400;
+
+    letter-spacing:
+        1px;
+
+    color:
+        rgba(120,247,255,.72);
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
+
+.notification-container {
+
+    position: absolute;
+
+    top: 110px;
+    right: 40px;
+
+    width: 290px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    z-index: 50;
+}
+
+
+.notification {
+
+    position: relative;
+
+    padding:
+        13px 16px;
+
+    border-left:
+        1px solid
+        var(--cyan);
+
+    background:
+        rgba(3,12,17,.72);
+
+    backdrop-filter:
+        blur(18px);
+
+    box-shadow:
+        0 10px 40px
+        rgba(0,0,0,.25);
+
+    animation:
+        notificationIn .6s var(--ease);
+}
+
+
+.notification small {
+
+    display: block;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        6px;
+
+    letter-spacing:
+        2px;
+
+    color:
+        rgba(120,247,255,.45);
+
+    margin-bottom:
+        5px;
+}
+
+
+.notification span {
+
+    font-size:
+        11px;
+
+    color:
+        rgba(234,255,255,.76);
+
+    font-weight:
+        300;
+}
+
+
+/* =========================================================
+   PROCESSING STATE
+   ========================================================= */
+
+#application.processing .core-orb {
+
+    box-shadow:
+
+        0 0 20px
+        rgba(120,247,255,.95),
+
+        0 0 65px
+        rgba(50,220,240,.5),
+
+        0 0 140px
+        rgba(50,220,240,.22),
+
+        inset
+        0 0 45px
+        rgba(120,247,255,.4);
+}
+
+
+#application.processing .ring-outer {
+
+    animation-duration:
+        3s;
+}
+
+
+#application.processing .ring-middle {
+
+    animation-duration:
+        2s;
+}
+
+
+#application.listening .core-orb {
+
+    transform:
+        scale(1.09);
+}
+
+
+#application.listening .core-aura {
+
+    transform:
+        scale(1.4);
+
+    opacity: .5;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .core {
+
+        transform:
+            translate(-50%, -50%)
+            scale(.8);
+    }
+
+    .response-area {
+
+        top:
+            calc(44% + 190px);
+    }
+
+    .input-system {
+
+        left: 25px;
+        right: 25px;
+
+        justify-content: center;
+    }
+
+    .input-shell {
+
+        width:
+            calc(100vw - 100px);
+    }
+
+    .telemetry {
+
+        display: none;
+    }
+
+    #application.neural-open #interface {
+
+        transform:
+            translateX(-55vw)
+            scale(.7);
+    }
+
+    .neural-header {
+
+        left: 35%;
+
+        width: 55%;
+    }
+
+    #neural-canvas {
+
+        left: 5%;
+        width: 90%;
+    }
+
+    .neural-information {
+
+        display: none;
+    }
+
+    .neural-legend {
+
+        left: 35%;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    #topbar {
+
+        padding:
+            0 20px;
+    }
+
+    #topbar::after {
+
+        left: 20px;
+    }
+
+    .core {
+
+        top: 41%;
+
+        transform:
+            translate(-50%, -50%)
+            scale(.65);
+    }
+
+    .response-area {
+
+        top:
+            calc(41% + 160px);
+    }
+
+    .response-text {
+
+        font-size:
+            14px;
+    }
+
+    .input-system {
+
+        bottom: 18px;
+    }
+
+    .input-shell {
+
+        width:
+            calc(100vw - 85px);
+    }
+
+    .neural-header {
+
+        top: 30px;
+        left: 25px;
+
+        width:
+            calc(100% - 50px);
+    }
+
+    .neural-legend {
+
+        left: 25px;
+        bottom: 25px;
+    }
+
+    #neural-canvas {
+
+        left: 0;
+        top: 18%;
+
+        width: 100%;
+        height: 65%;
+    }
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes gridDrift {
+
+    from {
+        transform:
+            perspective(700px)
+            rotateX(62deg)
+            translateY(25%)
+            translateX(0);
+    }
+
+    to {
+        transform:
+            perspective(700px)
+            rotateX(62deg)
+            translateY(25%)
+            translateX(70px);
+    }
+}
+
+
+@keyframes auraBreath {
+
+    0%,
+    100% {
+        transform: scale(.88);
+        opacity: .7;
+    }
+
+    50% {
+        transform: scale(1.13);
+        opacity: 1;
+    }
+}
+
+
+@keyframes orbFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translateY(-7px)
+            scale(1.025);
+    }
+}
+
+
+@keyframes orbInner {
+
+    0%,
+    100% {
+        transform: scale(.94);
+        opacity: .7;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+}
+
+
+@keyframes coreRotate {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+@keyframes ringRotate {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+@keyframes ringRotateReverse {
+
+    to {
+        transform:
+            rotate(-360deg);
+    }
+}
+
+
+@keyframes energyRotate {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+@keyframes statusPulse {
+
+    0%,
+    100% {
+        opacity: .45;
+        transform: scale(.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+
+@keyframes particleFloat {
+
+    0% {
+        transform:
+            translate3d(0,0,0)
+            scale(.5);
+    }
+
+    50% {
+        transform:
+            translate3d(
+                var(--x),
+                var(--y),
+                0
+            )
+            scale(1);
+    }
+
+    100% {
+        transform:
+            translate3d(
+                calc(var(--x) * -1),
+                calc(var(--y) * -1),
+                0
+            )
+            scale(.3);
+    }
+}
+
+
+@keyframes notificationIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateX(0);
+    }
+}
+
+
+/* =========================================================
+   GOOGLE FONT FALLBACK
+   ========================================================= */
+
+@import url(
+    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;600&display=swap'
+);
+
+</style>
+</head>
+
+
+<body>
+
+
+<div id="application">
+
+
+    <!-- =====================================================
+         AMBIENTE
+    ====================================================== -->
+
+    <div id="ambient">
+
+        <div class="ambient-grid"></div>
+
+        <div class="ambient-glow ambient-glow-a"></div>
+
+        <div class="ambient-glow ambient-glow-b"></div>
+
+        <div class="ambient-noise"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INTERFACE PRINCIPAL
+    ====================================================== -->
+
+    <section id="interface">
+
+
+        <header id="topbar">
+
+            <div class="system-indicator">
+
+                <span
+                    id="system-dot"
+                    class="status-dot"
+                ></span>
+
+                <span id="system-status">
+                    SISTEMA ONLINE
+                </span>
+
+            </div>
+
+
+            <div
+                id="clock"
+                class="clock"
+            >
+                --:--
+            </div>
+
+        </header>
+
+
+        <!-- CORE -->
+
+        <div id="core" class="core">
+
+            <div
+                id="core-aura"
+                class="core-aura"
+            ></div>
+
+
+            <div
+                id="core-rings"
+                class="core-rings"
+            >
+
+                <div
+                    class="core-ring ring-outer"
+                ></div>
+
+                <div
+                    class="core-ring ring-middle"
+                ></div>
+
+                <div
+                    class="core-ring ring-inner"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="core-orb"
+                class="core-orb"
+            >
+
+                <div class="orb-inner"></div>
+
+                <div class="orb-highlight"></div>
+
+                <div class="orb-energy"></div>
+
+            </div>
+
+
+            <div
+                id="core-particles"
+                class="core-particles"
+            ></div>
+
+        </div>
+
+
+        <!-- RESPONSE -->
+
+        <div
+            id="response-area"
+            class="response-area"
+        >
+
+            <div
+                id="response-label"
+                class="response-label"
+            >
+                SISTEMA
+            </div>
+
+            <div
+                id="response-text"
+                class="response-text"
+            >
+                Aguardando interação
+            </div>
+
+        </div>
+
+
+        <!-- LISTENING -->
+
+        <div
+            id="listening-indicator"
+            class="listening-indicator hidden"
+        >
+
+            <span class="listening-line"></span>
+
+            <span>
+                OUVINDO
+            </span>
+
+            <span class="listening-line"></span>
+
+        </div>
+
+
+        <!-- TELEMETRY -->
+
+        <div
+            id="telemetry"
+            class="telemetry"
+        >
+
+            <div>
+
+                <span>CORE</span>
+
+                <strong id="telemetry-core">
+                    READY
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>VOICE</span>
+
+                <strong id="telemetry-voice">
+                    READY
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>AI</span>
+
+                <strong id="telemetry-ai">
+                    STANDBY
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div
+            id="input-system"
+            class="input-system"
+        >
+
+            <div class="input-shell">
+
+                <span class="input-prefix">
+                    >
+                </span>
+
+
+                <input
+                    id="text-input"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="Digite um comando..."
+                >
+
+
+                <button
+                    id="send-button"
+                    type="button"
+                    aria-label="Enviar"
+                >
+
+                    <span></span>
+
+                </button>
+
+            </div>
+
+
+            <button
+                id="microphone-button"
+                class="microphone-button"
+                type="button"
+                aria-label="Microfone"
+            >
+
+                <span class="mic-icon"></span>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         REDE NEURAL
+    ====================================================== -->
+
+    <section
+        id="neural-stage"
+        class="neural-stage"
+    >
+
+
+        <div class="neural-header">
+
+            <div>
+
+                <div class="neural-eyebrow">
+                    COGNITIVE ARCHITECTURE
+                </div>
+
+                <h1>
+                    REDE NEURAL
+                </h1>
+
+            </div>
+
+
+            <div class="neural-status">
+
+                <span class="status-dot"></span>
+
+                <span>
+                    LIVE
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <canvas id="neural-canvas"></canvas>
+
+
+        <div class="neural-legend">
+
+            <div class="legend-item">
+
+                <span class="legend-mark"></span>
+
+                <span>
+                    NEURÔNIO
+                </span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-line"></span>
+
+                <span>
+                    CONEXÃO
+                </span>
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span class="legend-pulse"></span>
+
+                <span>
+                    ATIVAÇÃO
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <aside class="neural-information">
+
+            <div class="neural-info-block">
+
+                <span>
+                    ARQUITETURA
+                </span>
+
+                <strong id="network-architecture">
+                    8–12–16–8–4
+                </strong>
+
+            </div>
+
+
+            <div class="neural-info-block">
+
+                <span>
+                    NEURÔNIOS
+                </span>
+
+                <strong id="network-neurons">
+                    48
+                </strong>
+
+            </div>
+
+
+            <div class="neural-info-block">
+
+                <span>
+                    CONEXÕES
+                </span>
+
+                <strong id="network-connections">
+                    448
+                </strong>
+
+            </div>
+
+
+            <div class="neural-info-block">
+
+                <span>
+                    ESTADO
+                </span>
+
+                <strong id="network-state">
+                    STANDBY
+                </strong>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- =====================================================
+         NOTIFICATIONS
+    ====================================================== -->
+
+    <div
+        id="notification-container"
+        class="notification-container"
+    ></div>
+
+
+</div>
+
+
+<script>
+
+/* ==========================================================
+   MARCOS — JAVASCRIPT ENGINE
+   ========================================================== */
+
+
+/* ==========================================================
+   CONFIGURAÇÃO
+   ========================================================== */
+
+const CONFIG = {
+
+    /* ------------------------------------------------------
+       GROQ
+       ------------------------------------------------------
+
+       IMPORTANTE:
+
+       Para demonstração local você pode inserir sua chave aqui.
+
+       Porém, para uma apresentação pública, NÃO é seguro
+       deixar uma API key diretamente no HTML.
+
+       Posteriormente podemos transformar isso em backend.
+    ------------------------------------------------------ */
+
+    GROQ_API_KEY: "",
+
+    GROQ_MODEL:
+        "llama-3.3-70b-versatile",
+
+    GROQ_URL:
+        "https://api.groq.com/openai/v1/chat/completions",
+
+    /* voz */
+
+    voiceRate: 0.96,
+
+    voicePitch: 0.91,
+
+    voiceVolume: 1,
+
+    /* rede neural */
+
+    neuralLayers:
+        [8, 12, 16, 8, 4],
+
+    /* quantas partículas */
+
+    particles:
+        34
+
+};
+
+
+/* ==========================================================
+   ESTADO GLOBAL
+   ========================================================== */
+
+const STATE = {
+
+    mode:
+        "idle",
+
+    neuralVisible:
+        false,
+
+    listening:
+        false,
+
+    speaking:
+        false,
+
+    processing:
+        false,
+
+    initialized:
+        false,
+
+    conversation:
+        [],
+
+    neuralInput:
+        new Array(8).fill(.2)
+
+};
+
+
+/* ==========================================================
+   ELEMENTOS
+   ========================================================== */
+
+const UI = {
+
+    app:
+        document.getElementById("application"),
+
+    response:
+        document.getElementById("response-text"),
+
+    label:
+        document.getElementById("response-label"),
+
+    input:
+        document.getElementById("text-input"),
+
+    send:
+        document.getElementById("send-button"),
+
+    mic:
+        document.getElementById("microphone-button"),
+
+    listening:
+        document.getElementById(
+            "listening-indicator"
+        ),
+
+    clock:
+        document.getElementById("clock"),
+
+    systemStatus:
+        document.getElementById(
+            "system-status"
+        ),
+
+    aiStatus:
+        document.getElementById(
+            "telemetry-ai"
+        ),
+
+    voiceStatus:
+        document.getElementById(
+            "telemetry-voice"
+        ),
+
+    coreStatus:
+        document.getElementById(
+            "telemetry-core"
+        ),
+
+    particles:
+        document.getElementById(
+            "core-particles"
+        ),
+
+    neuralCanvas:
+        document.getElementById(
+            "neural-canvas"
+        ),
+
+    neuralState:
+        document.getElementById(
+            "network-state"
+        ),
+
+    neuralNeurons:
+        document.getElementById(
+            "network-neurons"
+        ),
+
+    neuralConnections:
+        document.getElementById(
+            "network-connections"
+        ),
+
+    notifications:
+        document.getElementById(
+            "notification-container"
+        )
+
+};
+
+
+/* ==========================================================
+   UTILIDADES
+   ========================================================== */
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(resolve, ms)
+    );
+
+}
+
+
+function clamp(
+    value,
+    min,
+    max
+) {
+
+    return Math.max(
+        min,
+        Math.min(max, value)
+    );
+
+}
+
+
+function random(
+    min,
+    max
+) {
+
+    return Math.random()
+        * (max - min)
+        + min;
+
+}
+
+
+function normalizeText(text) {
+
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .trim();
+
+}
+
+
+/* ==========================================================
+   RELÓGIO
+   ========================================================== */
+
+function updateClock() {
+
+    const now =
+        new Date();
+
+    const hours =
+        String(
+            now.getHours()
+        ).padStart(2, "0");
+
+    const minutes =
+        String(
+            now.getMinutes()
+        ).padStart(2, "0");
+
+    const seconds =
+        String(
+            now.getSeconds()
+        ).padStart(2, "0");
+
+    UI.clock.textContent =
+        `${hours}:${minutes}:${seconds}`;
+
+}
+
+
+setInterval(
+    updateClock,
+    1000
+);
+
+updateClock();
+
+
+/* ==========================================================
+   PARTÍCULAS DO CORE
+   ========================================================== */
+
+function createParticles() {
+
+    UI.particles.innerHTML = "";
+
+    for (
+        let i = 0;
+        i < CONFIG.particles;
+        i++
+    ) {
+
+        const particle =
+            document.createElement("span");
+
+        particle.className =
+            "core-particle";
+
+        const angle =
+            Math.random()
+            * Math.PI
+            * 2;
+
+        const distance =
+            random(100, 205);
+
+        particle.style.left =
+            `${50 + Math.cos(angle) * distance / 4}%`;
+
+        particle.style.top =
+            `${50 + Math.sin(angle) * distance / 4}%`;
+
+        particle.style.setProperty(
+            "--x",
+            `${random(-100,100)}px`
+        );
+
+        particle.style.setProperty(
+            "--y",
+            `${random(-100,100)}px`
+        );
+
+        particle.style.setProperty(
+            "--duration",
+            `${random(3,8)}s`
+        );
+
+        particle.style.setProperty(
+            "--opacity",
+            `${random(.2,.9)}`
+        );
+
+        particle.style.animationDelay =
+            `${random(-8,0)}s`;
+
+        UI.particles.appendChild(
+            particle
+        );
+
+    }
+
+}
+
+
+createParticles();
+
+
+/* ==========================================================
+   INTERFACE
+   ========================================================== */
+
+function setResponse(
+    text,
+    label = "SISTEMA"
+) {
+
+    UI.response.style.opacity =
+        "0";
+
+    UI.response.style.transform =
+        "translateY(5px)";
+
+    setTimeout(() => {
+
+        UI.response.textContent =
+            text;
+
+        UI.label.textContent =
+            label;
+
+        UI.response.style.opacity =
+            "1";
+
+        UI.response.style.transform =
+            "translateY(0)";
+
+    }, 180);
+
+}
+
+
+function setMode(mode) {
+
+    STATE.mode =
+        mode;
+
+    UI.app.classList.remove(
+        "processing",
+        "listening"
+    );
+
+    if (
+        mode === "processing"
+    ) {
+
+        UI.app.classList.add(
+            "processing"
+        );
+
+        UI.coreStatus.textContent =
+            "ACTIVE";
+
+    }
+
+    else if (
+        mode === "listening"
+    ) {
+
+        UI.app.classList.add(
+            "listening"
+        );
+
+        UI.listening.classList.remove(
+            "hidden"
+        );
+
+        UI.voiceStatus.textContent =
+            "LISTENING";
+
+    }
+
+    else {
+
+        UI.listening.classList.add(
+            "hidden"
+        );
+
+        UI.coreStatus.textContent =
+            "READY";
+
+        UI.voiceStatus.textContent =
+            "READY";
+
+    }
+
+}
+
+
+/* ==========================================================
+   NOTIFICAÇÃO
+   ========================================================== */
+
+function notify(
+    text,
+    duration = 3500
+) {
+
+    const item =
+        document.createElement("div");
+
+    item.className =
+        "notification";
+
+    item.innerHTML = `
+
+        <small>SYSTEM MESSAGE</small>
+
+        <span>
+            ${escapeHTML(text)}
+        </span>
+
+    `;
+
+    UI.notifications.appendChild(
+        item
+    );
+
+    setTimeout(() => {
+
+        item.style.opacity =
+            "0";
+
+        item.style.transform =
+            "translateX(30px)";
+
+        setTimeout(
+            () => item.remove(),
+            500
+        );
+
+    }, duration);
+
+}
+
+
+function escapeHTML(text) {
+
+    return text
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ==========================================================
+   RESPOSTAS LOCAIS
+   ==========================================================
+
+   Estas respostas NÃO passam pelo Groq.
+
+   Isso é importante para comandos de apresentação:
+   resposta instantânea, previsível e sem depender
+   de internet.
+   ========================================================== */
+
+const LOCAL_COMMANDS = [
+
+    {
+        patterns: [
+            "boa tarde",
+            "boa tarde sistema",
+            "boa tarde assistente"
+        ],
+
+        response:
+            "À disposição.",
+
+        label:
+            "RESPOSTA DIRETA",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "bom dia"
+        ],
+
+        response:
+            "Bom dia. Sistema operacional e à disposição.",
+
+        label:
+            "RESPOSTA DIRETA",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "boa noite"
+        ],
+
+        response:
+            "Boa noite. Sistema operacional.",
+
+        label:
+            "RESPOSTA DIRETA",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "ola",
+            "olá"
+        ],
+
+        response:
+            "Olá. Como posso ajudar?",
+
+        label:
+            "SAUDAÇÃO",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "oi"
+        ],
+
+        response:
+            "À disposição.",
+
+        label:
+            "SAUDAÇÃO",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "mostre sua rede neural",
+            "mostrar sua rede neural",
+            "exiba sua rede neural",
+            "exibir sua rede neural",
+            "mostrar rede neural",
+            "mostre a rede neural",
+            "exiba a rede neural",
+            "mostra sua rede neural"
+        ],
+
+        action:
+            "SHOW_NEURAL",
+
+        response:
+            "Exibindo arquitetura neural.",
+
+        label:
+            "ARQUITETURA",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "esconda a rede neural",
+            "esconder a rede neural",
+            "oculte a rede neural",
+            "ocultar a rede neural",
+            "feche a rede neural",
+            "volte ao modo principal",
+            "voltar ao modo principal"
+        ],
+
+        action:
+            "HIDE_NEURAL",
+
+        response:
+            "Retornando à interface principal.",
+
+        label:
+            "ARQUITETURA",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "quem é você",
+            "quem voce e",
+            "quem você é"
+        ],
+
+        response:
+            "Sou uma interface cognitiva projetada para interação por linguagem, voz e visualização neural.",
+
+        label:
+            "IDENTIDADE",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "sistema online",
+            "status do sistema",
+            "qual o status"
+        ],
+
+        response:
+            "Todos os sistemas principais estão operacionais.",
+
+        label:
+            "DIAGNÓSTICO",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "diagnostico",
+            "diagnóstico",
+            "executar diagnostico",
+            "executar diagnóstico"
+        ],
+
+        action:
+            "DIAGNOSTIC",
+
+        response:
+            "Executando diagnóstico.",
+
+        label:
+            "DIAGNÓSTICO",
+
+        speak:
+            true
+    },
+
+
+    {
+        patterns: [
+            "pare de falar",
+            "silencio",
+            "silêncio",
+            "pare"
+        ],
+
+        action:
+            "STOP_SPEECH",
+
+        response:
+            "Voz interrompida.",
+
+        label:
+            "CONTROLE",
+
+        speak:
+            false
+    }
+
+];
+
+
+/* ==========================================================
+   ENCONTRAR COMANDO LOCAL
+   ========================================================== */
+
+function findLocalCommand(
+    input
+) {
+
+    const normalized =
+        normalizeText(input);
+
+    for (
+        const command
+        of LOCAL_COMMANDS
+    ) {
+
+        for (
+            const pattern
+            of command.patterns
+        ) {
+
+            const normalizedPattern =
+                normalizeText(pattern);
+
+            if (
+                normalized ===
+                normalizedPattern
+            ) {
+
+                return command;
+
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+/* ==========================================================
+   HISTÓRICO
+   ========================================================== */
+
+function saveMessage(
+    role,
+    content
+) {
+
+    STATE.conversation.push({
+
+        role,
+        content,
+
+        timestamp:
+            Date.now()
+
+    });
+
+    if (
+        STATE.conversation.length
+        > 30
+    ) {
+
+        STATE.conversation.shift();
+
+    }
+
+}
+
+
+/* ==========================================================
+   VOZ
+   ========================================================== */
+
+let selectedVoice =
+    null;
+
+let recognition =
+    null;
+
+
+function loadVoice() {
+
+    if (
+        !("speechSynthesis"
+            in window)
+    ) {
+
+        return;
+
+    }
+
+    const voices =
+        speechSynthesis
+            .getVoices();
+
+    if (!voices.length) {
+        return;
+    }
+
+
+    /*
+       Preferimos vozes brasileiras naturais.
+    */
+
+    const preferred = [
+
+        "Google português do Brasil",
+
+        "Microsoft Francisca",
+
+        "Microsoft Maria",
+
+        "Microsoft Daniel",
+
+        "Google Português do Brasil"
+
+    ];
+
+
+    for (
+        const name
+        of preferred
+    ) {
+
+        const found =
+            voices.find(
+                voice =>
+                    voice.name
+                        .toLowerCase()
+                        .includes(
+                            name.toLowerCase()
+                        )
+            );
+
+        if (found) {
+
+            selectedVoice =
+                found;
+
+            break;
+
+        }
+
+    }
+
+
+    if (!selectedVoice) {
+
+        selectedVoice =
+            voices.find(
+                voice =>
+                    voice.lang
+                        .toLowerCase()
+                        .startsWith("pt-br")
+            );
+
+    }
+
+
+    if (!selectedVoice) {
+
+        selectedVoice =
+            voices.find(
+                voice =>
+                    voice.lang
+                        .toLowerCase()
+                        .startsWith("pt")
+            );
+
+    }
+
+}
+
+
+if (
+    "speechSynthesis"
+    in window
+) {
+
+    speechSynthesis
+        .onvoiceschanged =
+        loadVoice;
+
+    loadVoice();
+
+}
+
+
+function speak(
+    text
+) {
+
+    if (
+        !("speechSynthesis"
+            in window)
+    ) {
+
+        return;
+
+    }
+
+
+    speechSynthesis.cancel();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+
+    utterance.lang =
+        "pt-BR";
+
+    utterance.rate =
+        CONFIG.voiceRate;
+
+    utterance.pitch =
+        CONFIG.voicePitch;
+
+    utterance.volume =
+        CONFIG.voiceVolume;
+
+
+    if (
+        selectedVoice
+    ) {
+
+        utterance.voice =
+            selectedVoice;
+
+    }
+
+
+    utterance.onstart =
+        () => {
+
+            STATE.speaking =
+                true;
+
+            UI.voiceStatus.textContent =
+                "SPEAKING";
+
+        };
+
+
+    utterance.onend =
+        () => {
+
+            STATE.speaking =
+                false;
+
+            UI.voiceStatus.textContent =
+                "READY";
+
+        };
+
+
+    utterance.onerror =
+        () => {
+
+            STATE.speaking =
+                false;
+
+            UI.voiceStatus.textContent =
+                "READY";
+
+        };
+
+
+    speechSynthesis
+        .speak(utterance);
+
+}
+
+
+function stopSpeech() {
+
+    if (
+        "speechSynthesis"
+        in window
+    ) {
+
+        speechSynthesis.cancel();
+
+    }
+
+    STATE.speaking =
+        false;
+
+    UI.voiceStatus.textContent =
+        "READY";
+
+}
+
+
+/* ==========================================================
+   RECONHECIMENTO DE VOZ
+   ========================================================== */
+
+function setupRecognition() {
+
+    const Recognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if (!Recognition) {
+
+        UI.mic.style.opacity =
+            ".35";
+
+        UI.mic.title =
+            "Reconhecimento de voz não suportado";
+
+        return;
+
+    }
+
+
+    recognition =
+        new Recognition();
+
+
+    recognition.lang =
+        "pt-BR";
+
+    recognition.continuous =
+        false;
+
+    recognition.interimResults =
+        false;
+
+    recognition.maxAlternatives =
+        1;
+
+
+    recognition.onstart =
+        () => {
+
+            STATE.listening =
+                true;
+
+            setMode(
+                "listening"
+            );
+
+            UI.mic.classList.add(
+                "active"
+            );
+
+            setResponse(
+                "Estou ouvindo.",
+                "ENTRADA DE VOZ"
+            );
+
+        };
+
+
+    recognition.onresult =
+        event => {
+
+            const transcript =
+                event
+                    .results[0][0]
+                    .transcript;
+
+            UI.input.value =
+                transcript;
+
+            processInput(
+                transcript
+            );
+
+        };
+
+
+    recognition.onerror =
+        event => {
+
+            STATE.listening =
+                false;
+
+            UI.mic.classList.remove(
+                "active"
+            );
+
+            setMode(
+                "idle"
+            );
+
+            notify(
+                "Não foi possível interpretar a entrada de voz."
+            );
+
+        };
+
+
+    recognition.onend =
+        () => {
+
+            STATE.listening =
+                false;
+
+            UI.mic.classList.remove(
+                "active"
+            );
+
+            if (
+                STATE.mode ===
+                "listening"
+            ) {
+
+                setMode(
+                    "idle"
+                );
+
+            }
+
+        };
+
+}
+
+
+setupRecognition();
+
+
+/* ==========================================================
+   BOTÃO MICROFONE
+   ========================================================== */
+
+UI.mic.addEventListener(
+    "click",
+    () => {
+
+        if (!recognition) {
+
+            notify(
+                "Reconhecimento de voz indisponível neste navegador."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            STATE.listening
+        ) {
+
+            recognition.stop();
+
+            return;
+
+        }
+
+
+        stopSpeech();
+
+        recognition.start();
+
+    }
+);
+
+
+/* ==========================================================
+   REDE NEURAL REAL
+   ==========================================================
+
+   Esta não é uma imagem de uma rede.
+
+   São camadas com pesos e ativações calculadas
+   diretamente em JavaScript.
+
+   Arquitetura:
+
+       8
+       ↓
+       12
+       ↓
+       16
+       ↓
+       8
+       ↓
+       4
+
+   Usamos uma função de ativação sigmoid.
+
+   A visualização é alimentada pelas ativações
+   reais produzidas pelos cálculos abaixo.
+   ========================================================== */
+
+
+class NeuralNetwork {
+
+    constructor(
+        layerSizes
+    ) {
+
+        this.layerSizes =
+            layerSizes;
+
+        this.weights = [];
+
+        this.biases = [];
+
+        this.activations =
+            layerSizes.map(
+                size =>
+                    new Array(size)
+                        .fill(0)
+            );
+
+
+        for (
+            let layer = 0;
+            layer <
+            layerSizes.length - 1;
+            layer++
+        ) {
+
+            const inputSize =
+                layerSizes[layer];
+
+            const outputSize =
+                layerSizes[layer + 1];
+
+
+            const matrix = [];
+
+
+            for (
+                let i = 0;
+                i < outputSize;
+                i++
+            ) {
+
+                const row = [];
+
+                for (
+                    let j = 0;
+                    j < inputSize;
+                    j++
+                ) {
+
+                    row.push(
+                        random(
+                            -1,
+                            1
+                        )
+                    );
+
+                }
+
+                matrix.push(row);
+
+            }
+
+
+            this.weights.push(
+                matrix
+            );
+
+
+            this.biases.push(
+                new Array(
+                    outputSize
+                ).fill(0)
+                    .map(
+                        () =>
+                            random(
+                                -.5,
+                                .5
+                            )
+                    )
+            );
+
+        }
+
+    }
+
+
+    sigmoid(x) {
+
+        return 1 /
+            (
+                1 +
+                Math.exp(-x)
+            );
+
+    }
+
+
+    forward(input) {
+
+        let current =
+            input.slice();
+
+
+        this.activations[0] =
+            current.slice();
+
+
+        for (
+            let layer = 0;
+            layer <
+            this.weights.length;
+            layer++
+        ) {
+
+            const matrix =
+                this.weights[layer];
+
+            const bias =
+                this.biases[layer];
+
+            const next = [];
+
+
+            for (
+                let i = 0;
+                i < matrix.length;
+                i++
+            ) {
+
+                let sum =
+                    bias[i];
+
+
+                for (
+                    let j = 0;
+                    j < matrix[i].length;
+                    j++
+                ) {
+
+                    sum +=
+                        matrix[i][j]
+                        *
+                        current[j];
+
+                }
+
+
+                next.push(
+                    this.sigmoid(sum)
+                );
+
+            }
+
+
+            current =
+                next;
+
+            this.activations[
+                layer + 1
+            ] =
+                current.slice();
+
+        }
+
+
+        return current;
+
+    }
+
+}
+
+
+const neural =
+    new NeuralNetwork(
+        CONFIG.neuralLayers
+    );
+
+
+/* ==========================================================
+   CANVAS NEURAL
+   ========================================================== */
+
+const canvas =
+    UI.neuralCanvas;
+
+const ctx =
+    canvas.getContext(
+        "2d"
+    );
+
+
+let neuralNodes = [];
+
+let neuralConnections = [];
+
+let canvasWidth = 0;
+
+let canvasHeight = 0;
+
+
+function resizeNeuralCanvas() {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    const dpr =
+        window.devicePixelRatio ||
+        1;
+
+
+    canvasWidth =
+        rect.width;
+
+    canvasHeight =
+        rect.height;
+
+
+    canvas.width =
+        rect.width * dpr;
+
+    canvas.height =
+        rect.height * dpr;
+
+
+    ctx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+    );
+
+
+    buildNeuralGeometry();
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeNeuralCanvas
+);
+
+
+/* ==========================================================
+   GEOMETRIA DA REDE
+   ========================================================== */
+
+function buildNeuralGeometry() {
+
+    neuralNodes = [];
+
+    neuralConnections = [];
+
+
+    const layers =
+        CONFIG.neuralLayers;
+
+
+    const left =
+        70;
+
+    const right =
+        canvasWidth - 70;
+
+
+    const spacingX =
+        layers.length > 1
+            ? (right - left)
+              / (layers.length - 1)
+            : 0;
+
+
+    for (
+        let layer = 0;
+        layer < layers.length;
+        layer++
+    ) {
+
+        const count =
+            layers[layer];
+
+
+        const top =
+            canvasHeight / 2
+            -
+            ((count - 1) * 35) / 2;
+
+
+        const layerNodes = [];
+
+
+        for (
+            let node = 0;
+            node < count;
+            node++
+        ) {
+
+            layerNodes.push({
+
+                x:
+                    left +
+                    layer * spacingX,
+
+                y:
+                    top +
+                    node * 35,
+
+                layer,
+
+                index:
+                    node,
+
+                pulse:
+                    Math.random()
+                    * Math.PI
+                    * 2
+
+            });
+
+        }
+
+
+        neuralNodes.push(
+            layerNodes
+        );
+
+    }
+
+
+    for (
+        let layer = 0;
+        layer <
+        neuralNodes.length - 1;
+        layer++
+    ) {
+
+        const current =
+            neuralNodes[layer];
+
+        const next =
+            neuralNodes[layer + 1];
+
+
+        for (
+            const a
+            of current
+        ) {
+
+            for (
+                const b
+                of next
+            ) {
+
+                neuralConnections.push({
+
+                    a,
+                    b,
+
+                    layer,
+
+                    weight:
+                        neural.weights[
+                            layer
+                        ][
+                            b.index
+                        ][
+                            a.index
+                        ]
+
+                });
+
+            }
+
+        }
+
+    }
+
+
+    const totalNodes =
+        layers.reduce(
+            (sum, n) =>
+                sum + n,
+            0
+        );
+
+
+    UI.neuralNeurons.textContent =
+        totalNodes;
+
+
+    UI.neuralConnections.textContent =
+        neuralConnections.length;
+
+}
+
+
+resizeNeuralCanvas();
+
+
+/* ==========================================================
+   DESENHO DA REDE
+   ========================================================== */
+
+let neuralTime =
+    0;
+
+
+function drawNeural() {
+
+    neuralTime +=
+        .016;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+    );
+
+
+    if (
+        !STATE.neuralVisible
+    ) {
+
+        requestAnimationFrame(
+            drawNeural
+        );
+
+        return;
+
+    }
+
+
+    /* ------------------------------------------------------
+       linhas de conexão
+    ------------------------------------------------------ */
+
+    for (
+        const connection
+        of neuralConnections
+    ) {
+
+        const a =
+            connection.a;
+
+        const b =
+            connection.b;
+
+
+        const activationA =
+            neural.activations[
+                connection.layer
+            ][a.index] || 0;
+
+
+        const activationB =
+            neural.activations[
+                connection.layer + 1
+            ][b.index] || 0;
+
+
+        const activation =
+            (
+                activationA +
+                activationB
+            ) / 2;
+
+
+        const weight =
+            Math.abs(
+                connection.weight
+            );
+
+
+        const alpha =
+            .035 +
+            activation
+            * .20
+            +
+            weight
+            * .025;
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            a.x,
+            a.y
+        );
+
+        ctx.lineTo(
+            b.x,
+            b.y
+        );
+
+
+        ctx.lineWidth =
+            .35 +
+            weight * .8;
+
+
+        ctx.strokeStyle =
+            `rgba(120,247,255,${clamp(alpha,.025,.24)})`;
+
+
+        ctx.stroke();
+
+
+        /* energia viajando pela conexão */
+
+        const pulse =
+            (
+                neuralTime
+                *
+                (
+                    .25 +
+                    activation
+                    * 1.2
+                )
+                +
+                a.index
+                *
+                .7
+                +
+                connection.layer
+            )
+            % 1;
+
+
+        if (
+            activation > .3
+        ) {
+
+            const px =
+                a.x +
+                (
+                    b.x - a.x
+                ) * pulse;
+
+
+            const py =
+                a.y +
+                (
+                    b.y - a.y
+                ) * pulse;
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                px,
+                py,
+                1.2 +
+                activation * 1.8,
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                `rgba(190,255,255,${activation * .7})`;
+
+
+            ctx.shadowBlur =
+                10;
+
+
+            ctx.shadowColor =
+                "rgba(120,247,255,.8)";
+
+
+            ctx.fill();
+
+            ctx.shadowBlur =
+                0;
+
+        }
+
+    }
+
+
+    /* ------------------------------------------------------
+       neurônios
+    ------------------------------------------------------ */
+
+    for (
+        let layer = 0;
+        layer < neuralNodes.length;
+        layer++
+    ) {
+
+        const nodes =
+            neuralNodes[layer];
+
+
+        for (
+            const node
+            of nodes
+        ) {
+
+            const activation =
+                neural.activations[
+                    layer
+                ][node.index] || 0;
+
+
+            const pulse =
+                (
+                    Math.sin(
+                        neuralTime * 2
+                        +
+                        node.pulse
+                    )
+                    + 1
+                )
+                / 2;
+
+
+            const radius =
+                3.2 +
+                activation * 4
+                +
+                pulse * activation
+                * 1.5;
+
+
+            /* halo */
+
+            ctx.beginPath();
+
+            ctx.arc(
+                node.x,
+                node.y,
+                radius * 3,
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                `rgba(80,220,240,${activation * .045})`;
+
+            ctx.fill();
+
+
+            /* núcleo */
+
+            ctx.beginPath();
+
+            ctx.arc(
+                node.x,
+                node.y,
+                radius,
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                `rgba(120,247,255,${.12 + activation * .88})`;
+
+
+            ctx.shadowBlur =
+                8 +
+                activation * 14;
+
+
+            ctx.shadowColor =
+                "rgba(120,247,255,.8)";
+
+
+            ctx.fill();
+
+
+            ctx.shadowBlur =
+                0;
+
+
+            /* núcleo interno */
+
+            if (
+                activation > .35
+            ) {
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    node.x,
+                    node.y,
+                    1.1,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle =
+                    "rgba(240,255,255,.9)";
+
+                ctx.fill();
+
+            }
+
+        }
+
+    }
+
+
+    /* ------------------------------------------------------
+       labels das camadas
+    ------------------------------------------------------ */
+
+    const names = [
+
+        "INPUT",
+
+        "FEATURES",
+
+        "HIDDEN",
+
+        "ABSTRACTION",
+
+        "OUTPUT"
+
+    ];
+
+
+    ctx.textAlign =
+        "center";
+
+    ctx.font =
+        "7px Orbitron, Arial";
+
+
+    for (
+        let i = 0;
+        i < neuralNodes.length;
+        i++
+    ) {
+
+        const layer =
+            neuralNodes[i];
+
+
+        if (!layer.length) {
+            continue;
+        }
+
+
+        const x =
+            layer[0].x;
+
+
+        const y =
+            Math.max(
+                20,
+                Math.min(
+                    canvasHeight - 15,
+                    layer[layer.length - 1].y
+                    + 48
+                )
+            );
+
+
+        ctx.fillStyle =
+            "rgba(198,217,223,.30)";
+
+
+        ctx.fillText(
+            names[i],
+            x,
+            y
+        );
+
+    }
+
+
+    requestAnimationFrame(
+        drawNeural
+    );
+
+}
+
+
+drawNeural();
+
+
+/* ==========================================================
+   ATIVAÇÃO DA REDE
+   ========================================================== */
+
+function feedNeural(
+    text
+) {
+
+    const normalized =
+        normalizeText(text);
+
+
+    const input =
+        new Array(8)
+            .fill(0)
+            .map(
+                (_, i) => {
+
+                    let value = 0;
+
+                    for (
+                        let j = i;
+                        j < normalized.length;
+                        j += 8
+                    ) {
+
+                        value +=
+                            normalized
+                                .charCodeAt(j)
+                                % 97;
+
+                    }
+
+                    value =
+                        value
+                        /
+                        Math.max(
+                            1,
+                            normalized.length * 12
+                        );
+
+                    return clamp(
+                        value,
+                        0,
+                        1
+                    );
+
+                }
+            );
+
+
+    STATE.neuralInput =
+        input;
+
+
+    neural.forward(
+        input
+    );
+
+
+    UI.neuralState.textContent =
+        "ACTIVE";
+
+}
+
+
+/* ==========================================================
+   MOSTRAR REDE
+   ========================================================== */
+
+async function showNeural() {
+
+    if (
+        STATE.neuralVisible
+    ) {
+
+        return;
+
+    }
+
+
+    stopSpeech();
+
+
+    STATE.neuralVisible =
+        true;
+
+
+    feedNeural(
+        "visualizacao arquitetura neural"
+    );
+
+
+    setMode(
+        "processing"
+    );
+
+
+    setResponse(
+        "Exibindo arquitetura neural.",
+        "ARQUITETURA"
+    );
+
+
+    await sleep(250);
+
+
+    UI.app.classList.add(
+        "neural-open"
+    );
+
+
+    UI.neuralState.textContent =
+        "LIVE";
+
+
+    setTimeout(
+        () => {
+
+            setMode(
+                "idle"
+            );
+
+        },
+        1200
+    );
+
+}
+
+
+/* ==========================================================
+   ESCONDER REDE
+   ========================================================== */
+
+async function hideNeural() {
+
+    if (
+        !STATE.neuralVisible
+    ) {
+
+        return;
+
+    }
+
+
+    setResponse(
+        "Retornando à interface principal.",
+        "ARQUITETURA"
+    );
+
+
+    setMode(
+        "processing"
+    );
+
+
+    UI.neuralState.textContent =
+        "STANDBY";
+
+
+    UI.app.classList.remove(
+        "neural-open"
+    );
+
+
+    await sleep(
+        1100
+    );
+
+
+    STATE.neuralVisible =
+        false;
+
+
+    setMode(
+        "idle"
+    );
+
+
+    setResponse(
+        "Aguardando interação.",
+        "SISTEMA"
+    );
+
+}
+
+
+/* ==========================================================
+   DIAGNÓSTICO
+   ========================================================== */
+
+async function diagnostic() {
+
+    setMode(
+        "processing"
+    );
+
+    setResponse(
+        "Executando diagnóstico dos sistemas.",
+        "DIAGNÓSTICO"
+    );
+
+
+    await sleep(
+        700
+    );
+
+
+    UI.coreStatus.textContent =
+        "100%";
+
+
+    await sleep(
+        500
+    );
+
+
+    UI.voiceStatus.textContent =
+        "READY";
+
+
+    await sleep(
+        500
+    );
+
+
+    UI.aiStatus.textContent =
+        CONFIG.GROQ_API_KEY
+            ? "ONLINE"
+            : "LOCAL";
+
+
+    await sleep(
+        400
+    );
+
+
+    setMode(
+        "idle"
+    );
+
+
+    setResponse(
+        "Diagnóstico concluído. Todos os sistemas principais estão operacionais.",
+        "DIAGNÓSTICO"
+    );
+
+
+    speak(
+        "Diagnóstico concluído. Todos os sistemas principais estão operacionais."
+    );
+
+}
+
+
+/* ==========================================================
+   GROQ
+   ========================================================== */
+
+async function askGroq(
+    userInput
+) {
+
+    if (
+        !CONFIG.GROQ_API_KEY
+    ) {
+
+        return null;
+
+    }
+
+
+    const messages = [
+
+        {
+
+            role:
+                "system",
+
+            content:
+                `
+Você é uma inteligência artificial extremamente direta,
+precisa e funcional.
+
+Responda em português do Brasil.
+
+Seja conciso.
+
+Não use emojis.
+
+Não diga que você é o Groq.
+
+Não invente capacidades.
+
+Seu estilo deve parecer uma interface tecnológica
+avançada: calmo, preciso e objetivo.
+
+Evite frases desnecessárias.
+                `.trim()
+
+        },
+
+        ...STATE.conversation
+            .slice(-8)
+            .map(
+                item => ({
+
+                    role:
+                        item.role,
+
+                    content:
+                        item.content
+
+                })
+            ),
+
+        {
+
+            role:
+                "user",
+
+            content:
+                userInput
+
+        }
+
+    ];
+
+
+    const response =
+        await fetch(
+            CONFIG.GROQ_URL,
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${CONFIG.GROQ_API_KEY}`
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        model:
+                            CONFIG.GROQ_MODEL,
+
+                        messages,
+
+                        temperature:
+                            .45,
+
+                        max_tokens:
+                            300
+
+                    })
+
+            }
+        );
+
+
+    if (
+        !response.ok
+    ) {
+
+        throw new Error(
+            "Falha na comunicação com o modelo."
+        );
+
+    }
+
+
+    const data =
+        await response.json();
+
+
+    return (
+        data
+            ?.choices
+            ?.0
+            ?.message
+            ?.content
+            ?.trim()
+        ||
+        null
+    );
+
+}
+
+
+/* ==========================================================
+   PROCESSADOR PRINCIPAL
+   ========================================================== */
+
+async function processInput(
+    rawInput
+) {
+
+    const input =
+        rawInput.trim();
+
+
+    if (!input) {
+        return;
+    }
+
+
+    UI.input.value =
+        "";
+
+
+    saveMessage(
+        "user",
+        input
+    );
+
+
+    feedNeural(
+        input
+    );
+
+
+    /* ------------------------------------------------------
+       COMANDOS LOCAIS
+       ------------------------------------------------------ */
+
+    const command =
+        findLocalCommand(
+            input
+        );
+
+
+    if (command) {
+
+        if (
+            command.action ===
+            "SHOW_NEURAL"
+        ) {
+
+            saveMessage(
+                "assistant",
+                command.response
+            );
+
+            await showNeural();
+
+            if (
+                command.speak
+            ) {
+
+                speak(
+                    command.response
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        if (
+            command.action ===
+            "HIDE_NEURAL"
+        ) {
+
+            saveMessage(
+                "assistant",
+                command.response
+            );
+
+            await hideNeural();
+
+            if (
+                command.speak
+            ) {
+
+                speak(
+                    command.response
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        if (
+            command.action ===
+            "STOP_SPEECH"
+        ) {
+
+            stopSpeech();
+
+            setResponse(
+                command.response,
+                command.label
+            );
+
+            return;
+
+        }
+
+
+        if (
+            command.action ===
+            "DIAGNOSTIC"
+        ) {
+
+            await diagnostic();
+
+            return;
+
+        }
+
+
+        setMode(
+            "processing"
+        );
+
+
+        await sleep(
+            120
+        );
+
+
+        setMode(
+            "idle"
+        );
+
+
+        setResponse(
+            command.response,
+            command.label
+        );
+
+
+        saveMessage(
+            "assistant",
+            command.response
+        );
+
+
+        if (
+            command.speak
+        ) {
+
+            speak(
+                command.response
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* ------------------------------------------------------
+       IA EXTERNA
+       ------------------------------------------------------ */
+
+    setMode(
+        "processing"
+    );
+
+
+    UI.aiStatus.textContent =
+        "PROCESSING";
+
+
+    setResponse(
+        "Processando.",
+        "INTELIGÊNCIA"
+    );
+
+
+    try {
+
+        const answer =
+            await askGroq(
+                input
+            );
+
+
+        if (!answer) {
+
+            /*
+               Modo de contingência.
+
+               O sistema continua funcional mesmo
+               sem chave da API.
+            */
+
+            const fallback =
+                "Essa solicitação exige o módulo de inteligência externa. Configure a chave da API para habilitar respostas avançadas.";
+
+            setResponse(
+                fallback,
+                "MÓDULO EXTERNO"
+            );
+
+            saveMessage(
+                "assistant",
+                fallback
+            );
+
+            speak(
+                fallback
+            );
+
+        }
+
+        else {
+
+            setResponse(
+                answer,
+                "INTELIGÊNCIA"
+            );
+
+            saveMessage(
+                "assistant",
+                answer
+            );
+
+            speak(
+                answer
+            );
+
+        }
+
+        UI.aiStatus.textContent =
+            CONFIG.GROQ_API_KEY
+                ? "ONLINE"
+                : "LOCAL";
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            error
+        );
+
+
+        const message =
+            "Não foi possível estabelecer comunicação com o módulo externo.";
+
+
+        setResponse(
+            message,
+            "COMUNICAÇÃO"
+        );
+
+
+        notify(
+            "Falha na comunicação com a inteligência externa."
+        );
+
+
+        UI.aiStatus.textContent =
+            "ERROR";
+
+
+        speak(
+            message
+        );
+
+    }
+
+
+    setMode(
+        "idle"
+    );
+
+}
+
+
+/* ==========================================================
+   INPUT — ENTER
+   ========================================================== */
+
+UI.input.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            processInput(
+                UI.input.value
+            );
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   INPUT — BOTÃO
+   ========================================================== */
+
+UI.send.addEventListener(
+    "click",
+    () => {
+
+        processInput(
+            UI.input.value
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   TECLAS GLOBAIS
+   ========================================================== */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        /*
+           ESC interrompe fala
+        */
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            stopSpeech();
+
+        }
+
+
+        /*
+           CTRL + K foca entrada
+        */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase()
+                === "k"
+        ) {
+
+            event.preventDefault();
+
+            UI.input.focus();
+
+        }
+
+
+        /*
+           CTRL + M ativa microfone
+        */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase()
+                === "m"
+        ) {
+
+            event.preventDefault();
+
+            UI.mic.click();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   COMANDOS DE TESTE PELO NAVEGADOR
+   ========================================================== */
+
+window.Marcos = {
+
+    showNeural,
+
+    hideNeural,
+
+    speak,
+
+    stopSpeech,
+
+    processInput,
+
+    notify,
+
+    diagnostic,
+
+    neural,
+
+    state:
+        STATE
+
+};
+
+
+/* ==========================================================
+   INICIALIZAÇÃO
+   ========================================================== */
+
+function initialize() {
+
+    UI.systemStatus.textContent =
+        "SISTEMA ONLINE";
+
+
+    UI.aiStatus.textContent =
+        CONFIG.GROQ_API_KEY
+            ? "ONLINE"
+            : "LOCAL";
+
+
+    UI.coreStatus.textContent =
+        "READY";
+
+
+    UI.voiceStatus.textContent =
+        "READY";
+
+
+    /*
+       Pequena sequência de inicialização.
+       Não exageramos: a interface deve parecer pronta,
+       não uma tela de loading de aplicativo genérico.
+    */
+
+    setTimeout(
+        () => {
+
+            setResponse(
+                "Aguardando interação.",
+                "SISTEMA"
+            );
+
+        },
+        500
+    );
+
+
+    STATE.initialized =
+        true;
+
+}
+
+
+initialize();
+
+
+/* ==========================================================
+   LOOP DE ATIVAÇÃO NEURAL
+   ==========================================================
+
+   Mesmo em repouso, a rede continua recebendo uma pequena
+   variação para que sua representação permaneça viva.
+
+   Quando há uma pergunta real, feedNeural() injeta os dados
+   correspondentes à entrada.
+   ========================================================== */
+
+let idleNeuralTime =
+    0;
+
+
+function neuralIdleLoop() {
+
+    idleNeuralTime +=
+        .018;
+
+
+    if (
+        !STATE.neuralVisible
+    ) {
+
+        const idleInput =
+            STATE.neuralInput.map(
+                (value, i) => {
+
+                    return clamp(
+                        .12
+                        +
+                        Math.sin(
+                            idleNeuralTime
+                            * (
+                                .7
+                                +
+                                i * .13
+                            )
+                        )
+                        * .07,
+                        0,
+                        1
+                    );
+
+                }
+            );
+
+
+        neural.forward(
+            idleInput
+        );
+
+    }
+
+
+    requestAnimationFrame(
+        neuralIdleLoop
+    );
+
+}
+
+
+neuralIdleLoop();
+
+
+/* ==========================================================
+   PRIMEIRA INTERAÇÃO
+   ========================================================== */
+
+window.addEventListener(
+    "pointerdown",
+    () => {
+
+        if (
+            !STATE.initialized
+        ) {
+            return;
+        }
+
+
+        /*
+           Algumas implementações do navegador só liberam
+           determinadas funções de áudio depois de uma
+           interação explícita do usuário.
+        */
+
+        loadVoice();
+
+    },
+    {
+        once: true
+    }
+);
+
+
+/* ==========================================================
+   LOG FINAL
+   ========================================================== */
+
+console.log(
+    "%c MARCOS SYSTEM ",
+    "color:#78f7ff;font-weight:bold;font-size:18px"
+);
+
+console.log(
+    "Cognitive interface initialized."
+);
+
+console.log(
+    "Neural architecture:",
+    CONFIG.neuralLayers.join(" → ")
+);
+
+console.log(
+    "Local command engine: ONLINE"
+);
+
+console.log(
+    "Voice engine:",
+    recognition
+        ? "ONLINE"
+        : "UNAVAILABLE"
+);
+
+</script>
+
+</body>
+</html>
