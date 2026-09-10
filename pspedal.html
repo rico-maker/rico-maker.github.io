@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch Shifter</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 20%, #242424 0%, #111 40%, #080808 100%);
+    color: #eee;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pedal {
+    width: min(520px, 94vw);
+    padding: 28px;
+    border-radius: 24px;
+    background: linear-gradient(145deg, #242424, #111);
+    border: 1px solid #3d3d3d;
+    box-shadow:
+        0 30px 80px #000,
+        inset 0 1px 1px #555;
+}
+
+.title {
+    text-align: center;
+    letter-spacing: 5px;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #777;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 28px;
+}
+
+.display {
+    background: #080808;
+    border-radius: 15px;
+    padding: 22px;
+    text-align: center;
+    border: 1px solid #333;
+    box-shadow: inset 0 0 25px #000;
+}
+
+.note {
+    font-size: 13px;
+    color: #777;
+    letter-spacing: 3px;
+}
+
+.pitch {
+    font-family: "Courier New", monospace;
+    font-size: 54px;
+    font-weight: bold;
+    margin: 4px 0;
+}
+
+.frequency {
+    color: #777;
+    font-family: monospace;
+}
+
+.slider-area {
+    margin: 30px 5px 20px;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #ff4b2b;
+    cursor: pointer;
+}
+
+.knob-row {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 30px;
+}
+
+.knob {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, #555, #222 45%, #111 70%);
+    border: 5px solid #151515;
+    box-shadow:
+        0 10px 25px #000,
+        inset 0 2px 4px #777;
+    position: relative;
+}
+
+.knob::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 37px;
+    background: #eee;
+    top: 10px;
+    left: calc(50% - 2.5px);
+    border-radius: 4px;
+    transform-origin: 50% 50px;
+    transform: rotate(0deg);
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+button, select {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #444;
+    background: #191919;
+    color: #ddd;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #292929;
+}
+
+.start {
+    grid-column: 1 / -1;
+    background: #b92d19;
+    border-color: #e34a31;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.start.active {
+    background: #193d28;
+    border-color: #36b86c;
+}
+
+.status {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 11px;
+    color: #666;
+}
+
+.meter {
+    height: 6px;
+    margin-top: 15px;
+    background: #222;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    width: 0%;
+    height: 100%;
+    background: #ff4b2b;
+    transition: width .05s linear;
+}
+
+.small {
+    margin-top: 20px;
+    color: #555;
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="pedal">
+
+    <div class="title">PITCH SHIFT</div>
+    <div class="subtitle">REAL TIME EFFECT</div>
+
+    <div class="display">
+        <div class="note">SEMITONES</div>
+        <div class="pitch" id="pitchText">0</div>
+        <div class="frequency" id="factorText">1.000x</div>
+
+        <div class="meter">
+            <div class="meter-fill" id="meter"></div>
+        </div>
+    </div>
+
+    <div class="slider-area">
+
+        <div class="slider-label">
+            <span>-12</span>
+            <span>0</span>
+            <span>+12</span>
+        </div>
+
+        <input
+            id="pitchSlider"
+            type="range"
+            min="-12"
+            max="12"
+            step="1"
+            value="0"
+        >
+
+    </div>
+
+    <div class="knob-row">
+        <div class="knob" id="knob"></div>
+    </div>
+
+    <div class="slider-area">
+
+        <div class="slider-label">
+            <span>DRY</span>
+            <span>MIX</span>
+            <span>WET</span>
+        </div>
+
+        <input
+            id="mixSlider"
+            type="range"
+            min="0"
+            max="100"
+            value="100"
+        >
+
+    </div>
+
+    <div class="controls">
+
+        <button class="start" id="startButton">
+            LIGAR PEDAL
+        </button>
+
+        <select id="inputSelect">
+            <option value="">Entrada de áudio</option>
+        </select>
+
+        <select id="outputSelect">
+            <option value="">Saída de áudio</option>
+        </select>
+
+    </div>
+
+    <div class="status" id="status">
+        Desligado
+    </div>
+
+    <div class="small">
+        Para menor latência, use conexão USB/áudio direta.<br>
+        Evite monitorar o mesmo sinal simultaneamente pela Cube Baby.
+    </div>
+
+</div>
+
+<script>
+
+let audioContext;
+let inputStream;
+let source;
+let pitchNode;
+let dryGain;
+let wetGain;
+let analyser;
+let animationFrame;
+
+const pitchSlider = document.getElementById("pitchSlider");
+const mixSlider = document.getElementById("mixSlider");
+const pitchText = document.getElementById("pitchText");
+const factorText = document.getElementById("factorText");
+const knob = document.getElementById("knob");
+const meter = document.getElementById("meter");
+const statusText = document.getElementById("status");
+
+const startButton = document.getElementById("startButton");
+const inputSelect = document.getElementById("inputSelect");
+const outputSelect = document.getElementById("outputSelect");
+
+
+/* =========================================================
+   AUDIO WORKLET
+   ========================================================= */
+
+const workletCode = `
+
+class PitchShifter extends AudioWorkletProcessor {
+
+    constructor() {
+
+        super();
+
+        this.bufferSize = 8192;
+
+        this.bufferL = new Float32Array(this.bufferSize);
+        this.bufferR = new Float32Array(this.bufferSize);
+
+        this.writeIndex = 0;
+
+        this.read1 = 0;
+        this.read2 = this.bufferSize / 2;
+
+        this.phase = 0;
+
+        this.pitch = 1.0;
+
+        this.grainSize = 2048;
+
+        this.port.onmessage = event => {
+
+            if (event.data.pitch !== undefined) {
+                this.pitch = event.data.pitch;
+            }
+
+        };
+
+    }
+
+
+    read(buffer, index) {
+
+        index = ((index % this.bufferSize) + this.bufferSize)
+            % this.bufferSize;
+
+        const i0 = Math.floor(index);
+        const i1 = (i0 + 1) % this.bufferSize;
+
+        const frac = index - i0;
+
+        return buffer[i0] * (1 - frac) + buffer[i1] * frac;
+
+    }
+
+
+    window(position) {
+
+        return 0.5 -
+            0.5 * Math.cos(
+                2 * Math.PI * position
+            );
+
+    }
+
+
+    process(inputs, outputs) {
+
+        const input = inputs[0];
+        const output = outputs[0];
+
+        if (!input || input.length === 0) {
+            return true;
+        }
+
+        const inL = input[0];
+        const inR = input[1] || input[0];
+
+        const outL = output[0];
+        const outR = output[1] || output[0];
+
+        for (let i = 0; i < inL.length; i++) {
+
+            this.bufferL[this.writeIndex] = inL[i];
+            this.bufferR[this.writeIndex] = inR[i];
+
+            let p = this.phase;
+
+            let w1 = this.window(p);
+
+            let p2 = (p + 0.5) % 1.0;
+
+            let w2 = this.window(p2);
+
+            let sL =
+                this.read(this.bufferL, this.read1) * w1 +
+                this.read(this.bufferL, this.read2) * w2;
+
+            let sR =
+                this.read(this.bufferR, this.read1) * w1 +
+                this.read(this.bufferR, this.read2) * w2;
+
+            outL[i] = sL;
+            outR[i] = sR;
+
+            this.writeIndex++;
+
+            if (this.writeIndex >= this.bufferSize) {
+                this.writeIndex = 0;
+            }
+
+            this.read1 += this.pitch;
+            this.read2 += this.pitch;
+
+            this.phase += 1 / (this.grainSize / 2);
+
+            if (this.phase >= 1) {
+
+                this.phase -= 1;
+
+                this.read1 =
+                    this.writeIndex -
+                    this.grainSize;
+
+                this.read2 =
+                    this.read1 -
+                    this.grainSize / 2;
+            }
+
+        }
+
+        return true;
+    }
+}
+
+registerProcessor(
+    "pitch-shifter",
+    PitchShifter
+);
+
+`;
+
+async function createPitchShifter() {
+
+    const blob = new Blob(
+        [workletCode],
+        { type: "application/javascript" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    await audioContext.audioWorklet.addModule(url);
+
+    URL.revokeObjectURL(url);
+
+    return new AudioWorkletNode(
+        audioContext,
+        "pitch-shifter",
+        {
+            numberOfInputs: 1,
+            numberOfOutputs: 1,
+            outputChannelCount: [2]
+        }
+    );
+}
+
+
+/* =========================================================
+   DEVICES
+   ========================================================= */
+
+async function loadDevices() {
+
+    const devices =
+        await navigator.mediaDevices.enumerateDevices();
+
+    inputSelect.innerHTML =
+        '<option value="">Entrada de áudio</option>';
+
+    outputSelect.innerHTML =
+        '<option value="">Saída de áudio</option>';
+
+    devices.forEach(device => {
+
+        if (device.kind === "audioinput") {
+
+            const option =
+                document.createElement("option");
+
+            option.value = device.deviceId;
+
+            option.textContent =
+                device.label ||
+                "Entrada " +
+                (inputSelect.length);
+
+            inputSelect.appendChild(option);
+        }
+
+        if (device.kind === "audiooutput") {
+
+            const option =
+                document.createElement("option");
+
+            option.value = device.deviceId;
+
+            option.textContent =
+                device.label ||
+                "Saída " +
+                (outputSelect.length);
+
+            outputSelect.appendChild(option);
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+async function startPedal() {
+
+    try {
+
+        statusText.textContent =
+            "Solicitando acesso ao áudio...";
+
+        audioContext =
+            new AudioContext({
+                latencyHint: "interactive"
+            });
+
+        await audioContext.resume();
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                audio: {
+
+                    deviceId:
+                        inputSelect.value
+                            ? { exact: inputSelect.value }
+                            : undefined,
+
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false,
+
+                    channelCount: 2
+
+                }
+
+            });
+
+        inputStream = stream;
+
+        source =
+            audioContext.createMediaStreamSource(
+                stream
+            );
+
+        pitchNode =
+            await createPitchShifter();
+
+        dryGain =
+            audioContext.createGain();
+
+        wetGain =
+            audioContext.createGain();
+
+        analyser =
+            audioContext.createAnalyser();
+
+        analyser.fftSize = 256;
+
+        source.connect(pitchNode);
+
+        source.connect(dryGain);
+
+        pitchNode.connect(wetGain);
+
+        dryGain.connect(analyser);
+
+        wetGain.connect(analyser);
+
+        analyser.connect(
+            audioContext.destination
+        );
+
+        updateMix();
+
+        updatePitch();
+
+        startButton.textContent =
+            "DESLIGAR PEDAL";
+
+        startButton.classList.add("active");
+
+        statusText.textContent =
+            "PEDAL ATIVO";
+
+        animateMeter();
+
+        await setOutputDevice();
+
+    } catch (error) {
+
+        console.error(error);
+
+        statusText.textContent =
+            "Erro: " + error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   STOP
+   ========================================================= */
+
+function stopPedal() {
+
+    if (inputStream) {
+
+        inputStream
+            .getTracks()
+            .forEach(track => track.stop());
+
+    }
+
+    if (audioContext) {
+
+        audioContext.close();
+
+    }
+
+    cancelAnimationFrame(animationFrame);
+
+    meter.style.width = "0%";
+
+    startButton.textContent =
+        "LIGAR PEDAL";
+
+    startButton.classList.remove("active");
+
+    statusText.textContent =
+        "Desligado";
+
+}
+
+
+/* =========================================================
+   PITCH
+   ========================================================= */
+
+function updatePitch() {
+
+    const semitones =
+        Number(pitchSlider.value);
+
+    const factor =
+        Math.pow(
+            2,
+            semitones / 12
+        );
+
+    pitchText.textContent =
+        semitones > 0
+            ? "+" + semitones
+            : semitones;
+
+    factorText.textContent =
+        factor.toFixed(3) + "x";
+
+    /*
+       Rotação visual do knob.
+    */
+
+    const rotation =
+        -135 +
+        ((semitones + 12) / 24) * 270;
+
+    knob.style.transform =
+        "rotate(" + rotation + "deg)";
+
+    if (pitchNode) {
+
+        pitchNode.port.postMessage({
+            pitch: factor
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   MIX
+   ========================================================= */
+
+function updateMix() {
+
+    const mix =
+        Number(mixSlider.value) / 100;
+
+    /*
+       Curva de potência constante.
+    */
+
+    const wet =
+        Math.sin(
+            mix * Math.PI / 2
+        );
+
+    const dry =
+        Math.cos(
+            mix * Math.PI / 2
+        );
+
+    if (wetGain) {
+        wetGain.gain.value = wet;
+    }
+
+    if (dryGain) {
+        dryGain.gain.value = dry;
+    }
+
+}
+
+
+/* =========================================================
+   OUTPUT
+   ========================================================= */
+
+async function setOutputDevice() {
+
+    if (!audioContext) return;
+
+    if (
+        outputSelect.value &&
+        typeof audioContext.setSinkId === "function"
+    ) {
+
+        try {
+
+            await audioContext.setSinkId(
+                outputSelect.value
+            );
+
+        } catch (error) {
+
+            console.warn(
+                "Não foi possível selecionar a saída.",
+                error
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   LEVEL METER
+   ========================================================= */
+
+function animateMeter() {
+
+    if (!analyser) return;
+
+    const data =
+        new Uint8Array(
+            analyser.frequencyBinCount
+        );
+
+    analyser.getByteFrequencyData(data);
+
+    let sum = 0;
+
+    for (let i = 0; i < data.length; i++) {
+        sum += data[i];
+    }
+
+    const average =
+        sum / data.length;
+
+    const level =
+        Math.min(
+            100,
+            average * 1.8
+        );
+
+    meter.style.width =
+        level + "%";
+
+    animationFrame =
+        requestAnimationFrame(
+            animateMeter
+        );
+
+}
+
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
+pitchSlider.addEventListener(
+    "input",
+    updatePitch
+);
+
+mixSlider.addEventListener(
+    "input",
+    updateMix
+);
+
+startButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            audioContext &&
+            audioContext.state !== "closed"
+        ) {
+            stopPedal();
+        } else {
+            startPedal();
+        }
+
+    }
+);
+
+outputSelect.addEventListener(
+    "change",
+    setOutputDevice
+);
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+navigator.mediaDevices
+    .getUserMedia({
+        audio: true
+    })
+    .then(stream => {
+
+        stream.getTracks()
+            .forEach(track => track.stop());
+
+        return loadDevices();
+
+    })
+    .catch(error => {
+
+        statusText.textContent =
+            "Permita o acesso ao áudio.";
+
+        console.error(error);
+
+    });
+
+</script>
+
+</body>
+</html>
