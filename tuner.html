@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Precision Guitar Tuner</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080b10;color:#e9eef5;font-family:Inter,Segoe UI,Arial,sans-serif;min-height:100vh;display:grid;place-items:center}
+.app{width:min(1050px,94vw);background:linear-gradient(145deg,#111720,#090d13);border:1px solid #26303c;border-radius:28px;padding:28px;box-shadow:0 30px 90px #0008}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.brand{font-size:22px;font-weight:800;letter-spacing:.08em}.status{font-size:12px;color:#7f8b99;letter-spacing:.12em;text-transform:uppercase}
+.main{display:grid;grid-template-columns:1.3fr .7fr;gap:20px}.card{background:#0b1017;border:1px solid #222d39;border-radius:22px;padding:24px}
+.note{text-align:center;font-size:112px;line-height:.9;font-weight:800;letter-spacing:-.08em}.oct{text-align:center;color:#8491a0;margin-top:8px}.freq{text-align:center;font-variant-numeric:tabular-nums;font-size:22px;margin:12px 0}
+.meter{height:18px;background:#171f29;border-radius:99px;position:relative;margin:28px 0 10px;overflow:hidden}.center{position:absolute;left:50%;top:0;width:2px;height:100%;background:#fff}.needle{position:absolute;left:50%;top:50%;width:46%;height:3px;transform-origin:left center;transform:translateY(-50%) rotate(0deg);background:#dce5ef;border-radius:5px;transition:transform .08s linear}
+.cents{text-align:center;font-size:42px;font-weight:700;font-variant-numeric:tabular-nums}.hint{text-align:center;color:#7f8b99;font-size:13px}
+.controls{display:grid;gap:14px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.label{color:#9ba7b5;font-size:13px}.value{font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#e9eef5}select,button{background:#151c25;color:#e9eef5;border:1px solid #2a3542;border-radius:12px;padding:11px 13px;font:inherit}button{cursor:pointer;font-weight:700}button:hover{background:#1d2732}.primary{width:100%;font-size:17px;padding:15px;margin-top:5px}
+.strings{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:18px}.string{padding:10px 5px;text-align:center;border-radius:12px;background:#121923;border:1px solid #202b37;cursor:pointer}.string b{display:block;font-size:20px}.string small{color:#778493}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:#aeb8c4}
+.history{margin-top:18px}.history h3{font-size:13px;color:#8e9aaa;margin:0 0 9px;text-transform:uppercase;letter-spacing:.1em}.log{max-height:120px;overflow:auto;font-size:12px;color:#778493;line-height:1.7}
+@media(max-width:760px){.main{grid-template-columns:1fr}.note{font-size:85px}.strings{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">PRECISION TUNER</div><div class="status" id="status">microfone desligado</div></header>
+<div class="main">
+<section class="card">
+  <div class="note" id="note">—</div>
+  <div class="oct" id="oct">Aguardando sinal</div>
+  <div class="freq" id="freq">0.00 Hz</div>
+  <div class="meter"><div class="center"></div><div class="needle" id="needle"></div></div>
+  <div class="cents" id="cents">0.0¢</div>
+  <div class="hint" id="hint">Toque uma corda individualmente</div>
+  <button class="primary" id="start">🎙 Ativar afinador</button>
+  <div class="strings">
+    <div class="string" data-note="E2"><b>E</b><small>6ª</small></div>
+    <div class="string" data-note="A2"><b>A</b><small>5ª</small></div>
+    <div class="string" data-note="D3"><b>D</b><small>4ª</small></div>
+    <div class="string" data-note="G3"><b>G</b><small>3ª</small></div>
+    <div class="string" data-note="B3"><b>B</b><small>2ª</small></div>
+    <div class="string" data-note="E4"><b>E</b><small>1ª</small></div>
+  </div>
+</section>
+<aside class="card">
+  <div class="controls">
+    <div class="row"><span class="label">Nota A de referência</span><strong class="value" id="aVal">440 Hz</strong></div>
+    <input id="a4" type="range" min="400" max="480" step=".1" value="440">
+    <div class="row"><span class="label">Precisão / sensibilidade</span><strong class="value" id="pVal">±0,1¢</strong></div>
+    <input id="precision" type="range" min=".1" max="5" step=".1" value=".1">
+    <div class="row"><span class="label">Modo</span>
+      <select id="mode"><option value="chromatic">Cromático</option><option value="guitar">Guitarra</option></select>
+    </div>
+    <div class="options">
+      <label class="toggle"><input id="sound" type="checkbox"> som de referência</label>
+      <label class="toggle"><input id="auto" type="checkbox" checked> detectar corda</label>
+      <label class="toggle"><input id="hold" type="checkbox"> congelar leitura</label>
+      <label class="toggle"><input id="dark" type="checkbox" checked> modo escuro</label>
+    </div>
+    <button id="ref">🔊 Tocar A de referência</button>
+    <button id="calibrate">↺ Restaurar 440 Hz</button>
+    <div class="history"><h3>Últimas leituras</h3><div class="log" id="log">Nenhuma leitura registrada.</div></div>
+  </div>
+</aside>
+</div>
+</div>
+<script>
+const NAMES=["C","C♯","D","D♯","E","F","F♯","G","G♯","A","A♯","B"];
+const GUITAR={E2:40,A2:45,D3:50,G3:55,B3:59,E4:64};
+let audio, analyser, data, running=false, raf, frozen=false, lastLog=0, selected=null;
+const $=id=>document.getElementById(id);
+const a4=$("a4"), precision=$("precision");
+function aFreq(){return +a4.value}
+function midiFreq(m){return aFreq()*Math.pow(2,(m-69)/12)}
+function freqToMidi(f){return 69+12*Math.log2(f/aFreq())}
+function noteInfo(f){
+  const m=Math.round(freqToMidi(f)), target=midiFreq(m), cents=1200*Math.log2(f/target);
+  return {m,target,cents,name:NAMES[(m%12+12)%12],oct:Math.floor(m/12)-1}
+}
+function detectPitch(buf,sr){
+  let rms=0; for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/buf.length); if(rms<.008)return null;
+  let best=0,bestCorr=0;
+  const minLag=Math.floor(sr/1000), maxLag=Math.min(Math.floor(sr/70),buf.length-2);
+  for(let lag=minLag;lag<=maxLag;lag++){
+    let sum=0,n=0;
+    for(let i=0;i<buf.length-lag;i+=2){sum+=buf[i]*buf[i+lag];n++}
+    const c=sum/n;if(c>bestCorr){bestCorr=c;best=lag}
+  }
+  if(!best||bestCorr<.01)return null;
+  return sr/best;
+}
+async function start(){
+ try{
+  audio=audio||new (window.AudioContext||window.webkitAudioContext)();
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  const src=audio.createMediaStreamSource(stream); analyser=audio.createAnalyser(); analyser.fftSize=4096; analyser.smoothingTimeConstant=.15; src.connect(analyser);
+  data=new Float32Array(analyser.fftSize); running=true;$("start").textContent="■ Desativar afinador";$("status").textContent="microfone ativo";loop();
+ }catch(e){alert("Não foi possível acessar o microfone. Verifique a permissão do navegador.");}
+}
+function stop(){running=false;cancelAnimationFrame(raf);$("status").textContent="microfone desligado";$("start").textContent="🎙 Ativar afinador"}
+function loop(){
+ if(!running)return; analyser.getFloatTimeDomainData(data); let f=detectPitch(data,audio.sampleRate);
+ if(f&&!frozen){
+   let i=noteInfo(f);
+   if(selected){const target=GUITAR[selected]; i=noteInfo(f); i.name=NAMES[target%12]; i.oct=Math.floor(target/12)-1; i.target=midiFreq(target); i.cents=1200*Math.log2(f/i.target)}
+   $("note").textContent=i.name;$("oct").textContent="oitava "+i.oct;$("freq").textContent=f.toFixed(2)+" Hz";
+   const c=Math.max(-50,Math.min(50,i.cents)); $("cents").textContent=(i.cents>=0?"+":"")+i.cents.toFixed(1)+"¢";
+   $("needle").style.transform=`translateY(-50%) rotate(${c*1.55}deg)`;
+   $("hint").textContent=Math.abs(i.cents)<=+precision.value?"✓ Afinado":i.cents<0?"↑ aumente a tensão":"↓ diminua a tensão";
+   if(Date.now()-lastLog>1200){lastLog=Date.now();$("log").innerHTML=`${i.name}${i.oct} · ${f.toFixed(2)} Hz · ${i.cents.toFixed(1)}¢<br>`+$("log").innerHTML}
+ }
+ raf=requestAnimationFrame(loop);
+}
+$("start").onclick=()=>running?stop():start();
+a4.oninput=()=>{$("aVal").textContent=a4.value+" Hz"}
+precision.oninput=()=>{$("pVal").textContent="±"+precision.value.replace(".",",")+"¢"}
+$("calibrate").onclick=()=>{a4.value=440;a4.oninput()}
+$("hold").onchange=e=>frozen=e.target.checked;
+document.querySelectorAll(".string").forEach(x=>x.onclick=()=>{selected=x.dataset.note;document.querySelectorAll(".string").forEach(y=>y.style.outline="");x.style.outline="2px solid #fff";});
+$("ref").onclick=()=>{
+ const ac=new (window.AudioContext||window.webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.frequency.value=aFreq();g.gain.value=.12;o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+2);
+}
+</script>
+</body>
+</html>
