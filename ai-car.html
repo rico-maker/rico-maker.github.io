@@ -1,329 +1,434 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
+
 <head>
+
 
 <meta charset="UTF-8">
 
+
 <meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+content="width=device-width,initial-scale=1.0">
+
 
 <title>Neural Track Evolution</title>
 
+
 <style>
 
+
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
 }
+
 
 body{
-    margin:0;
-    background:#0b0e12;
-    color:#eee;
-    font-family:Arial,Helvetica,sans-serif;
-    overflow:hidden;
+margin:0;
+background:#0b0e12;
+color:#eee;
+font-family:Arial,Helvetica,sans-serif;
+overflow:hidden;
 }
+
 
 #app{
-    display:flex;
-    width:100vw;
-    height:100vh;
+display:flex;
+width:100vw;
+height:100vh;
 }
+
 
 #sidebar{
-    width:330px;
-    min-width:330px;
-    background:#171a20;
-    border-right:1px solid #30343c;
-    padding:14px;
-    overflow-y:auto;
+width:330px;
+min-width:330px;
+background:#171a20;
+border-right:1px solid #30343c;
+padding:14px;
+overflow-y:auto;
 }
+
 
 h1{
-    margin:0 0 4px;
-    font-size:21px;
+margin:0 0 4px;
+font-size:21px;
 }
+
 
 h2{
-    font-size:14px;
-    margin:16px 0 9px;
-    color:#aaa;
+font-size:14px;
+margin:16px 0 9px;
+color:#aaa;
 }
+
 
 .small{
-    font-size:11px;
-    line-height:1.45;
-    color:#888;
+font-size:11px;
+line-height:1.45;
+color:#888;
 }
+
 
 .section{
-    background:#1d2129;
-    border:1px solid #30343d;
-    border-radius:9px;
-    padding:11px;
-    margin-bottom:10px;
+background:#1d2129;
+border:1px solid #30343d;
+border-radius:9px;
+padding:11px;
+margin-bottom:10px;
 }
+
 
 .control{
-    margin:9px 0;
+margin:9px 0;
 }
+
 
 .control label{
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    margin-bottom:4px;
+display:flex;
+justify-content:space-between;
+font-size:12px;
+margin-bottom:4px;
 }
+
 
 .value{
-    color:#62d8ff;
-    font-weight:bold;
+color:#62d8ff;
+font-weight:bold;
 }
+
 
 input[type="range"]{
-    width:100%;
+width:100%;
 }
+
 
 select{
-    width:100%;
-    padding:7px;
-    background:#252a33;
-    color:#fff;
-    border:1px solid #444;
-    border-radius:6px;
+width:100%;
+padding:7px;
+background:#252a33;
+color:#fff;
+border:1px solid #444;
+border-radius:6px;
 }
+
 
 button{
-    background:#2b313b;
-    border:0;
-    color:#fff;
-    border-radius:6px;
-    padding:8px 9px;
-    margin:2px;
-    cursor:pointer;
-    font-size:11px;
+background:#2b313b;
+border:0;
+color:#fff;
+border-radius:6px;
+padding:8px 9px;
+margin:2px;
+cursor:pointer;
+font-size:11px;
 }
+
 
 button:hover{
-    background:#3a4350;
+background:#3a4350;
 }
+
 
 button.active{
-    background:#147cff;
+background:#147cff;
 }
+
 
 button.good{
-    background:#167d46;
+background:#167d46;
 }
+
 
 button.danger{
-    background:#8c2828;
+background:#8c2828;
 }
+
 
 .buttons{
-    display:flex;
-    flex-wrap:wrap;
+display:flex;
+flex-wrap:wrap;
 }
+
 
 .checkbox{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    margin:7px 0;
-    font-size:12px;
+display:flex;
+align-items:center;
+gap:6px;
+margin:7px 0;
+font-size:12px;
 }
+
 
 #main{
-    flex:1;
-    display:flex;
-    position:relative;
-    overflow:hidden;
+flex:1;
+display:flex;
+position:relative;
+overflow:hidden;
 }
+
 
 #trackPanel{
-    flex:1;
-    position:relative;
-    overflow:hidden;
+flex:1;
+position:relative;
+overflow:hidden;
 }
+
 
 #canvas{
-    width:100%;
-    height:100%;
-    display:block;
+width:100%;
+height:100%;
+display:block;
 }
 
-#networkPanel{
-    width:390px;
-    min-width:390px;
-    background:#111419;
-    border-left:1px solid #30343d;
-    position:relative;
+
+#resizeDivider{
+width:8px;
+min-width:8px;
+height:100%;
+background:#20252d;
+border-left:1px solid #343a44;
+border-right:1px solid #343a44;
+cursor:col-resize;
+position:relative;
+z-index:20;
+transition:background .15s;
 }
+#resizeDivider:hover,
+#resizeDivider.dragging{
+background:#147cff;
+}
+#resizeDivider::after{
+content:"⋮";
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+color:#777;
+font-size:18px;
+line-height:1;
+}
+#networkPanel{
+width:390px;
+min-width:260px;
+max-width:70vw;
+background:#111419;
+border-left:1px solid #30343d;
+position:relative;
+}
+
 
 #networkCanvas{
-    width:100%;
-    height:100%;
-    display:block;
+width:100%;
+height:100%;
+display:block;
 }
+
 
 #topbar{
-    position:absolute;
-    top:10px;
-    left:10px;
-    right:10px;
-    display:flex;
-    justify-content:space-between;
-    pointer-events:none;
+position:absolute;
+top:10px;
+left:10px;
+right:10px;
+display:flex;
+justify-content:space-between;
+pointer-events:none;
 }
+
 
 .badge{
-    background:rgba(0,0,0,.7);
-    border:1px solid #333;
-    padding:7px 10px;
-    border-radius:7px;
-    font-size:11px;
+background:rgba(0,0,0,.7);
+border:1px solid #333;
+padding:7px 10px;
+border-radius:7px;
+font-size:11px;
 }
+
 
 #editorHint{
-    display:none;
-    position:absolute;
-    bottom:12px;
-    left:12px;
-    background:rgba(0,0,0,.75);
-    border:1px solid #333;
-    border-radius:6px;
-    padding:8px 11px;
-    font-size:11px;
+display:none;
+position:absolute;
+bottom:12px;
+left:12px;
+background:rgba(0,0,0,.75);
+border:1px solid #333;
+border-radius:6px;
+padding:8px 11px;
+font-size:11px;
 }
+
 
 .stat{
-    display:flex;
-    justify-content:space-between;
-    padding:2px 0;
-    font-size:12px;
+display:flex;
+justify-content:space-between;
+padding:2px 0;
+font-size:12px;
 }
+
 
 #networkTitle{
-    position:absolute;
-    top:10px;
-    left:15px;
-    font-size:13px;
-    font-weight:bold;
-    color:#ddd;
-    pointer-events:none;
+position:absolute;
+top:10px;
+left:15px;
+font-size:13px;
+font-weight:bold;
+color:#ddd;
+pointer-events:none;
 }
 
+
 #networkLegend{
-    position:absolute;
-    bottom:10px;
-    left:12px;
-    right:12px;
-    font-size:10px;
-    color:#888;
-    line-height:1.5;
-    pointer-events:none;
+position:absolute;
+bottom:10px;
+left:12px;
+right:12px;
+font-size:10px;
+color:#888;
+line-height:1.5;
+pointer-events:none;
 }
+
 
 </style>
 
+
 </head>
+
 
 <body>
 
+
 <div id="app">
 
+
 <!-- =====================================================
-     SIDEBAR
+SIDEBAR
 ===================================================== -->
+
 
 <aside id="sidebar">
 
+
 <h1>Neural Track Evolution</h1>
+
 
 <div class="small">
 Simulador evolutivo de carros controlados por uma rede neural.
 </div>
 
 
+
+
 <!-- SIMULAÇÃO -->
+
 
 <div class="section">
 
+
 <h2>Simulação</h2>
+
 
 <div class="buttons">
 
+
 <button id="pauseBtn"
-        class="good">
+class="good">
 Pausar
 </button>
+
 
 <button id="resetBtn">
 Reiniciar
 </button>
 
+
 <button id="newGenerationBtn">
 Nova geração
 </button>
 
+
 </div>
+
+
 
 
 <div class="checkbox">
 
+
 <input
-    type="checkbox"
-    id="showSensors"
-    checked>
+type="checkbox"
+id="showSensors"
+checked>
+
 
 <label for="showSensors">
 Mostrar sensores
 </label>
 
+
 </div>
+
+
 
 
 <div class="checkbox">
 
+
 <input
-    type="checkbox"
-    id="showBestOnly">
+type="checkbox"
+id="showBestOnly">
+
 
 <label for="showBestOnly">
 Mostrar somente o melhor
 </label>
 
+
 </div>
+
+
 
 
 <div class="checkbox">
 
+
 <input
-    type="checkbox"
-    id="showNetwork"
-    checked>
+type="checkbox"
+id="showNetwork"
+checked>
+
 
 <label for="showNetwork">
 Mostrar rede neural
 </label>
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- POPULAÇÃO -->
 
+
 <div class="section">
+
 
 <h2>População</h2>
 
 
+
+
 <div class="control">
+
 
 <label>
 
+
 <span>Quantidade de carros</span>
+
 
 <span
 id="carCountValue"
@@ -331,7 +436,9 @@ class="value">
 500
 </span>
 
+
 </label>
+
 
 <input
 id="carCount"
@@ -341,14 +448,20 @@ max="1000"
 step="10"
 value="500">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Velocidade máxima</span>
+
 
 <span
 id="maxSpeedValue"
@@ -356,7 +469,9 @@ class="value">
 20
 </span>
 
+
 </label>
+
 
 <input
 id="maxSpeed"
@@ -365,14 +480,20 @@ min="5"
 max="50"
 value="20">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Velocidade mínima</span>
+
 
 <span
 id="minSpeedValue"
@@ -380,7 +501,9 @@ class="value">
 8
 </span>
 
+
 </label>
+
 
 <input
 id="minSpeed"
@@ -389,14 +512,20 @@ min="0"
 max="20"
 value="8">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Tamanho do carro</span>
+
 
 <span
 id="carSizeValue"
@@ -404,7 +533,9 @@ class="value">
 5
 </span>
 
+
 </label>
+
 
 <input
 id="carSize"
@@ -413,23 +544,34 @@ min="2"
 max="15"
 value="5">
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- SENSORES -->
 
+
 <div class="section">
+
 
 <h2>Sensores</h2>
 
 
+
+
 <div class="control">
+
 
 <label>
 
+
 <span>Quantidade</span>
+
 
 <span
 id="sensorCountValue"
@@ -437,7 +579,9 @@ class="value">
 8
 </span>
 
+
 </label>
+
 
 <input
 id="sensorCount"
@@ -446,14 +590,20 @@ min="3"
 max="25"
 value="8">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Alcance</span>
+
 
 <span
 id="sensorRangeValue"
@@ -461,7 +611,9 @@ class="value">
 100
 </span>
 
+
 </label>
+
 
 <input
 id="sensorRange"
@@ -471,56 +623,86 @@ max="250"
 step="5"
 value="100">
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- REDE -->
 
+
 <div class="section">
+
 
 <h2>Rede neural</h2>
 
+
 <div class="small">
+
 
 Arquitetura:
 
-<br>
+
+\
+
+
 
 Sensores →
 12 neurônios →
 8 neurônios →
 3 saídas
 
-<br><br>
+
+\
+\
+
+
 
 Saídas:
 
-<br>
+
+\
+
 Aceleração
-<br>
+\
+
 Direção
-<br>
+\
+
 Freio
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- EVOLUÇÃO -->
 
+
 <div class="section">
+
 
 <h2>Evolução</h2>
 
 
+
+
 <div class="control">
+
 
 <label>
 
+
 <span>Taxa de mutação</span>
+
 
 <span
 id="mutationValue"
@@ -528,7 +710,9 @@ class="value">
 10%
 </span>
 
+
 </label>
+
 
 <input
 id="mutation"
@@ -538,14 +722,20 @@ max="1"
 step=".01"
 value=".10">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Força da mutação</span>
+
 
 <span
 id="mutationStrengthValue"
@@ -553,7 +743,9 @@ class="value">
 0.30
 </span>
 
+
 </label>
+
 
 <input
 id="mutationStrength"
@@ -563,14 +755,20 @@ max="1"
 step=".01"
 value=".30">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Persistência</span>
+
 
 <span
 id="persistenceValue"
@@ -578,7 +776,9 @@ class="value">
 90%
 </span>
 
+
 </label>
+
 
 <input
 id="persistence"
@@ -588,14 +788,20 @@ max="1"
 step=".01"
 value=".90">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
 
+
 <span>Elitismo</span>
+
 
 <span
 id="elitismValue"
@@ -603,7 +809,9 @@ class="value">
 5
 </span>
 
+
 </label>
+
 
 <input
 id="elitism"
@@ -612,49 +820,69 @@ min="0"
 max="30"
 value="5">
 
+
 </div>
+
+
 
 
 <div class="control">
 
+
 <label>
+
 
 <span>Seleção</span>
 
+
 </label>
 
+
 <select id="selection">
+
 
 <option value="best">
 Melhores
 </option>
 
+
 <option value="tournament">
 Torneio
 </option>
 
+
 </select>
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- CÉREBRO -->
 
+
 <div class="section">
+
 
 <h2>Aprendizado</h2>
 
+
 <div class="buttons">
+
 
 <button id="saveBrain">
 Salvar cérebro
 </button>
 
+
 <button id="loadBrain">
 Carregar cérebro
 </button>
+
 
 <button
 id="clearBrain"
@@ -662,24 +890,33 @@ class="danger">
 Apagar aprendizado
 </button>
 
+
 <button
 id="clearStorage"
 class="danger">
 Limpar dados do simulador
 </button>
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- EDITOR -->
 
+
 <div class="section">
+
 
 <h2>Editor de pista</h2>
 
+
 <div class="buttons">
+
 
 <button
 id="simulationMode"
@@ -687,67 +924,94 @@ class="active">
 Simulação
 </button>
 
+
 <button id="editorMode">
 Editar pista
 </button>
 
+
 </div>
 
 
+
+
 <div class="buttons">
+
 
 <button id="addOuter">
 Adicionar externo
 </button>
 
+
 <button id="addInner">
 Adicionar interno
 </button>
+
 
 <button id="removePoint">
 Remover selecionado
 </button>
 
+
 </div>
 
 
+
+
 <div class="buttons">
+
 
 <button id="saveTrack">
 Salvar pista
 </button>
 
+
 <button id="loadTrack">
 Carregar pista
 </button>
+
 
 <button id="resetTrack">
 Pista padrão
 </button>
 
+
 </div>
+
+
 
 
 <div class="small">
 
+
 No modo editor, arraste os pontos vermelhos
 ou azuis para modificar a pista.
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- ESTATÍSTICAS -->
 
+
 <div class="section">
+
 
 <h2>Estatísticas</h2>
 
 
+
+
 <div class="stat">
 
+
 <span>Geração</span>
+
 
 <span
 id="generationValue"
@@ -755,12 +1019,17 @@ class="value">
 1
 </span>
 
+
 </div>
+
+
 
 
 <div class="stat">
 
+
 <span>Carros vivos</span>
+
 
 <span
 id="aliveValue"
@@ -768,12 +1037,17 @@ class="value">
 0
 </span>
 
+
 </div>
+
+
 
 
 <div class="stat">
 
+
 <span>Melhor fitness</span>
+
 
 <span
 id="fitnessValue"
@@ -781,12 +1055,17 @@ class="value">
 0
 </span>
 
+
 </div>
+
+
 
 
 <div class="stat">
 
+
 <span>Recorde</span>
+
 
 <span
 id="recordValue"
@@ -794,12 +1073,17 @@ class="value">
 0
 </span>
 
+
 </div>
+
+
 
 
 <div class="stat">
 
+
 <span>FPS</span>
+
 
 <span
 id="fpsValue"
@@ -807,426 +1091,664 @@ class="value">
 60
 </span>
 
-</div>
 
 </div>
+
+
+</div>
+
 
 </aside>
 
 
+
+
 <!-- =====================================================
-     ÁREA PRINCIPAL
+ÁREA PRINCIPAL
 ===================================================== -->
+
 
 <div id="main">
 
+
 <div id="trackPanel">
+
 
 <canvas id="canvas"></canvas>
 
+
 <div id="topbar">
+
 
 <div class="badge"
 id="statusBadge">
 SIMULAÇÃO
 </div>
 
+
 <div class="badge">
+
 
 Geração:
 <span id="topGeneration">
 1
 </span>
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <div id="editorHint">
 
+
 Modo editor:
 arraste os pontos da pista.
 
-</div>
 
 </div>
+
+
+</div>
+
+
 
 
 <!-- =====================================================
-     REDE NEURAL
+REDE NEURAL
 ===================================================== -->
 
+
+<div id="resizeDivider" title="Arraste para redimensionar a rede neural"></div>
 <div id="networkPanel">
+
 
 <div id="networkTitle">
 
+
 REDE NEURAL — MELHOR INDIVÍDUO
 
+
 </div>
+
 
 <canvas id="networkCanvas"></canvas>
 
 
+
+
 <div id="networkLegend">
 
+
 Linha clara = peso positivo
-<br>
+\
+
+
 
 Linha escura = peso negativo
-<br>
+\
+
+
 
 Espessura = magnitude do peso
-<br>
+\
+
+
 
 Brilho do neurônio = ativação
 
-</div>
 
 </div>
 
-</div>
 
 </div>
+
+
+</div>
+
+
+</div>
+
+
 
 
 <script>
 
+
 /* =====================================================
-   CANVAS
+CANVAS
 ===================================================== */
+
 
 const canvas =
 document.getElementById("canvas");
+
 
 const ctx =
 canvas.getContext("2d");
 
 
+
+
 const networkCanvas =
 document.getElementById(
-    "networkCanvas"
+"networkCanvas"
 );
+
 
 const nctx =
 networkCanvas.getContext("2d");
 
 
+
+
 let W=1200;
 let H=700;
+
 
 let NW=390;
 let NH=700;
 
+/* CÂMERA DA PISTA: enquadra e centraliza a pista no espaço disponível. */
+let camera={
+    x:0,
+    y:0,
+    scale:1
+};
+
+function updateTrackCamera(){
+    const points=[
+        ...trackData.outer,
+        ...trackData.inner
+    ];
+
+    if(!points.length)
+        return;
+
+    let minX=Infinity;
+    let maxX=-Infinity;
+    let minY=Infinity;
+    let maxY=-Infinity;
+
+    for(const p of points){
+        minX=Math.min(minX,p.x);
+        maxX=Math.max(maxX,p.x);
+        minY=Math.min(minY,p.y);
+        maxY=Math.max(maxY,p.y);
+    }
+
+    const worldW=Math.max(1,maxX-minX);
+    const worldH=Math.max(1,maxY-minY);
+    const margin=55;
+
+    camera.scale=Math.min(
+        Math.max(80,W-margin*2)/worldW,
+        Math.max(80,H-margin*2)/worldH
+    );
+
+    camera.scale=Math.max(
+        .25,
+        Math.min(2.5,camera.scale)
+    );
+
+    const centerWorldX=(minX+maxX)/2;
+    const centerWorldY=(minY+maxY)/2;
+
+    camera.x=W/2-centerWorldX*camera.scale;
+    camera.y=H/2-centerWorldY*camera.scale;
+}
+
+function beginTrackTransform(){
+    ctx.save();
+    ctx.translate(camera.x,camera.y);
+    ctx.scale(camera.scale,camera.scale);
+}
+
+function endTrackTransform(){
+    ctx.restore();
+}
+
+function screenToWorld(x,y){
+    return {
+        x:(x-camera.x)/camera.scale,
+        y:(y-camera.y)/camera.scale
+    };
+}
+
+
+
 
 function resize(){
 
-    const r=
-    canvas.getBoundingClientRect();
 
-    const nr=
-    networkCanvas.getBoundingClientRect();
+const r=
+canvas.getBoundingClientRect();
 
 
-    const dpr=
-    window.devicePixelRatio||1;
+const nr=
+networkCanvas.getBoundingClientRect();
 
 
-    canvas.width=
-    r.width*dpr;
-
-    canvas.height=
-    r.height*dpr;
 
 
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
+const dpr=
+window.devicePixelRatio||1;
 
 
-    networkCanvas.width=
-    nr.width*dpr;
-
-    networkCanvas.height=
-    nr.height*dpr;
 
 
-    nctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
+canvas.width=
+r.width*dpr;
 
 
-    W=r.width;
-    H=r.height;
+canvas.height=
+r.height*dpr;
 
-    NW=nr.width;
-    NH=nr.height;
+
+
+
+ctx.setTransform(
+dpr,
+0,
+0,
+dpr,
+0,
+0
+);
+
+
+
+
+networkCanvas.width=
+nr.width*dpr;
+
+
+networkCanvas.height=
+nr.height*dpr;
+
+
+
+
+nctx.setTransform(
+dpr,
+0,
+0,
+dpr,
+0,
+0
+);
+
+
+
+
+W=r.width;
+H=r.height;
+
+
+NW=nr.width;
+NH=nr.height;
+
 
 }
 
+
 window.addEventListener(
-    "resize",
-    resize
+"resize",
+resize
 );
+
 
 resize();
 
 
+
+
 /* =====================================================
-   CONFIGURAÇÃO
+CONFIGURAÇÃO
 ===================================================== */
+
 
 const config={
 
-    carCount:500,
 
-    sensorCount:8,
+carCount:500,
 
-    sensorRange:100,
 
-    maxSpeed:20,
+sensorCount:8,
 
-    minSpeed:8,
 
-    carSize:5,
+sensorRange:100,
 
-    mutationRate:.10,
 
-    mutationStrength:.30,
+maxSpeed:20,
 
-    persistence:.90,
 
-    elitism:5,
+minSpeed:8,
 
-    selection:"best"
+
+carSize:5,
+
+
+mutationRate:.10,
+
+
+mutationStrength:.30,
+
+
+persistence:.90,
+
+
+elitism:5,
+
+
+selection:"best"
+
 
 };
 
 
+
+
 /* =====================================================
-   REDE
+REDE
 ===================================================== */
+
 
 const HIDDEN_1=12;
 
+
 const HIDDEN_2=8;
+
 
 const OUTPUTS=3;
 
 
-/*
-    Pesos:
 
-    sensores → hidden1
-    hidden1 → hidden2
-    hidden2 → outputs
+
+/*
+Pesos:
+
+
+sensores → hidden1
+hidden1 → hidden2
+hidden2 → outputs
 */
+
 
 function randomMatrix(rows,cols){
 
-    const matrix=[];
+
+const matrix=[];
 
 
-    for(
-        let i=0;
-        i<rows;
-        i++
-    ){
-
-        const row=[];
 
 
-        for(
-            let j=0;
-            j<cols;
-            j++
-        ){
-
-            row.push(
-                Math.random()*2-1
-            );
-
-        }
+for(
+let i=0;
+i<rows;
+i++
+){
 
 
-        matrix.push(row);
-
-    }
+const row=[];
 
 
-    return matrix;
+
+
+for(
+let j=0;
+j<cols;
+j++
+){
+
+
+row.push(
+Math.random()*2-1
+);
+
 
 }
+
+
+
+
+matrix.push(row);
+
+
+}
+
+
+
+
+return matrix;
+
+
+}
+
+
 
 
 function createBrain(){
 
-    return {
 
-        w1:
-        randomMatrix(
-            config.sensorCount,
-            HIDDEN_1
-        ),
+return {
 
-        w2:
-        randomMatrix(
-            HIDDEN_1,
-            HIDDEN_2
-        ),
 
-        w3:
-        randomMatrix(
-            HIDDEN_2,
-            OUTPUTS
-        )
+w1:
+randomMatrix(
+config.sensorCount,
+HIDDEN_1
+),
 
-    };
+
+w2:
+randomMatrix(
+HIDDEN_1,
+HIDDEN_2
+),
+
+
+w3:
+randomMatrix(
+HIDDEN_2,
+OUTPUTS
+)
+
+
+};
+
 
 }
+
+
 
 
 /* =====================================================
-   REDE NEURAL
+REDE NEURAL
 ===================================================== */
+
 
 function tanh(x){
 
-    return Math.tanh(x);
+
+return Math.tanh(x);
+
 
 }
+
+
 
 
 function forward(brain,inputs){
 
-    const hidden1=[];
 
-    const hidden2=[];
-
-    const output=[];
+const hidden1=[];
 
 
-    /* SENSOR → HIDDEN 1 */
-
-    for(
-        let j=0;
-        j<HIDDEN_1;
-        j++
-    ){
-
-        let sum=0;
+const hidden2=[];
 
 
-        for(
-            let i=0;
-            i<inputs.length;
-            i++
-        ){
-
-            sum+=
-            inputs[i]*
-            brain.w1[i][j];
-
-        }
+const output=[];
 
 
-        hidden1.push(
-            tanh(sum)
-        );
-
-    }
 
 
-    /* HIDDEN 1 → HIDDEN 2 */
-
-    for(
-        let j=0;
-        j<HIDDEN_2;
-        j++
-    ){
-
-        let sum=0;
+/* SENSOR → HIDDEN 1 */
 
 
-        for(
-            let i=0;
-            i<HIDDEN_1;
-            i++
-        ){
-
-            sum+=
-            hidden1[i]*
-            brain.w2[i][j];
-
-        }
+for(
+let j=0;
+j<HIDDEN_1;
+j++
+){
 
 
-        hidden2.push(
-            tanh(sum)
-        );
-
-    }
+let sum=0;
 
 
-    /* HIDDEN 2 → OUTPUT */
-
-    for(
-        let j=0;
-        j<OUTPUTS;
-        j++
-    ){
-
-        let sum=0;
 
 
-        for(
-            let i=0;
-            i<HIDDEN_2;
-            i++
-        ){
-
-            sum+=
-            hidden2[i]*
-            brain.w3[i][j];
-
-        }
+for(
+let i=0;
+i<inputs.length;
+i++
+){
 
 
-        output.push(
-            tanh(sum)
-        );
+sum+=
+inputs[i]*
+brain.w1[i][j];
 
-    }
-
-
-    return {
-
-        hidden1,
-        hidden2,
-        output
-
-    };
 
 }
 
 
+
+
+hidden1.push(
+tanh(sum)
+);
+
+
+}
+
+
+
+
+/* HIDDEN 1 → HIDDEN 2 */
+
+
+for(
+let j=0;
+j<HIDDEN_2;
+j++
+){
+
+
+let sum=0;
+
+
+
+
+for(
+let i=0;
+i<HIDDEN_1;
+i++
+){
+
+
+sum+=
+hidden1[i]*
+brain.w2[i][j];
+
+
+}
+
+
+
+
+hidden2.push(
+tanh(sum)
+);
+
+
+}
+
+
+
+
+/* HIDDEN 2 → OUTPUT */
+
+
+for(
+let j=0;
+j<OUTPUTS;
+j++
+){
+
+
+let sum=0;
+
+
+
+
+for(
+let i=0;
+i<HIDDEN_2;
+i++
+){
+
+
+sum+=
+hidden2[i]*
+brain.w3[i][j];
+
+
+}
+
+
+
+
+output.push(
+tanh(sum)
+);
+
+
+}
+
+
+
+
+return {
+
+
+hidden1,
+hidden2,
+output
+
+
+};
+
+
+}
+
+
+
+
 /* =====================================================
-   PISTA
+PISTA
 ===================================================== */
+
 
 const defaultTrack={
 
+
 outer:[
+
 
 {x:150,y:500},
 {x:200,y:390},
@@ -1239,9 +1761,12 @@ outer:[
 {x:500,y:530},
 {x:320,y:600}
 
+
 ],
 
+
 inner:[
+
 
 {x:200,y:480},
 {x:250,y:410},
@@ -1254,3099 +1779,4262 @@ inner:[
 {x:500,y:500},
 {x:320,y:560}
 
+
 ]
 
+
 };
+
+
 
 
 let trackData=
 structuredClone(defaultTrack);
 
 
+
+
 const START_X=880;
+
 
 const START_Y=450;
 
+updateTrackCamera();
+
+window.addEventListener(
+    "resize",
+    updateTrackCamera
+);
+
+
+
 
 /* =====================================================
-   GEOMETRIA
+GEOMETRIA
 ===================================================== */
+
 
 function pointInPolygon(p,poly){
 
-    let inside=false;
+
+let inside=false;
 
 
-    for(
-        let i=0,j=poly.length-1;
-        i<poly.length;
-        j=i++
-    ){
-
-        const a=poly[i];
-
-        const b=poly[j];
 
 
-        const intersect=
-        (
-            (a.y>p.y)!=(b.y>p.y)
-        )
-        &&
-        (
-            p.x<
-            (b.x-a.x)*
-            (p.y-a.y)/
-            (b.y-a.y)+
-            a.x
-        );
+for(
+let i=0,j=poly.length-1;
+i<poly.length;
+j=i++
+){
 
 
-        if(intersect)
-            inside=!inside;
-
-    }
+const a=poly[i];
 
 
-    return inside;
+const b=poly[j];
+
+
+
+
+const intersect=
+(
+(a.y>p.y)!=(b.y>p.y)
+)
+&&
+(
+p.x<
+(b.x-a.x)*
+(p.y-a.y)/
+(b.y-a.y)+
+a.x
+);
+
+
+
+
+if(intersect)
+inside=!inside;
+
 
 }
+
+
+
+
+return inside;
+
+
+}
+
+
 
 
 function pointInTrack(x,y){
 
-    return (
 
-        pointInPolygon(
-            {x,y},
-            trackData.outer
-        )
+return (
 
-        &&
 
-        !pointInPolygon(
-            {x,y},
-            trackData.inner
-        )
+pointInPolygon(
+{x,y},
+trackData.outer
+)
 
-    );
+
+&&
+
+
+!pointInPolygon(
+{x,y},
+trackData.inner
+)
+
+
+);
+
 
 }
 
 
+
+
 /* =====================================================
-   CARRO
+CARRO
 ===================================================== */
+
 
 class Car{
 
-    constructor(brain){
 
-        this.x=START_X;
+constructor(brain){
 
-        this.y=START_Y;
 
-        this.angle=-Math.PI/2;
+this.x=START_X;
 
-        this.speed=config.minSpeed;
 
-        this.size=config.carSize;
+this.y=START_Y;
 
-        this.alive=true;
 
-        this.fitness=0;
+this.angle=-Math.PI/2;
 
-        this.age=0;
 
-        this.distanceTravelled=0;
+this.speed=config.minSpeed;
 
-        this.stuckTimer=0;
 
-        this.slowTimer=0;
+this.size=config.carSize;
 
-        this.lastX=this.x;
 
-        this.lastY=this.y;
+this.alive=true;
 
 
-        this.brain=
-        brain||
-        createBrain();
+this.fitness=0;
 
 
-        this.sensors=[];
+this.age=0;
 
-        this.activations={
-            hidden1:
-            new Array(HIDDEN_1).fill(0),
 
-            hidden2:
-            new Array(HIDDEN_2).fill(0),
+this.distanceTravelled=0;
 
-            output:
-            new Array(OUTPUTS).fill(0)
-        };
 
-    }
+this.stuckTimer=0;
 
 
-    update(dt){
+this.slowTimer=0;
 
-        if(!this.alive)
-            return;
 
+this.lastX=this.x;
 
-        this.age+=dt;
 
+this.lastY=this.y;
 
-        /* =============================
-           SENSORES
-        ============================= */
 
-        this.sensors=[];
 
 
-        for(
-            let i=0;
-            i<config.sensorCount;
-            i++
-        ){
+this.brain=
+brain||
+createBrain();
 
-            let angle;
 
 
-            if(
-                config.sensorCount===1
-            ){
 
-                angle=0;
+this.sensors=[];
 
-            }else{
 
-                angle=
-                -Math.PI/2+
-                i*
-                (
-                    Math.PI/
-                    (config.sensorCount-1)
-                );
+this.activations={
+hidden1:
+new Array(HIDDEN_1).fill(0),
 
-            }
 
+hidden2:
+new Array(HIDDEN_2).fill(0),
 
-            this.sensors.push(
 
-                this.castRay(
-                    angle
-                )/
-                config.sensorRange
+output:
+new Array(OUTPUTS).fill(0)
+};
 
-            );
-
-        }
-
-
-        /* =============================
-           REDE
-        ============================= */
-
-        const result=
-        forward(
-            this.brain,
-            this.sensors
-        );
-
-
-        this.activations=
-        result;
-
-
-        const acceleration=
-        result.output[0];
-
-        const turn=
-        result.output[1];
-
-        const brake=
-        result.output[2];
-
-
-        /* =============================
-           DIREÇÃO
-        ============================= */
-
-        this.angle+=
-        turn*.09;
-
-
-        /* =============================
-           ACELERAÇÃO
-        ============================= */
-
-        this.speed+=
-        acceleration*.35;
-
-
-        /* =============================
-           FREIO
-        ============================= */
-
-        if(
-            brake>0
-        ){
-
-            this.speed-=
-            brake*.7;
-
-        }
-
-
-        this.speed=
-        Math.max(
-            0,
-            Math.min(
-                config.maxSpeed,
-                this.speed
-            )
-        );
-
-
-        /* =============================
-           MOVIMENTO
-        ============================= */
-
-        const ox=this.x;
-
-        const oy=this.y;
-
-
-        this.x+=
-        Math.cos(this.angle)*
-        this.speed;
-
-
-        this.y+=
-        Math.sin(this.angle)*
-        this.speed;
-
-
-        const movement=
-        Math.hypot(
-            this.x-ox,
-            this.y-oy
-        );
-
-
-        this.distanceTravelled+=
-        movement;
-
-
-        /* =============================
-           COLISÃO
-        ============================= */
-
-        if(
-            !pointInTrack(
-                this.x,
-                this.y
-            )
-        ){
-
-            this.alive=false;
-
-        }
-
-
-        /* =============================
-           PARADO
-        ============================= */
-
-        if(
-            movement<.2
-        ){
-
-            this.stuckTimer+=dt;
-
-        }else{
-
-            this.stuckTimer=0;
-
-        }
-
-
-        if(
-            this.stuckTimer>1.5
-        ){
-
-            this.alive=false;
-
-        }
-
-
-        /* =============================
-           MUITO LENTO
-        ============================= */
-
-        if(
-            this.speed<
-            config.minSpeed
-        ){
-
-            this.slowTimer+=dt;
-
-        }else{
-
-            this.slowTimer=0;
-
-        }
-
-
-        if(
-            this.slowTimer>1.5
-        ){
-
-            this.alive=false;
-
-        }
-
-
-        this.lastX=this.x;
-
-        this.lastY=this.y;
-
-
-        /* =============================
-           FITNESS
-        ============================= */
-
-        if(this.alive){
-
-            this.fitness+=
-            this.speed*
-            dt;
-
-            this.fitness+=.05;
-
-        }
-
-    }
-
-
-    castRay(offset){
-
-        const angle=
-        this.angle+offset;
-
-
-        for(
-            let d=0;
-            d<config.sensorRange;
-            d+=2
-        ){
-
-            const x=
-            this.x+
-            Math.cos(angle)*d;
-
-
-            const y=
-            this.y+
-            Math.sin(angle)*d;
-
-
-            if(
-                !pointInTrack(x,y)
-            ){
-
-                return d;
-
-            }
-
-        }
-
-
-        return config.sensorRange;
-
-    }
-
-
-    draw(best){
-
-        if(
-            document.getElementById(
-                "showBestOnly"
-            ).checked &&
-            !best
-        )
-            return;
-
-
-        ctx.save();
-
-
-        ctx.translate(
-            this.x,
-            this.y
-        );
-
-
-        ctx.rotate(
-            this.angle
-        );
-
-
-        ctx.fillStyle=
-        best
-        ?
-        "#00ff55"
-        :
-        this.alive
-        ?
-        "#00d9ff"
-        :
-        "#8c2222";
-
-
-        ctx.fillRect(
-
-            -this.size/2,
-
-            -this.size/2,
-
-            this.size,
-
-            this.size
-
-        );
-
-
-        ctx.restore();
-
-
-        if(
-            best &&
-            document.getElementById(
-                "showSensors"
-            ).checked
-        ){
-
-            this.drawSensors();
-
-        }
-
-    }
-
-
-    drawSensors(){
-
-        for(
-            let i=0;
-            i<config.sensorCount;
-            i++
-        ){
-
-            let angle;
-
-
-            if(
-                config.sensorCount===1
-            ){
-
-                angle=0;
-
-            }else{
-
-                angle=
-                -Math.PI/2+
-                i*
-                (
-                    Math.PI/
-                    (config.sensorCount-1)
-                );
-
-            }
-
-
-            const length=
-            this.sensors[i]*
-            config.sensorRange;
-
-
-            ctx.beginPath();
-
-
-            ctx.moveTo(
-                this.x,
-                this.y
-            );
-
-
-            ctx.lineTo(
-
-                this.x+
-                Math.cos(
-                    this.angle+angle
-                )*
-                length,
-
-                this.y+
-                Math.sin(
-                    this.angle+angle
-                )*
-                length
-
-            );
-
-
-            ctx.strokeStyle=
-            "#fff200";
-
-
-            ctx.lineWidth=1;
-
-
-            ctx.stroke();
-
-        }
-
-    }
 
 }
 
 
+
+
+update(dt){
+
+
+if(!this.alive)
+return;
+
+
+
+
+this.age+=dt;
+
+
+
+
+/* =============================
+SENSORES
+============================= */
+
+
+this.sensors=[];
+
+
+
+
+for(
+let i=0;
+i<config.sensorCount;
+i++
+){
+
+
+let angle;
+
+
+
+
+if(
+config.sensorCount===1
+){
+
+
+angle=0;
+
+
+}else{
+
+
+angle=
+-Math.PI/2+
+i*
+(
+Math.PI/
+(config.sensorCount-1)
+);
+
+
+}
+
+
+
+
+this.sensors.push(
+
+
+this.castRay(
+angle
+)/
+config.sensorRange
+
+
+);
+
+
+}
+
+
+
+
+/* =============================
+REDE
+============================= */
+
+
+const result=
+forward(
+this.brain,
+this.sensors
+);
+
+
+
+
+this.activations=
+result;
+
+
+
+
+const acceleration=
+result.output[0];
+
+
+const turn=
+result.output[1];
+
+
+const brake=
+result.output[2];
+
+
+
+
+/* =============================
+DIREÇÃO
+============================= */
+
+
+this.angle+=
+turn*.09;
+
+
+
+
+/* =============================
+ACELERAÇÃO
+============================= */
+
+
+this.speed+=
+acceleration*.35;
+
+
+
+
+/* =============================
+FREIO
+============================= */
+
+
+if(
+brake>0
+){
+
+
+this.speed-=
+brake*.7;
+
+
+}
+
+
+
+
+this.speed=
+Math.max(
+0,
+Math.min(
+config.maxSpeed,
+this.speed
+)
+);
+
+
+
+
+/* =============================
+MOVIMENTO
+============================= */
+
+
+const ox=this.x;
+
+
+const oy=this.y;
+
+
+
+
+this.x+=
+Math.cos(this.angle)*
+this.speed;
+
+
+
+
+this.y+=
+Math.sin(this.angle)*
+this.speed;
+
+
+
+
+const movement=
+Math.hypot(
+this.x-ox,
+this.y-oy
+);
+
+
+
+
+this.distanceTravelled+=
+movement;
+
+
+
+
+/* =============================
+COLISÃO
+============================= */
+
+
+if(
+!pointInTrack(
+this.x,
+this.y
+)
+){
+
+
+this.alive=false;
+
+
+}
+
+
+
+
+/* =============================
+PARADO
+============================= */
+
+
+if(
+movement<.2
+){
+
+
+this.stuckTimer+=dt;
+
+
+}else{
+
+
+this.stuckTimer=0;
+
+
+}
+
+
+
+
+if(
+this.stuckTimer>1.5
+){
+
+
+this.alive=false;
+
+
+}
+
+
+
+
+/* =============================
+MUITO LENTO
+============================= */
+
+
+if(
+this.speed<
+config.minSpeed
+){
+
+
+this.slowTimer+=dt;
+
+
+}else{
+
+
+this.slowTimer=0;
+
+
+}
+
+
+
+
+if(
+this.slowTimer>1.5
+){
+
+
+this.alive=false;
+
+
+}
+
+
+
+
+this.lastX=this.x;
+
+
+this.lastY=this.y;
+
+
+
+
+/* =============================
+FITNESS
+============================= */
+
+
+if(this.alive){
+
+
+this.fitness+=
+this.speed*
+dt;
+
+
+this.fitness+=.05;
+
+
+}
+
+
+}
+
+
+
+
+castRay(offset){
+
+
+const angle=
+this.angle+offset;
+
+
+
+
+for(
+let d=0;
+d<config.sensorRange;
+d+=2
+){
+
+
+const x=
+this.x+
+Math.cos(angle)*d;
+
+
+
+
+const y=
+this.y+
+Math.sin(angle)*d;
+
+
+
+
+if(
+!pointInTrack(x,y)
+){
+
+
+return d;
+
+
+}
+
+
+}
+
+
+
+
+return config.sensorRange;
+
+
+}
+
+
+
+
+draw(best){
+
+
+if(
+document.getElementById(
+"showBestOnly"
+).checked &&
+!best
+)
+return;
+
+
+
+
+ctx.save();
+
+
+
+
+ctx.translate(
+this.x,
+this.y
+);
+
+
+
+
+ctx.rotate(
+this.angle
+);
+
+
+
+
+ctx.fillStyle=
+best
+?
+"#00ff55"
+:
+this.alive
+?
+"#e600ff"
+:
+"#8c2222";
+
+
+
+
+ctx.fillRect(
+
+
+-this.size/2,
+
+
+-this.size/2,
+
+
+this.size,
+
+
+this.size
+
+
+);
+
+
+
+
+ctx.restore();
+
+
+
+
+if(
+best &&
+document.getElementById(
+"showSensors"
+).checked
+){
+
+
+this.drawSensors();
+
+
+}
+
+
+}
+
+
+
+
+drawSensors(){
+
+
+for(
+let i=0;
+i<config.sensorCount;
+i++
+){
+
+
+let angle;
+
+
+
+
+if(
+config.sensorCount===1
+){
+
+
+angle=0;
+
+
+}else{
+
+
+angle=
+-Math.PI/2+
+i*
+(
+Math.PI/
+(config.sensorCount-1)
+);
+
+
+}
+
+
+
+
+const length=
+this.sensors[i]*
+config.sensorRange;
+
+
+
+
+ctx.beginPath();
+
+
+
+
+ctx.moveTo(
+this.x,
+this.y
+);
+
+
+
+
+ctx.lineTo(
+
+
+this.x+
+Math.cos(
+this.angle+angle
+)*
+length,
+
+
+this.y+
+Math.sin(
+this.angle+angle
+)*
+length
+
+
+);
+
+
+
+
+ctx.strokeStyle=
+"#fff200";
+
+
+
+
+ctx.lineWidth=1;
+
+
+
+
+ctx.stroke();
+
+
+}
+
+
+}
+
+
+}
+
+
+
+
 /* =====================================================
-   POPULAÇÃO
+POPULAÇÃO
 ===================================================== */
+
 
 let cars=[];
 
+
 let bestCar=null;
 
+
 let generation=1;
+
 
 let recordFitness=0;
 
 
+
+
 function init(){
 
-    cars=[];
 
-    generation=1;
-
-
-    for(
-        let i=0;
-        i<config.carCount;
-        i++
-    ){
-
-        cars.push(
-            new Car()
-        );
-
-    }
+cars=[];
 
 
-    bestCar=cars[0];
+generation=1;
+
+
+
+
+for(
+let i=0;
+i<config.carCount;
+i++
+){
+
+
+cars.push(
+new Car()
+);
+
 
 }
 
 
+
+
+bestCar=cars[0];
+
+
+}
+
+
+
+
 /* =====================================================
-   CLONAGEM
+CLONAGEM
 ===================================================== */
+
 
 function cloneBrain(brain){
 
-    return {
 
-        w1:
-        brain.w1.map(
-            row=>row.slice()
-        ),
+return {
 
-        w2:
-        brain.w2.map(
-            row=>row.slice()
-        ),
 
-        w3:
-        brain.w3.map(
-            row=>row.slice()
-        )
+w1:
+brain.w1.map(
+row=>row.slice()
+),
 
-    };
+
+w2:
+brain.w2.map(
+row=>row.slice()
+),
+
+
+w3:
+brain.w3.map(
+row=>row.slice()
+)
+
+
+};
+
 
 }
+
+
 
 
 /* =====================================================
-   MUTAÇÃO
+MUTAÇÃO
 ===================================================== */
+
 
 function mutateMatrix(matrix){
 
-    return matrix.map(
-        row=>
-        row.map(
-            value=>{
 
-                if(
-                    Math.random()<
-                    config.mutationRate
-                ){
-
-                    return value+
-                    (
-                        Math.random()*2-1
-                    )*
-                    config.mutationStrength;
-
-                }
+return matrix.map(
+row=>
+row.map(
+value=>{
 
 
-                return value;
+if(
+Math.random()<
+config.mutationRate
+){
 
-            }
-        )
-    );
+
+return value+
+(
+Math.random()*2-1
+)*
+config.mutationStrength;
+
 
 }
+
+
+
+
+return value;
+
+
+}
+)
+);
+
+
+}
+
+
 
 
 function mutateBrain(brain){
 
-    return {
 
-        w1:
-        mutateMatrix(
-            brain.w1
-        ),
+return {
 
-        w2:
-        mutateMatrix(
-            brain.w2
-        ),
 
-        w3:
-        mutateMatrix(
-            brain.w3
-        )
+w1:
+mutateMatrix(
+brain.w1
+),
 
-    };
+
+w2:
+mutateMatrix(
+brain.w2
+),
+
+
+w3:
+mutateMatrix(
+brain.w3
+)
+
+
+};
+
 
 }
 
 
+
+
 /* =====================================================
-   SELEÇÃO
+SELEÇÃO
 ===================================================== */
+
 
 function selectParent(){
 
-    if(
-        config.selection===
-        "tournament"
-    ){
 
-        let selected=null;
-
-
-        for(
-            let i=0;
-            i<5;
-            i++
-        ){
-
-            const candidate=
-            cars[
-                Math.floor(
-                    Math.random()*
-                    cars.length
-                )
-            ];
+if(
+config.selection===
+"tournament"
+){
 
 
-            if(
-                !selected ||
-                candidate.fitness>
-                selected.fitness
-            ){
-
-                selected=
-                candidate;
-
-            }
-
-        }
+let selected=null;
 
 
-        return selected;
-
-    }
 
 
-    const count=
-    Math.max(
-        1,
-        Math.floor(
-            cars.length*.2
-        )
-    );
+for(
+let i=0;
+i<5;
+i++
+){
 
 
-    return cars[
-        Math.floor(
-            Math.random()*count
-        )
-    ];
+const candidate=
+cars[
+Math.floor(
+Math.random()*
+cars.length
+)
+];
+
+
+
+
+if(
+!selected ||
+candidate.fitness>
+selected.fitness
+){
+
+
+selected=
+candidate;
+
 
 }
 
 
+}
+
+
+
+
+return selected;
+
+
+}
+
+
+
+
+const count=
+Math.max(
+1,
+Math.floor(
+cars.length*.2
+)
+);
+
+
+
+
+return cars[
+Math.floor(
+Math.random()*count
+)
+];
+
+
+}
+
+
+
+
 /* =====================================================
-   PERSISTÊNCIA
+PERSISTÊNCIA
 ===================================================== */
+
 
 function applyPersistence(brain){
 
-    const saved=
-    localStorage.getItem(
-        "neural-best-brain"
-    );
+
+const saved=
+localStorage.getItem(
+"neural-best-brain"
+);
 
 
-    if(!saved)
-        return brain;
 
 
-    try{
-
-        const data=
-        JSON.parse(saved);
+if(!saved)
+return brain;
 
 
-        if(
-            data.sensorCount !==
-            config.sensorCount
-        ){
-
-            return brain;
-
-        }
 
 
-        const p=
-        config.persistence;
+try{
 
 
-        function blend(a,b){
-
-            return (
-                a*(1-p)+
-                b*p
-            );
-
-        }
+const data=
+JSON.parse(saved);
 
 
-        for(
-            let i=0;
-            i<brain.w1.length;
-            i++
-        ){
-
-            for(
-                let j=0;
-                j<brain.w1[i].length;
-                j++
-            ){
-
-                brain.w1[i][j]=
-                blend(
-                    brain.w1[i][j],
-                    data.brain.w1[i][j]
-                );
-
-            }
-
-        }
 
 
-        for(
-            let i=0;
-            i<brain.w2.length;
-            i++
-        ){
-
-            for(
-                let j=0;
-                j<brain.w2[i].length;
-                j++
-            ){
-
-                brain.w2[i][j]=
-                blend(
-                    brain.w2[i][j],
-                    data.brain.w2[i][j]
-                );
-
-            }
-
-        }
+if(
+data.sensorCount !==
+config.sensorCount
+){
 
 
-        for(
-            let i=0;
-            i<brain.w3.length;
-            i++
-        ){
+return brain;
 
-            for(
-                let j=0;
-                j<brain.w3[i].length;
-                j++
-            ){
-
-                brain.w3[i][j]=
-                blend(
-                    brain.w3[i][j],
-                    data.brain.w3[i][j]
-                );
-
-            }
-
-        }
-
-
-    }catch(e){}
-
-
-    return brain;
 
 }
 
 
+
+
+const p=
+config.persistence;
+
+
+
+
+function blend(a,b){
+
+
+return (
+a*(1-p)+
+b*p
+);
+
+
+}
+
+
+
+
+for(
+let i=0;
+i<brain.w1.length;
+i++
+){
+
+
+for(
+let j=0;
+j<brain.w1[i].length;
+j++
+){
+
+
+brain.w1[i][j]=
+blend(
+brain.w1[i][j],
+data.brain.w1[i][j]
+);
+
+
+}
+
+
+}
+
+
+
+
+for(
+let i=0;
+i<brain.w2.length;
+i++
+){
+
+
+for(
+let j=0;
+j<brain.w2[i].length;
+j++
+){
+
+
+brain.w2[i][j]=
+blend(
+brain.w2[i][j],
+data.brain.w2[i][j]
+);
+
+
+}
+
+
+}
+
+
+
+
+for(
+let i=0;
+i<brain.w3.length;
+i++
+){
+
+
+for(
+let j=0;
+j<brain.w3[i].length;
+j++
+){
+
+
+brain.w3[i][j]=
+blend(
+brain.w3[i][j],
+data.brain.w3[i][j]
+);
+
+
+}
+
+
+}
+
+
+
+
+}catch(e){}
+
+
+
+
+return brain;
+
+
+}
+
+
+
+
 /* =====================================================
-   NOVA GERAÇÃO
+NOVA GERAÇÃO
 ===================================================== */
+
 
 function nextGeneration(){
 
-    if(
-        !cars.length
-    )
-        return;
+
+if(
+!cars.length
+)
+return;
 
 
-    cars.sort(
-        (a,b)=>
-        b.fitness-
-        a.fitness
-    );
 
 
-    bestCar=cars[0];
+cars.sort(
+(a,b)=>
+b.fitness-
+a.fitness
+);
 
 
-    if(
-        bestCar.fitness>
-        recordFitness
-    ){
-
-        recordFitness=
-        bestCar.fitness;
-
-    }
 
 
-    let seedBrain=
-    cloneBrain(
-        bestCar.brain
-    );
+bestCar=cars[0];
 
 
-    seedBrain=
-    applyPersistence(
-        seedBrain
-    );
 
 
-    /* SALVA MELHOR */
-
-    localStorage.setItem(
-
-        "neural-best-brain",
-
-        JSON.stringify({
-
-            version:2,
-
-            sensorCount:
-            config.sensorCount,
-
-            brain:
-            cloneBrain(
-                bestCar.brain
-            ),
-
-            fitness:
-            bestCar.fitness,
-
-            generation:
-            generation
-
-        })
-
-    );
+if(
+bestCar.fitness>
+recordFitness
+){
 
 
-    const next=[];
+recordFitness=
+bestCar.fitness;
 
-
-    const elite=
-    Math.min(
-        config.elitism,
-        config.carCount
-    );
-
-
-    /* ELITE */
-
-    for(
-        let i=0;
-        i<elite;
-        i++
-    ){
-
-        next.push(
-            new Car(
-                cloneBrain(
-                    cars[i].brain
-                )
-            )
-        );
-
-    }
-
-
-    /* RESTANTE */
-
-    while(
-        next.length<
-        config.carCount
-    ){
-
-        let parent=
-        selectParent();
-
-
-        let brain=
-        cloneBrain(
-            parent.brain
-        );
-
-
-        brain=
-        mutateBrain(
-            brain
-        );
-
-
-        next.push(
-            new Car(brain)
-        );
-
-    }
-
-
-    /* PRIMEIRO INDIVÍDUO RECEBE
-       A MEMÓRIA PERSISTENTE */
-
-    if(
-        next.length>0 &&
-        config.persistence>0
-    ){
-
-        next[0].brain=
-        seedBrain;
-
-    }
-
-
-    cars=next;
-
-    generation++;
 
 }
+
+
+
+
+let seedBrain=
+cloneBrain(
+bestCar.brain
+);
+
+
+
+
+seedBrain=
+applyPersistence(
+seedBrain
+);
+
+
+
+
+/* SALVA MELHOR */
+
+
+localStorage.setItem(
+
+
+"neural-best-brain",
+
+
+JSON.stringify({
+
+
+version:2,
+
+
+sensorCount:
+config.sensorCount,
+
+
+brain:
+cloneBrain(
+bestCar.brain
+),
+
+
+fitness:
+bestCar.fitness,
+
+
+generation:
+generation
+
+
+})
+
+
+);
+
+
+
+
+const next=[];
+
+
+
+
+const elite=
+Math.min(
+config.elitism,
+config.carCount
+);
+
+
+
+
+/* ELITE */
+
+
+for(
+let i=0;
+i<elite;
+i++
+){
+
+
+next.push(
+new Car(
+cloneBrain(
+cars[i].brain
+)
+)
+);
+
+
+}
+
+
+
+
+/* RESTANTE */
+
+
+while(
+next.length<
+config.carCount
+){
+
+
+let parent=
+selectParent();
+
+
+
+
+let brain=
+cloneBrain(
+parent.brain
+);
+
+
+
+
+brain=
+mutateBrain(
+brain
+);
+
+
+
+
+next.push(
+new Car(brain)
+);
+
+
+}
+
+
+
+
+/* PRIMEIRO INDIVÍDUO RECEBE
+A MEMÓRIA PERSISTENTE */
+
+
+if(
+next.length>0 &&
+config.persistence>0
+){
+
+
+next[0].brain=
+seedBrain;
+
+
+}
+
+
+
+
+cars=next;
+
+
+generation++;
+
+
+}
+
+
 
 
 /* =====================================================
-   DESENHAR PISTA
+DESENHAR PISTA
 ===================================================== */
+
 
 function polygon(poly){
 
-    ctx.beginPath();
 
-    ctx.moveTo(
-        poly[0].x,
-        poly[0].y
-    );
+ctx.beginPath();
 
 
-    for(
-        let i=1;
-        i<poly.length;
-        i++
-    ){
-
-        ctx.lineTo(
-            poly[i].x,
-            poly[i].y
-        );
-
-    }
+ctx.moveTo(
+poly[0].x,
+poly[0].y
+);
 
 
-    ctx.closePath();
+
+
+for(
+let i=1;
+i<poly.length;
+i++
+){
+
+
+ctx.lineTo(
+poly[i].x,
+poly[i].y
+);
+
 
 }
+
+
+
+
+ctx.closePath();
+
+
+}
+
+
 
 
 function drawTrack(){
 
-    ctx.fillStyle="#090c10";
 
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
+ctx.fillStyle="#090c10";
 
 
-    /* GRADE */
-
-    ctx.strokeStyle=
-    "rgba(255,255,255,.035)";
-
-    ctx.lineWidth=1;
-
-
-    for(
-        let x=0;
-        x<W;
-        x+=50
-    ){
-
-        ctx.beginPath();
-
-        ctx.moveTo(x,0);
-
-        ctx.lineTo(x,H);
-
-        ctx.stroke();
-
-    }
+ctx.fillRect(
+0,
+0,
+W,
+H
+);
 
 
-    for(
-        let y=0;
-        y<H;
-        y+=50
-    ){
-
-        ctx.beginPath();
-
-        ctx.moveTo(0,y);
-
-        ctx.lineTo(W,y);
-
-        ctx.stroke();
-
-    }
 
 
-    /* EXTERNA */
-
-    polygon(
-        trackData.outer
-    );
-
-    ctx.fillStyle="#555a62";
-
-    ctx.fill();
+/* GRADE */
 
 
-    /* INTERNA */
-
-    polygon(
-        trackData.inner
-    );
-
-    ctx.fillStyle="#0c1014";
-
-    ctx.fill();
+ctx.strokeStyle=
+"rgba(255,255,255,.035)";
 
 
-    /* BORDAS */
-
-    polygon(
-        trackData.outer
-    );
-
-    ctx.strokeStyle="#eee";
-
-    ctx.lineWidth=3;
-
-    ctx.stroke();
+ctx.lineWidth=1;
 
 
-    polygon(
-        trackData.inner
-    );
-
-    ctx.strokeStyle="#eee";
-
-    ctx.lineWidth=3;
-
-    ctx.stroke();
 
 
-    /* LARGADA */
-
-    ctx.save();
-
-    ctx.setLineDash([
-        7,
-        7
-    ]);
-
-    ctx.strokeStyle="#fff";
-
-    ctx.lineWidth=4;
+for(
+let x=0;
+x<W;
+x+=50
+){
 
 
-    ctx.beginPath();
-
-    ctx.moveTo(
-        START_X-20,
-        START_Y-16
-    );
-
-    ctx.lineTo(
-        START_X-20,
-        START_Y+16
-    );
-
-    ctx.stroke();
+ctx.beginPath();
 
 
-    ctx.restore();
+ctx.moveTo(x,0);
+
+
+ctx.lineTo(x,H);
+
+
+ctx.stroke();
+
 
 }
 
 
+
+
+for(
+let y=0;
+y<H;
+y+=50
+){
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(0,y);
+
+
+ctx.lineTo(W,y);
+
+
+ctx.stroke();
+
+
+}
+
+
+
+
+beginTrackTransform();
+
+/* EXTERNA */
+
+
+polygon(
+trackData.outer
+);
+
+
+ctx.fillStyle="#555a62";
+
+
+ctx.fill();
+
+
+
+
+/* INTERNA */
+
+
+polygon(
+trackData.inner
+);
+
+
+ctx.fillStyle="#0c1014";
+
+
+ctx.fill();
+
+
+
+
+/* BORDAS */
+
+
+polygon(
+trackData.outer
+);
+
+
+ctx.strokeStyle="#eee";
+
+
+ctx.lineWidth=3;
+
+
+ctx.stroke();
+
+
+
+
+polygon(
+trackData.inner
+);
+
+
+ctx.strokeStyle="#eee";
+
+
+ctx.lineWidth=3;
+
+
+ctx.stroke();
+
+
+
+
+/* LARGADA */
+
+
+ctx.save();
+
+
+ctx.setLineDash([
+7,
+7
+]);
+
+
+ctx.strokeStyle="#fff";
+
+
+ctx.lineWidth=4;
+
+
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+START_X-20,
+START_Y-16
+);
+
+
+ctx.lineTo(
+START_X-20,
+START_Y+16
+);
+
+
+ctx.stroke();
+
+
+
+
+ctx.restore();
+
+
+}
+
+endTrackTransform();
+
+
+
+
 /* =====================================================
-   EDITOR
+EDITOR
 ===================================================== */
+
 
 let editMode=false;
 
+
 let selectedPoint=null;
+
 
 let selectedType=null;
 
 
+
+
 function drawEditor(){
 
-    if(!editMode)
-        return;
+
+if(!editMode)
+return;
 
 
-    function drawPoints(
-        poly,
-        type
-    ){
-
-        for(
-            let i=0;
-            i<poly.length;
-            i++
-        ){
-
-            const p=poly[i];
 
 
-            ctx.beginPath();
+beginTrackTransform();
 
-            ctx.arc(
-                p.x,
-                p.y,
-                8,
-                0,
-                Math.PI*2
-            );
+function drawPoints(
+poly,
+type
+){
 
 
-            ctx.fillStyle=
-            selectedType===type &&
-            selectedPoint===i
-            ?
-            "#ffff00"
-            :
-            type==="outer"
-            ?
-            "#ff5555"
-            :
-            "#5599ff";
+for(
+let i=0;
+i<poly.length;
+i++
+){
 
 
-            ctx.fill();
+const p=poly[i];
 
 
-            ctx.strokeStyle="#fff";
-
-            ctx.lineWidth=1;
-
-            ctx.stroke();
 
 
-            ctx.fillStyle="#fff";
-
-            ctx.font="10px Arial";
-
-            ctx.fillText(
-                i,
-                p.x+10,
-                p.y-8
-            );
-
-        }
-
-    }
+ctx.beginPath();
 
 
-    drawPoints(
-        trackData.outer,
-        "outer"
-    );
+ctx.arc(
+p.x,
+p.y,
+8,
+0,
+Math.PI*2
+);
 
 
-    drawPoints(
-        trackData.inner,
-        "inner"
-    );
+
+
+ctx.fillStyle=
+selectedType===type &&
+selectedPoint===i
+?
+"#ffff00"
+:
+type==="outer"
+?
+"#ff5555"
+:
+"#5599ff";
+
+
+
+
+ctx.fill();
+
+
+
+
+ctx.strokeStyle="#fff";
+
+
+ctx.lineWidth=1;
+
+
+ctx.stroke();
+
+
+
+
+ctx.fillStyle="#fff";
+
+
+ctx.font="10px Arial";
+
+
+ctx.fillText(
+i,
+p.x+10,
+p.y-8
+);
+
 
 }
+
+
+}
+
+
+
+
+drawPoints(
+trackData.outer,
+"outer"
+);
+
+
+
+
+drawPoints(
+trackData.inner,
+"inner"
+);
+
+
+}
+
+
 
 
 /* =====================================================
-   REDE — DESENHO
+REDE — DESENHO
 ===================================================== */
 
+
 function neuronPosition(
-    layer,
-    index,
-    count
+layer,
+index,
+count
 ){
 
-    const margins={
-        left:38,
-        right:45,
-        top:65,
-        bottom:100
-    };
+
+const margins={
+left:38,
+right:45,
+top:65,
+bottom:100
+};
 
 
-    const xs=[
-
-        margins.left,
-
-        NW*.36,
-
-        NW*.63,
-
-        NW-margins.right
-
-    ];
 
 
-    const x=xs[layer];
+const xs=[
 
 
-    const usable=
-    NH-
-    margins.top-
-    margins.bottom;
+margins.left,
 
 
-    let y;
+NW*.36,
 
 
-    if(count===1){
-
-        y=
-        margins.top+
-        usable/2;
-
-    }else{
-
-        y=
-        margins.top+
-        (
-            index/
-            (count-1)
-        )*
-        usable;
-
-    }
+NW*.63,
 
 
-    return {
-        x,
-        y
-    };
+NW-margins.right
+
+
+];
+
+
+
+
+const x=xs[layer];
+
+
+
+
+const usable=
+NH-
+margins.top-
+margins.bottom;
+
+
+
+
+let y;
+
+
+
+
+if(count===1){
+
+
+y=
+margins.top+
+usable/2;
+
+
+}else{
+
+
+y=
+margins.top+
+(
+index/
+(count-1)
+)*
+usable;
+
 
 }
+
+
+
+
+return {
+x,
+y
+};
+
+
+}
+
+
 
 
 function weightAlpha(weight){
 
-    return Math.min(
-        1,
-        .12+
-        Math.abs(weight)*
-        .75
-    );
+
+return Math.min(
+1,
+.12+
+Math.abs(weight)*
+.75
+);
+
 
 }
+
+
 
 
 function drawConnection(
-    a,
-    b,
-    weight
+a,
+b,
+weight
 ){
 
-    nctx.beginPath();
 
-    nctx.moveTo(
-        a.x,
-        a.y
-    );
-
-    nctx.lineTo(
-        b.x,
-        b.y
-    );
+nctx.beginPath();
 
 
-    const alpha=
-    weightAlpha(weight);
+nctx.moveTo(
+a.x,
+a.y
+);
 
 
-    /*
-      Positivo = branco/ciano
-      Negativo = vermelho
-    */
-
-    if(weight>=0){
-
-        nctx.strokeStyle=
-        `rgba(70,210,255,${alpha})`;
-
-    }else{
-
-        nctx.strokeStyle=
-        `rgba(255,75,75,${alpha})`;
-
-    }
+nctx.lineTo(
+b.x,
+b.y
+);
 
 
-    nctx.lineWidth=
-    Math.max(
-        .4,
-        Math.min(
-            4,
-            Math.abs(weight)*2
-        )
-    );
 
 
-    nctx.stroke();
+const alpha=
+weightAlpha(weight);
+
+
+
+
+/*
+Positivo = branco/ciano
+Negativo = vermelho
+*/
+
+
+if(weight>=0){
+
+
+nctx.strokeStyle=
+`rgba(70,210,255,${alpha})`;
+
+
+}else{
+
+
+nctx.strokeStyle=
+`rgba(255,75,75,${alpha})`;
+
 
 }
+
+
+
+
+nctx.lineWidth=
+Math.max(
+.4,
+Math.min(
+4,
+Math.abs(weight)*2
+)
+);
+
+
+
+
+nctx.stroke();
+
+
+}
+
+
 
 
 function drawNeuron(
-    pos,
-    activation,
-    label
+pos,
+activation,
+label
 ){
 
-    const strength=
-    Math.abs(activation);
+
+const strength=
+Math.abs(activation);
 
 
-    const radius=
-    6+
-    strength*6;
 
 
-    nctx.beginPath();
-
-    nctx.arc(
-        pos.x,
-        pos.y,
-        radius,
-        0,
-        Math.PI*2
-    );
+const radius=
+6+
+strength*6;
 
 
-    if(
-        activation>=0
-    ){
-
-        nctx.fillStyle=
-        `rgba(
-            50,
-            220,
-            255,
-            ${.2+strength*.8}
-        )`;
-
-    }else{
-
-        nctx.fillStyle=
-        `rgba(
-            255,
-            70,
-            70,
-            ${.2+strength*.8}
-        )`;
-
-    }
 
 
-    nctx.fill();
+nctx.beginPath();
 
 
-    nctx.strokeStyle="#fff";
+nctx.arc(
+pos.x,
+pos.y,
+radius,
+0,
+Math.PI*2
+);
 
-    nctx.lineWidth=1;
-
-    nctx.stroke();
 
 
-    if(label){
 
-        nctx.fillStyle="#aaa";
+if(
+activation>=0
+){
 
-        nctx.font="9px Arial";
 
-        nctx.fillText(
-            label,
-            pos.x-15,
-            pos.y+radius+12
-        );
+nctx.fillStyle=
+`rgba(
+50,
+220,
+255,
+${.2+strength*.8}
+)`;
 
-    }
+
+}else{
+
+
+nctx.fillStyle=
+`rgba(
+255,
+70,
+70,
+${.2+strength*.8}
+)`;
+
 
 }
+
+
+
+
+nctx.fill();
+
+
+
+
+nctx.strokeStyle="#fff";
+
+
+nctx.lineWidth=1;
+
+
+nctx.stroke();
+
+
+
+
+if(label){
+
+
+nctx.fillStyle="#aaa";
+
+
+nctx.font="9px Arial";
+
+
+nctx.fillText(
+label,
+pos.x-15,
+pos.y+radius+12
+);
+
+
+}
+
+
+}
+
+
 
 
 function drawNetwork(){
 
-    nctx.clearRect(
-        0,
-        0,
-        NW,
-        NH
-    );
 
+nctx.clearRect(
+0,
+0,
+NW,
+NH
+);
 
-    nctx.fillStyle="#111419";
 
-    nctx.fillRect(
-        0,
-        0,
-        NW,
-        NH
-    );
 
 
-    if(
-        !bestCar ||
-        !document.getElementById(
-            "showNetwork"
-        ).checked
-    ){
+nctx.fillStyle="#111419";
 
-        nctx.fillStyle="#777";
 
-        nctx.font="13px Arial";
+nctx.fillRect(
+0,
+0,
+NW,
+NH
+);
 
-        nctx.fillText(
-            "Rede neural desativada",
-            110,
-            NH/2
-        );
 
-        return;
 
-    }
 
+if(
+!bestCar ||
+!document.getElementById(
+"showNetwork"
+).checked
+){
 
-    const sensors=
-    bestCar.sensors;
 
+nctx.fillStyle="#777";
 
-    const a1=
-    bestCar.activations.hidden1;
 
+nctx.font="13px Arial";
 
-    const a2=
-    bestCar.activations.hidden2;
 
+nctx.fillText(
+"Rede neural desativada",
+110,
+NH/2
+);
 
-    const out=
-    bestCar.activations.output;
 
+return;
 
-    const layers=[
-
-        sensors,
-
-        a1,
-
-        a2,
-
-        out
-
-    ];
-
-
-    const names=[
-
-        "SENSORES",
-
-        "CAMADA 1",
-
-        "CAMADA 2",
-
-        "SAÍDAS"
-
-    ];
-
-
-    /* TÍTULOS */
-
-    for(
-        let layer=0;
-        layer<4;
-        layer++
-    ){
-
-        const count=
-        layers[layer].length;
-
-
-        const pos=
-        neuronPosition(
-            layer,
-            0,
-            count
-        );
-
-
-        nctx.fillStyle="#888";
-
-        nctx.font="9px Arial";
-
-        nctx.textAlign="center";
-
-
-        nctx.fillText(
-            names[layer],
-            pos.x,
-            42
-        );
-
-    }
-
-
-    nctx.textAlign="left";
-
-
-    /* =============================
-       CONEXÕES
-    ============================= */
-
-    function connections(
-        layerA,
-        layerB,
-        matrix
-    ){
-
-        const A=
-        layers[layerA];
-
-        const B=
-        layers[layerB];
-
-
-        for(
-            let i=0;
-            i<A.length;
-            i++
-        ){
-
-            const p1=
-            neuronPosition(
-                layerA,
-                i,
-                A.length
-            );
-
-
-            for(
-                let j=0;
-                j<B.length;
-                j++
-            ){
-
-                const p2=
-                neuronPosition(
-                    layerB,
-                    j,
-                    B.length
-                );
-
-
-                let weight=
-                matrix[i][j];
-
-
-                /*
-                  A ativação atual também
-                  influencia visualmente
-                  a conexão.
-                */
-
-                weight*=
-                Math.abs(
-                    A[i]
-                )+.15;
-
-
-                drawConnection(
-                    p1,
-                    p2,
-                    weight
-                );
-
-            }
-
-        }
-
-    }
-
-
-    connections(
-        0,
-        1,
-        bestCar.brain.w1
-    );
-
-
-    connections(
-        1,
-        2,
-        bestCar.brain.w2
-    );
-
-
-    connections(
-        2,
-        3,
-        bestCar.brain.w3
-    );
-
-
-    /* =============================
-       NEURÔNIOS
-    ============================= */
-
-    for(
-        let layer=0;
-        layer<4;
-        layer++
-    ){
-
-        const values=
-        layers[layer];
-
-
-        for(
-            let i=0;
-            i<values.length;
-            i++
-        ){
-
-            const pos=
-            neuronPosition(
-                layer,
-                i,
-                values.length
-            );
-
-
-            let activation=
-            values[i];
-
-
-            /*
-              Sensores estão em
-              0..1. Ajuste visual.
-            */
-
-            if(
-                layer===0
-            ){
-
-                activation=
-                values[i]*2-1;
-
-            }
-
-
-            let label="";
-
-
-            if(
-                layer===0
-            ){
-
-                label=
-                "S"+
-                (i+1);
-
-            }
-
-
-            if(
-                layer===3
-            ){
-
-                label=[
-                    "ACC",
-                    "TURN",
-                    "BRAKE"
-                ][i];
-
-            }
-
-
-            drawNeuron(
-                pos,
-                activation,
-                label
-            );
-
-
-            /* valor */
-
-            nctx.fillStyle="#888";
-
-            nctx.font="8px Arial";
-
-            nctx.textAlign="center";
-
-
-            nctx.fillText(
-
-                Number(
-                    values[i]
-                ).toFixed(2),
-
-                pos.x,
-
-                pos.y-12
-
-            );
-
-        }
-
-    }
-
-
-    /* =============================
-       INFORMAÇÕES
-    ============================= */
-
-    nctx.textAlign="left";
-
-    nctx.fillStyle="#aaa";
-
-    nctx.font="10px Arial";
-
-
-    nctx.fillText(
-
-        "Fitness: "+
-        bestCar.fitness.toFixed(1),
-
-        12,
-        NH-55
-
-    );
-
-
-    nctx.fillText(
-
-        "Velocidade: "+
-        bestCar.speed.toFixed(1),
-
-        12,
-        NH-40
-
-    );
-
-
-    nctx.fillText(
-
-        "Idade: "+
-        bestCar.age.toFixed(1)+
-        " s",
-
-        12,
-        NH-25
-
-    );
 
 }
+
+
+
+
+const sensors=
+bestCar.sensors;
+
+
+
+
+const a1=
+bestCar.activations.hidden1;
+
+
+
+
+const a2=
+bestCar.activations.hidden2;
+
+
+
+
+const out=
+bestCar.activations.output;
+
+
+
+
+const layers=[
+
+
+sensors,
+
+
+a1,
+
+
+a2,
+
+
+out
+
+
+];
+
+
+
+
+const names=[
+
+
+"SENSORES",
+
+
+"CAMADA 1",
+
+
+"CAMADA 2",
+
+
+"SAÍDAS"
+
+
+];
+
+
+
+
+/* TÍTULOS */
+
+
+for(
+let layer=0;
+layer<4;
+layer++
+){
+
+
+const count=
+layers[layer].length;
+
+
+
+
+const pos=
+neuronPosition(
+layer,
+0,
+count
+);
+
+
+
+
+nctx.fillStyle="#888";
+
+
+nctx.font="9px Arial";
+
+
+nctx.textAlign="center";
+
+
+
+
+nctx.fillText(
+names[layer],
+pos.x,
+42
+);
+
+
+}
+
+
+
+
+nctx.textAlign="left";
+
+
+
+
+/* =============================
+CONEXÕES
+============================= */
+
+
+function connections(
+layerA,
+layerB,
+matrix
+){
+
+
+const A=
+layers[layerA];
+
+
+const B=
+layers[layerB];
+
+
+
+
+for(
+let i=0;
+i<A.length;
+i++
+){
+
+
+const p1=
+neuronPosition(
+layerA,
+i,
+A.length
+);
+
+
+
+
+for(
+let j=0;
+j<B.length;
+j++
+){
+
+
+const p2=
+neuronPosition(
+layerB,
+j,
+B.length
+);
+
+
+
+
+let weight=
+matrix[i][j];
+
+
+
+
+/*
+A ativação atual também
+influencia visualmente
+a conexão.
+*/
+
+
+weight*=
+Math.abs(
+A[i]
+)+.15;
+
+
+
+
+drawConnection(
+p1,
+p2,
+weight
+);
+
+
+}
+
+
+}
+
+
+}
+
+
+
+
+connections(
+0,
+1,
+bestCar.brain.w1
+);
+
+
+
+
+connections(
+1,
+2,
+bestCar.brain.w2
+);
+
+
+
+
+connections(
+2,
+3,
+bestCar.brain.w3
+);
+
+
+
+
+/* =============================
+NEURÔNIOS
+============================= */
+
+
+for(
+let layer=0;
+layer<4;
+layer++
+){
+
+
+const values=
+layers[layer];
+
+
+
+
+for(
+let i=0;
+i<values.length;
+i++
+){
+
+
+const pos=
+neuronPosition(
+layer,
+i,
+values.length
+);
+
+
+
+
+let activation=
+values[i];
+
+
+
+
+/*
+Sensores estão em
+0..1. Ajuste visual.
+*/
+
+
+if(
+layer===0
+){
+
+
+activation=
+values[i]*2-1;
+
+
+}
+
+
+
+
+let label="";
+
+
+
+
+if(
+layer===0
+){
+
+
+label=
+"S"+
+(i+1);
+
+
+}
+
+
+
+
+if(
+layer===3
+){
+
+
+label=[
+"ACC",
+"TURN",
+"BRAKE"
+][i];
+
+
+}
+
+
+
+
+drawNeuron(
+pos,
+activation,
+label
+);
+
+
+
+
+/* valor */
+
+
+nctx.fillStyle="#888";
+
+
+nctx.font="8px Arial";
+
+
+nctx.textAlign="center";
+
+
+
+
+nctx.fillText(
+
+
+Number(
+values[i]
+).toFixed(2),
+
+
+pos.x,
+
+
+pos.y-12
+
+
+);
+
+
+}
+
+
+}
+
+
+
+
+/* =============================
+INFORMAÇÕES
+============================= */
+
+
+nctx.textAlign="left";
+
+
+nctx.fillStyle="#aaa";
+
+
+nctx.font="10px Arial";
+
+
+
+
+nctx.fillText(
+
+
+"Fitness: "+
+bestCar.fitness.toFixed(1),
+
+
+12,
+NH-55
+
+
+);
+
+
+
+
+nctx.fillText(
+
+
+"Velocidade: "+
+bestCar.speed.toFixed(1),
+
+
+12,
+NH-40
+
+
+);
+
+
+
+
+nctx.fillText(
+
+
+"Idade: "+
+bestCar.age.toFixed(1)+
+" s",
+
+
+12,
+NH-25
+
+
+);
+
+
+}
+
+endTrackTransform();
+
+
 
 
 /* =====================================================
-   EDITOR — MOUSE
+EDITOR — MOUSE
 ===================================================== */
 
+
 function mousePosition(e){
+    const rect=canvas.getBoundingClientRect();
 
-    const rect=
-    canvas.getBoundingClientRect();
+    const screenX=e.clientX-rect.left;
+    const screenY=e.clientY-rect.top;
+
+    return screenToWorld(
+        screenX,
+        screenY
+    );
+}
 
 
-    return {
 
-        x:
-        e.clientX-
-        rect.left,
 
-        y:
-        e.clientY-
-        rect.top
+canvas.addEventListener(
+"mousedown",
+e=>{
 
-    };
+
+if(!editMode)
+return;
+
+
+
+
+const p=
+mousePosition(e);
+
+
+
+
+let closest=null;
+
+
+let min=15;
+
+
+
+
+for(
+let i=0;
+i<trackData.outer.length;
+i++
+){
+
+
+const d=
+Math.hypot(
+p.x-
+trackData.outer[i].x,
+
+
+p.y-
+trackData.outer[i].y
+);
+
+
+
+
+if(d<min){
+
+
+min=d;
+
+
+closest={
+type:"outer",
+index:i
+};
+
 
 }
 
 
-canvas.addEventListener(
-    "mousedown",
-    e=>{
-
-        if(!editMode)
-            return;
+}
 
 
-        const p=
-        mousePosition(e);
 
 
-        let closest=null;
-
-        let min=15;
-
-
-        for(
-            let i=0;
-            i<trackData.outer.length;
-            i++
-        ){
-
-            const d=
-            Math.hypot(
-                p.x-
-                trackData.outer[i].x,
-
-                p.y-
-                trackData.outer[i].y
-            );
+for(
+let i=0;
+i<trackData.inner.length;
+i++
+){
 
 
-            if(d<min){
-
-                min=d;
-
-                closest={
-                    type:"outer",
-                    index:i
-                };
-
-            }
-
-        }
+const d=
+Math.hypot(
+p.x-
+trackData.inner[i].x,
 
 
-        for(
-            let i=0;
-            i<trackData.inner.length;
-            i++
-        ){
-
-            const d=
-            Math.hypot(
-                p.x-
-                trackData.inner[i].x,
-
-                p.y-
-                trackData.inner[i].y
-            );
-
-
-            if(d<min){
-
-                min=d;
-
-                closest={
-                    type:"inner",
-                    index:i
-                };
-
-            }
-
-        }
-
-
-        if(closest){
-
-            selectedType=
-            closest.type;
-
-            selectedPoint=
-            closest.index;
-
-        }
-
-    }
+p.y-
+trackData.inner[i].y
 );
 
 
-canvas.addEventListener(
-    "mousemove",
-    e=>{
-
-        if(
-            !editMode ||
-            selectedPoint===null ||
-            e.buttons!==1
-        )
-            return;
 
 
-        const p=
-        mousePosition(e);
+if(d<min){
 
 
-        trackData[
-            selectedType
-        ][
-            selectedPoint
-        ]={
-
-            x:p.x,
-
-            y:p.y
-
-        };
+min=d;
 
 
-        init();
+closest={
+type:"inner",
+index:i
+};
 
-    }
+
+}
+
+
+}
+
+
+
+
+if(closest){
+
+
+selectedType=
+closest.type;
+
+
+selectedPoint=
+closest.index;
+
+
+}
+
+
+}
 );
+
+
+
+
+canvas.addEventListener(
+"mousemove",
+e=>{
+
+
+if(
+!editMode ||
+selectedPoint===null ||
+e.buttons!==1
+)
+return;
+
+
+
+
+const p=
+mousePosition(e);
+
+
+
+
+trackData[
+selectedType
+][
+selectedPoint
+]={
+
+
+x:p.x,
+
+
+y:p.y
+
+
+};
+
+
+
+
+init();
+
+
+}
+);
+
+
 
 
 window.addEventListener(
-    "mouseup",
-    ()=>{
+"mouseup",
+()=>{
 
-        selectedPoint=null;
 
-        selectedType=null;
+selectedPoint=null;
 
-    }
+
+selectedType=null;
+
+
+}
 );
 
 
+
+
 /* =====================================================
-   EDITOR — ADICIONAR PONTO
+EDITOR — ADICIONAR PONTO
 ===================================================== */
+
 
 function addPoint(type){
 
-    const poly=
-    trackData[type];
+
+const poly=
+trackData[type];
 
 
-    let bestIndex=0;
-
-    let bestDist=Infinity;
 
 
-    for(
-        let i=0;
-        i<poly.length;
-        i++
-    ){
-
-        const a=poly[i];
-
-        const b=
-        poly[
-            (i+1)%
-            poly.length
-        ];
+let bestIndex=0;
 
 
-        const mx=
-        (a.x+b.x)/2;
-
-        const my=
-        (a.y+b.y)/2;
+let bestDist=Infinity;
 
 
-        const d=
-        Math.hypot(
-            mx-START_X,
-            my-START_Y
-        );
 
 
-        if(d<bestDist){
-
-            bestDist=d;
-
-            bestIndex=i+1;
-
-        }
-
-    }
+for(
+let i=0;
+i<poly.length;
+i++
+){
 
 
-    const a=
-    poly[
-        bestIndex-1
-    ];
+const a=poly[i];
 
 
-    const b=
-    poly[
-        bestIndex%
-        poly.length
-    ];
+const b=
+poly[
+(i+1)%
+poly.length
+];
 
 
-    poly.splice(
-
-        bestIndex,
-
-        0,
-
-        {
-
-            x:
-            (a.x+b.x)/2,
-
-            y:
-            (a.y+b.y)/2
-
-        }
-
-    );
 
 
-    init();
+const mx=
+(a.x+b.x)/2;
+
+
+const my=
+(a.y+b.y)/2;
+
+
+
+
+const d=
+Math.hypot(
+mx-START_X,
+my-START_Y
+);
+
+
+
+
+if(d<bestDist){
+
+
+bestDist=d;
+
+
+bestIndex=i+1;
+
 
 }
 
 
-document.getElementById(
-    "addOuter"
-).onclick=()=>{
-    addPoint("outer");
-};
+}
+
+
+
+
+const a=
+poly[
+bestIndex-1
+];
+
+
+
+
+const b=
+poly[
+bestIndex%
+poly.length
+];
+
+
+
+
+poly.splice(
+
+
+bestIndex,
+
+
+0,
+
+
+{
+
+
+x:
+(a.x+b.x)/2,
+
+
+y:
+(a.y+b.y)/2
+
+
+}
+
+
+);
+
+
+
+
+init();
+
+
+}
+
+
 
 
 document.getElementById(
-    "addInner"
+"addOuter"
 ).onclick=()=>{
-    addPoint("inner");
+addPoint("outer");
 };
+
+
+
+
+document.getElementById(
+"addInner"
+).onclick=()=>{
+addPoint("inner");
+};
+
+
 
 
 /* =====================================================
-   EDITOR — REMOVER
+EDITOR — REMOVER
 ===================================================== */
 
+
 document.getElementById(
-    "removePoint"
+"removePoint"
 ).onclick=()=>{
 
-    if(
-        selectedPoint===null
-    ){
 
-        alert(
-            "Selecione um ponto."
-        );
-
-        return;
-
-    }
+if(
+selectedPoint===null
+){
 
 
-    const poly=
-    trackData[selectedType];
+alert(
+"Selecione um ponto."
+);
 
 
-    if(
-        poly.length<=3
-    ){
-
-        alert(
-            "São necessários pelo menos 3 pontos."
-        );
-
-        return;
-
-    }
+return;
 
 
-    poly.splice(
-        selectedPoint,
-        1
-    );
+}
 
 
-    selectedPoint=null;
-
-    selectedType=null;
 
 
-    init();
+const poly=
+trackData[selectedType];
+
+
+
+
+if(
+poly.length<=3
+){
+
+
+alert(
+"São necessários pelo menos 3 pontos."
+);
+
+
+return;
+
+
+}
+
+
+
+
+poly.splice(
+selectedPoint,
+1
+);
+
+
+
+
+selectedPoint=null;
+
+
+selectedType=null;
+
+
+
+
+init();
+
 
 };
 
 
+
+
 /* =====================================================
-   MODO EDITOR
+MODO EDITOR
 ===================================================== */
+
 
 function setEditMode(value){
 
-    editMode=value;
+
+editMode=value;
 
 
-    document.getElementById(
-        "editorHint"
-    ).style.display=
-    editMode
-    ?
-    "block"
-    :
-    "none";
 
 
-    document.getElementById(
-        "editorMode"
-    ).classList.toggle(
-        "active",
-        editMode
-    );
+document.getElementById(
+"editorHint"
+).style.display=
+editMode
+?
+"block"
+:
+"none";
 
 
-    document.getElementById(
-        "simulationMode"
-    ).classList.toggle(
-        "active",
-        !editMode
-    );
 
 
-    document.getElementById(
-        "statusBadge"
-    ).textContent=
-    editMode
-    ?
-    "EDITOR"
-    :
-    "SIMULAÇÃO";
+document.getElementById(
+"editorMode"
+).classList.toggle(
+"active",
+editMode
+);
+
+
+
+
+document.getElementById(
+"simulationMode"
+).classList.toggle(
+"active",
+!editMode
+);
+
+
+
+
+document.getElementById(
+"statusBadge"
+).textContent=
+editMode
+?
+"EDITOR"
+:
+"SIMULAÇÃO";
+
 
 }
 
 
+
+
 document.getElementById(
-    "simulationMode"
+"simulationMode"
 ).onclick=()=>{
 
-    setEditMode(false);
+
+setEditMode(false);
+
 
 };
 
 
+
+
 document.getElementById(
-    "editorMode"
+"editorMode"
 ).onclick=()=>{
 
-    setEditMode(true);
+
+setEditMode(true);
+
 
 };
+
+
 
 
 /* =====================================================
-   SALVAR PISTA
+SALVAR PISTA
 ===================================================== */
 
+
 document.getElementById(
-    "saveTrack"
+"saveTrack"
 ).onclick=()=>{
 
-    localStorage.setItem(
 
-        "custom-track",
-
-        JSON.stringify(
-            trackData
-        )
-
-    );
+localStorage.setItem(
 
 
-    alert(
-        "Pista salva."
-    );
+"custom-track",
+
+
+JSON.stringify(
+trackData
+)
+
+
+);
+
+
+
+
+alert(
+"Pista salva."
+);
+
 
 };
 
 
+
+
 /* =====================================================
-   CARREGAR PISTA
+CARREGAR PISTA
 ===================================================== */
 
+
 document.getElementById(
-    "loadTrack"
+"loadTrack"
 ).onclick=()=>{
 
-    const saved=
-    localStorage.getItem(
-        "custom-track"
-    );
+
+const saved=
+localStorage.getItem(
+"custom-track"
+);
 
 
-    if(!saved){
-
-        alert(
-            "Nenhuma pista salva."
-        );
-
-        return;
-
-    }
 
 
-    try{
-
-        trackData=
-        JSON.parse(saved);
-
-        init();
+if(!saved){
 
 
-    }catch(e){
+alert(
+"Nenhuma pista salva."
+);
 
-        alert(
-            "Erro ao carregar pista."
-        );
 
-    }
+return;
+
+
+}
+
+
+
+
+try{
+
+
+trackData=
+JSON.parse(saved);
+
+
+init();
+
+
+
+
+}catch(e){
+
+
+alert(
+"Erro ao carregar pista."
+);
+
+
+}
+
 
 };
 
 
+
+
 /* =====================================================
-   PISTA PADRÃO
+PISTA PADRÃO
 ===================================================== */
 
+
 document.getElementById(
-    "resetTrack"
+"resetTrack"
 ).onclick=()=>{
 
-    trackData=
-    structuredClone(
-        defaultTrack
-    );
+
+trackData=
+structuredClone(
+defaultTrack
+);
 
 
-    init();
+
+
+init();
+
 
 };
 
 
+
+
 /* =====================================================
-   SALVAR CÉREBRO
+SALVAR CÉREBRO
 ===================================================== */
 
+
 document.getElementById(
-    "saveBrain"
+"saveBrain"
 ).onclick=()=>{
 
-    if(!bestCar)
-        return;
+
+if(!bestCar)
+return;
 
 
-    localStorage.setItem(
-
-        "neural-best-brain",
-
-        JSON.stringify({
-
-            version:2,
-
-            sensorCount:
-            config.sensorCount,
-
-            brain:
-            cloneBrain(
-                bestCar.brain
-            ),
-
-            fitness:
-            bestCar.fitness,
-
-            generation:
-            generation
-
-        })
-
-    );
 
 
-    alert(
-        "Cérebro salvo."
-    );
+localStorage.setItem(
+
+
+"neural-best-brain",
+
+
+JSON.stringify({
+
+
+version:2,
+
+
+sensorCount:
+config.sensorCount,
+
+
+brain:
+cloneBrain(
+bestCar.brain
+),
+
+
+fitness:
+bestCar.fitness,
+
+
+generation:
+generation
+
+
+})
+
+
+);
+
+
+
+
+alert(
+"Cérebro salvo."
+);
+
 
 };
 
 
+
+
 /* =====================================================
-   CARREGAR CÉREBRO
+CARREGAR CÉREBRO
 ===================================================== */
+
 
 document.getElementById(
-    "loadBrain"
+"loadBrain"
 ).onclick=()=>{
 
-    const saved=
-    localStorage.getItem(
-        "neural-best-brain"
-    );
 
+const saved=
+localStorage.getItem(
+"neural-best-brain"
+);
 
-    if(!saved){
 
-        alert(
-            "Nenhum cérebro salvo."
-        );
 
-        return;
 
-    }
+if(!saved){
 
 
-    try{
+alert(
+"Nenhum cérebro salvo."
+);
 
-        const data=
-        JSON.parse(saved);
 
+return;
 
-        if(
-            data.version!==2
-        ){
 
-            alert(
-                "Esse cérebro pertence a uma versão antiga da rede."
-            );
+}
 
-            return;
 
-        }
 
 
-        if(
-            data.sensorCount !==
-            config.sensorCount
-        ){
+try{
 
-            alert(
 
-                "Quantidade incompatível de sensores.\n\n"+
-                "Cérebro: "+
-                data.sensorCount+
-                "\n"+
-                "Atual: "+
-                config.sensorCount
+const data=
+JSON.parse(saved);
 
-            );
 
-            return;
 
-        }
 
-
-        cars=[];
-
-
-        for(
-            let i=0;
-            i<config.carCount;
-            i++
-        ){
-
-            cars.push(
-
-                new Car(
-
-                    mutateBrain(
-                        cloneBrain(
-                            data.brain
-                        )
-                    )
-
-                )
-
-            );
-
-        }
-
-
-        generation=
-        data.generation||
-        1;
-
-
-        bestCar=cars[0];
-
-
-    }catch(e){
-
-        alert(
-            "Erro ao carregar cérebro."
-        );
-
-    }
-
-};
-
-
-/* =====================================================
-   APAGAR APRENDIZADO
-===================================================== */
-
-document.getElementById(
-    "clearBrain"
-).onclick=()=>{
-
-    if(
-        !confirm(
-            "Apagar o cérebro salvo?"
-        )
-    )
-        return;
-
-
-    localStorage.removeItem(
-        "neural-best-brain"
-    );
-
-
-    recordFitness=0;
-
-
-    alert(
-        "Aprendizado apagado."
-    );
-
-};
-
-
-/* =====================================================
-   LIMPAR DADOS DO SIMULADOR
-===================================================== */
-
-document.getElementById(
-    "clearStorage"
-).onclick=()=>{
-
-    if(
-        !confirm(
-
-            "Isso apagará o cérebro salvo e a pista personalizada. "+
-            "Outros dados do navegador não serão apagados. Continuar?"
-
-        )
-    )
-        return;
-
-
-    localStorage.removeItem(
-        "neural-best-brain"
-    );
-
-
-    localStorage.removeItem(
-        "custom-track"
-    );
-
-
-    recordFitness=0;
-
-
-    generation=1;
-
-
-    trackData=
-    structuredClone(
-        defaultTrack
-    );
-
-
-    init();
-
-
-    alert(
-        "Dados do simulador apagados."
-    );
-
-};
-
-
-/* =====================================================
-   CONTROLES
-===================================================== */
-
-function slider(
-    id,
-    property,
-    output,
-    formatter
+if(
+data.version!==2
 ){
 
-    const element=
-    document.getElementById(id);
+
+alert(
+"Esse cérebro pertence a uma versão antiga da rede."
+);
 
 
-    const display=
-    document.getElementById(output);
+return;
 
-
-    function update(){
-
-        config[property]=
-        parseFloat(
-            element.value
-        );
-
-
-        display.textContent=
-        formatter
-        ?
-        formatter(
-            config[property]
-        )
-        :
-        config[property];
-
-    }
-
-
-    element.addEventListener(
-        "input",
-        update
-    );
-
-
-    update();
 
 }
 
 
-slider(
-    "carCount",
-    "carCount",
-    "carCountValue"
+
+
+if(
+data.sensorCount !==
+config.sensorCount
+){
+
+
+alert(
+
+
+"Quantidade incompatível de sensores.\n\n"+
+"Cérebro: "+
+data.sensorCount+
+"\n"+
+"Atual: "+
+config.sensorCount
+
+
 );
 
 
-slider(
-    "maxSpeed",
-    "maxSpeed",
-    "maxSpeedValue"
+return;
+
+
+}
+
+
+
+
+cars=[];
+
+
+
+
+for(
+let i=0;
+i<config.carCount;
+i++
+){
+
+
+cars.push(
+
+
+new Car(
+
+
+mutateBrain(
+cloneBrain(
+data.brain
+)
+)
+
+
+)
+
+
 );
 
 
-slider(
-    "minSpeed",
-    "minSpeed",
-    "minSpeedValue"
+}
+
+
+
+
+generation=
+data.generation||
+1;
+
+
+
+
+bestCar=cars[0];
+
+
+
+
+}catch(e){
+
+
+alert(
+"Erro ao carregar cérebro."
 );
 
 
-slider(
-    "carSize",
-    "carSize",
-    "carSizeValue"
-);
+}
 
 
-slider(
-    "sensorRange",
-    "sensorRange",
-    "sensorRangeValue"
-);
+};
 
 
-slider(
-    "mutation",
-    "mutationRate",
-    "mutationValue",
-    v=>
-    (v*100).toFixed(0)+"%"
-);
-
-
-slider(
-    "mutationStrength",
-    "mutationStrength",
-    "mutationStrengthValue"
-);
-
-
-slider(
-    "persistence",
-    "persistence",
-    "persistenceValue",
-    v=>
-    (v*100).toFixed(0)+"%"
-);
-
-
-slider(
-    "elitism",
-    "elitism",
-    "elitismValue"
-);
 
 
 /* =====================================================
-   QUANTIDADE DE SENSORES
+APAGAR APRENDIZADO
 ===================================================== */
 
+
 document.getElementById(
-    "sensorCount"
-).addEventListener(
-    "input",
-    e=>{
-
-        config.sensorCount=
-        parseInt(
-            e.target.value
-        );
+"clearBrain"
+).onclick=()=>{
 
 
-        document.getElementById(
-            "sensorCountValue"
-        ).textContent=
-        config.sensorCount;
+if(
+!confirm(
+"Apagar o cérebro salvo?"
+)
+)
+return;
 
-    }
+
+
+
+localStorage.removeItem(
+"neural-best-brain"
 );
 
 
-document.getElementById(
-    "sensorCount"
-).addEventListener(
-    "change",
-    ()=>{
 
-        /*
-          Alterar o número de sensores
-          muda a dimensão da rede.
-        */
 
-        init();
+recordFitness=0;
 
-    }
+
+
+
+alert(
+"Aprendizado apagado."
 );
+
+
+};
+
+
 
 
 /* =====================================================
-   SELEÇÃO
+LIMPAR DADOS DO SIMULADOR
 ===================================================== */
 
+
 document.getElementById(
-    "selection"
-).addEventListener(
-    "change",
-    e=>{
+"clearStorage"
+).onclick=()=>{
 
-        config.selection=
-        e.target.value;
 
-    }
+if(
+!confirm(
+
+
+"Isso apagará o cérebro salvo e a pista personalizada. "+
+"Outros dados do navegador não serão apagados. Continuar?"
+
+
+)
+)
+return;
+
+
+
+
+localStorage.removeItem(
+"neural-best-brain"
 );
 
 
+
+
+localStorage.removeItem(
+"custom-track"
+);
+
+
+
+
+recordFitness=0;
+
+
+
+
+generation=1;
+
+
+
+
+trackData=
+structuredClone(
+defaultTrack
+);
+
+
+
+
+init();
+
+
+
+
+alert(
+"Dados do simulador apagados."
+);
+
+
+};
+
+
+
+
 /* =====================================================
-   PAUSAR
+CONTROLES
 ===================================================== */
+
+
+function slider(
+id,
+property,
+output,
+formatter
+){
+
+
+const element=
+document.getElementById(id);
+
+
+
+
+const display=
+document.getElementById(output);
+
+
+
+
+function update(){
+
+
+config[property]=
+parseFloat(
+element.value
+);
+
+
+
+
+display.textContent=
+formatter
+?
+formatter(
+config[property]
+)
+:
+config[property];
+
+
+}
+
+
+
+
+element.addEventListener(
+"input",
+update
+);
+
+
+
+
+update();
+
+
+}
+
+
+
+
+slider(
+"carCount",
+"carCount",
+"carCountValue"
+);
+
+
+
+
+slider(
+"maxSpeed",
+"maxSpeed",
+"maxSpeedValue"
+);
+
+
+
+
+slider(
+"minSpeed",
+"minSpeed",
+"minSpeedValue"
+);
+
+
+
+
+slider(
+"carSize",
+"carSize",
+"carSizeValue"
+);
+
+
+
+
+slider(
+"sensorRange",
+"sensorRange",
+"sensorRangeValue"
+);
+
+
+
+
+slider(
+"mutation",
+"mutationRate",
+"mutationValue",
+v=>
+(v*100).toFixed(0)+"%"
+);
+
+
+
+
+slider(
+"mutationStrength",
+"mutationStrength",
+"mutationStrengthValue"
+);
+
+
+
+
+slider(
+"persistence",
+"persistence",
+"persistenceValue",
+v=>
+(v*100).toFixed(0)+"%"
+);
+
+
+
+
+slider(
+"elitism",
+"elitism",
+"elitismValue"
+);
+
+
+
+
+/* =====================================================
+QUANTIDADE DE SENSORES
+===================================================== */
+
+
+document.getElementById(
+"sensorCount"
+).addEventListener(
+"input",
+e=>{
+
+
+config.sensorCount=
+parseInt(
+e.target.value
+);
+
+
+
+
+document.getElementById(
+"sensorCountValue"
+).textContent=
+config.sensorCount;
+
+
+}
+);
+
+
+
+
+document.getElementById(
+"sensorCount"
+).addEventListener(
+"change",
+()=>{
+
+
+/*
+Alterar o número de sensores
+muda a dimensão da rede.
+*/
+
+
+init();
+
+
+}
+);
+
+
+
+
+/* =====================================================
+SELEÇÃO
+===================================================== */
+
+
+document.getElementById(
+"selection"
+).addEventListener(
+"change",
+e=>{
+
+
+config.selection=
+e.target.value;
+
+
+}
+);
+
+
+
+
+/* =====================================================
+PAUSAR
+===================================================== */
+
 
 let paused=false;
 
 
+
+
 document.getElementById(
-    "pauseBtn"
+"pauseBtn"
 ).onclick=()=>{
 
-    paused=!paused;
+
+paused=!paused;
 
 
-    document.getElementById(
-        "pauseBtn"
-    ).textContent=
-    paused
-    ?
-    "Continuar"
-    :
-    "Pausar";
 
 
-    document.getElementById(
-        "statusBadge"
-    ).textContent=
-    paused
-    ?
-    "PAUSADO"
-    :
-    editMode
-    ?
-    "EDITOR"
-    :
-    "SIMULAÇÃO";
+document.getElementById(
+"pauseBtn"
+).textContent=
+paused
+?
+"Continuar"
+:
+"Pausar";
+
+
+
+
+document.getElementById(
+"statusBadge"
+).textContent=
+paused
+?
+"PAUSADO"
+:
+editMode
+?
+"EDITOR"
+:
+"SIMULAÇÃO";
+
 
 };
 
 
+
+
 /* =====================================================
-   RESET
+RESET
 ===================================================== */
 
+
 document.getElementById(
-    "resetBtn"
+"resetBtn"
 ).onclick=()=>{
 
-    generation=1;
 
-    init();
+generation=1;
+
+
+init();
+
 
 };
 
 
+
+
 /* =====================================================
-   NOVA GERAÇÃO
+NOVA GERAÇÃO
 ===================================================== */
 
+
 document.getElementById(
-    "newGenerationBtn"
+"newGenerationBtn"
 ).onclick=()=>{
 
-    nextGeneration();
+
+nextGeneration();
+
 
 };
 
 
+
+
 /* =====================================================
-   TECLADO
+TECLADO
 ===================================================== */
+
 
 window.addEventListener(
-    "keydown",
-    e=>{
-
-        if(
-            e.code==="Space"
-        ){
-
-            e.preventDefault();
-
-            document.getElementById(
-                "pauseBtn"
-            ).click();
-
-        }
+"keydown",
+e=>{
 
 
-        if(
-            e.key.toLowerCase()==="e"
-        ){
-
-            setEditMode(
-                !editMode
-            );
-
-        }
+if(
+e.code==="Space"
+){
 
 
-        if(
-            e.key.toLowerCase()==="r"
-        ){
+e.preventDefault();
 
-            init();
 
-        }
+document.getElementById(
+"pauseBtn"
+).click();
 
-    }
+
+}
+
+
+
+
+if(
+e.key.toLowerCase()==="e"
+){
+
+
+setEditMode(
+!editMode
 );
 
 
+}
+
+
+
+
+if(
+e.key.toLowerCase()==="r"
+){
+
+
+init();
+
+
+}
+
+
+}
+);
+
+
+
+
 /* =====================================================
-   ESTATÍSTICAS
+ESTATÍSTICAS
 ===================================================== */
+
 
 let frames=0;
 
+
 let fps=60;
+
 
 let fpsTime=
 performance.now();
 
 
+
+
 function updateStats(){
 
-    let alive=0;
+
+let alive=0;
 
 
-    for(
-        const car of cars
-    ){
-
-        if(car.alive)
-            alive++;
-
-    }
 
 
-    if(bestCar){
-
-        if(
-            bestCar.fitness>
-            recordFitness
-        ){
-
-            recordFitness=
-            bestCar.fitness;
-
-        }
-
-    }
+for(
+const car of cars
+){
 
 
-    document.getElementById(
-        "generationValue"
-    ).textContent=
-    generation;
+if(car.alive)
+alive++;
 
-
-    document.getElementById(
-        "topGeneration"
-    ).textContent=
-    generation;
-
-
-    document.getElementById(
-        "aliveValue"
-    ).textContent=
-    alive;
-
-
-    document.getElementById(
-        "fitnessValue"
-    ).textContent=
-    bestCar
-    ?
-    bestCar.fitness.toFixed(1)
-    :
-    "0";
-
-
-    document.getElementById(
-        "recordValue"
-    ).textContent=
-    recordFitness.toFixed(1);
-
-
-    document.getElementById(
-        "fpsValue"
-    ).textContent=
-    fps;
 
 }
 
 
+
+
+if(bestCar){
+
+
+if(
+bestCar.fitness>
+recordFitness
+){
+
+
+recordFitness=
+bestCar.fitness;
+
+
+}
+
+
+}
+
+
+
+
+document.getElementById(
+"generationValue"
+).textContent=
+generation;
+
+
+
+
+document.getElementById(
+"topGeneration"
+).textContent=
+generation;
+
+
+
+
+document.getElementById(
+"aliveValue"
+).textContent=
+alive;
+
+
+
+
+document.getElementById(
+"fitnessValue"
+).textContent=
+bestCar
+?
+bestCar.fitness.toFixed(1)
+:
+"0";
+
+
+
+
+document.getElementById(
+"recordValue"
+).textContent=
+recordFitness.toFixed(1);
+
+
+
+
+document.getElementById(
+"fpsValue"
+).textContent=
+fps;
+
+
+}
+
+
+
+
 /* =====================================================
-   LOOP PRINCIPAL
+LOOP PRINCIPAL
 ===================================================== */
+
 
 let lastTime=
 performance.now();
 
 
+
+
 function loop(now){
 
-    const dt=
-    Math.min(
-        (now-lastTime)/1000,
-        .05
-    );
+
+const dt=
+Math.min(
+(now-lastTime)/1000,
+.05
+);
 
 
-    lastTime=now;
 
 
-    if(!paused){
-
-        let alive=0;
+lastTime=now;
 
 
-        for(
-            const car of cars
-        ){
-
-            car.update(dt);
 
 
-            if(car.alive)
-                alive++;
-
-        }
+if(!paused){
 
 
-        cars.sort(
-            (a,b)=>
-            b.fitness-
-            a.fitness
-        );
+let alive=0;
 
 
-        bestCar=cars[0];
 
 
-        if(
-            alive===0 &&
-            cars.length
-        ){
-
-            nextGeneration();
-
-        }
-
-    }
+for(
+const car of cars
+){
 
 
-    /* PISTA */
-
-    drawTrack();
+car.update(dt);
 
 
-    /* CARROS */
-
-    for(
-        const car of cars
-    ){
-
-        car.draw(
-            car===bestCar
-        );
-
-    }
 
 
-    /* EDITOR */
+if(car.alive)
+alive++;
 
-    drawEditor();
-
-
-    /* REDE */
-
-    drawNetwork();
-
-
-    /* ESTATÍSTICAS */
-
-    updateStats();
-
-
-    /* FPS */
-
-    frames++;
-
-
-    if(
-        now-fpsTime>=1000
-    ){
-
-        fps=frames;
-
-        frames=0;
-
-        fpsTime=now;
-
-    }
-
-
-    requestAnimationFrame(
-        loop
-    );
 
 }
 
 
+
+
+cars.sort(
+(a,b)=>
+b.fitness-
+a.fitness
+);
+
+
+
+
+bestCar=cars[0];
+
+
+
+
+if(
+alive===0 &&
+cars.length
+){
+
+
+nextGeneration();
+
+
+}
+
+
+}
+
+
+
+
+/* PISTA */
+
+updateTrackCamera();
+drawTrack();
+
+
+
+
+/* CARROS */
+
+
+for(
+const car of cars
+){
+
+
+beginTrackTransform();
+
+car.draw(
+car===bestCar
+);
+
+
+}
+
+endTrackTransform();
+
+
+
+
+/* EDITOR */
+
+
+drawEditor();
+
+
+
+
+/* REDE */
+
+
+drawNetwork();
+
+
+
+
+/* ESTATÍSTICAS */
+
+
+updateStats();
+
+
+
+
+/* FPS */
+
+
+frames++;
+
+
+
+
+if(
+now-fpsTime>=1000
+){
+
+
+fps=frames;
+
+
+frames=0;
+
+
+fpsTime=now;
+
+
+}
+
+
+
+
+requestAnimationFrame(
+loop
+);
+
+
+}
+
+
+
+
 /* =====================================================
-   INICIAR
+INICIAR
 ===================================================== */
+
 
 init();
 
+
 requestAnimationFrame(
-    loop
+loop
 );
+
 
 </script>
 
+
 </body>
+
 
 </html>
